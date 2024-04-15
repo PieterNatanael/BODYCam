@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		215E96022BCA669A00634871 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215E96012BCA669A00634871 /* AppDelegate.swift */; };
+		215E96042BCA66B100634871 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215E96032BCA66B100634871 /* SceneDelegate.swift */; };
 		218E2A432BCA1F1800E99A2B /* BODYCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218E2A422BCA1F1800E99A2B /* BODYCamApp.swift */; };
 		218E2A452BCA1F1800E99A2B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218E2A442BCA1F1800E99A2B /* ContentView.swift */; };
 		218E2A472BCA1F1A00E99A2B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 218E2A462BCA1F1A00E99A2B /* Assets.xcassets */; };
@@ -14,6 +16,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		215E96002BCA660D00634871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		215E96012BCA669A00634871 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		215E96032BCA66B100634871 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		218E2A3F2BCA1F1800E99A2B /* BODYCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BODYCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		218E2A422BCA1F1800E99A2B /* BODYCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BODYCamApp.swift; sourceTree = "<group>"; };
 		218E2A442BCA1F1800E99A2B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -51,8 +56,11 @@
 		218E2A412BCA1F1800E99A2B /* BODYCam */ = {
 			isa = PBXGroup;
 			children = (
+				215E96002BCA660D00634871 /* Info.plist */,
 				218E2A422BCA1F1800E99A2B /* BODYCamApp.swift */,
 				218E2A442BCA1F1800E99A2B /* ContentView.swift */,
+				215E96012BCA669A00634871 /* AppDelegate.swift */,
+				215E96032BCA66B100634871 /* SceneDelegate.swift */,
 				218E2A462BCA1F1A00E99A2B /* Assets.xcassets */,
 				218E2A482BCA1F1A00E99A2B /* Preview Content */,
 			);
@@ -137,8 +145,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				215E96022BCA669A00634871 /* AppDelegate.swift in Sources */,
 				218E2A452BCA1F1800E99A2B /* ContentView.swift in Sources */,
 				218E2A432BCA1F1800E99A2B /* BODYCamApp.swift in Sources */,
+				215E96042BCA66B100634871 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,21 +280,25 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"BODYCam/Preview Content\"";
 				DEVELOPMENT_TEAM = L295MT4VTH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BODYCam/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "BODYCam need access to camera to record video";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "BODYCam need access to microphone to record audio";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = PieterNatanael.BODYCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -299,21 +313,25 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"BODYCam/Preview Content\"";
 				DEVELOPMENT_TEAM = L295MT4VTH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BODYCam/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "BODYCam need access to camera to record video";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "BODYCam need access to microphone to record audio";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = PieterNatanael.BODYCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
