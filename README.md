@@ -86,3 +86,19 @@ No recopilamos datos personales, datos de uso ni análisis de nuestros usuarios.
 Información de Contacto:
 
 Para cualquier pregunta, preocupación o soporte relacionado con la privacidad o la aplicación, por favor contáctanos en pieternatanael@icloud.com.
+
+
+
+---
+
+Chính Sách Bảo Mật:
+
+Chúng tôi tôn trọng quyền riêng tư của bạn và cam kết bảo vệ thông tin cá nhân của bạn. Ứng dụng "BODYCam" của chúng tôi không thu thập bất kỳ dữ liệu nào từ người dùng.
+
+Thu Thập Dữ Liệu:
+
+Chúng tôi không thu thập bất kỳ dữ liệu cá nhân, dữ liệu sử dụng, hoặc phân tích nào từ người dùng của chúng tôi.
+
+Thông Tin Liên Hệ:
+
+Để có bất kỳ câu hỏi, thắc mắc, hoặc hỗ trợ liên quan đến quyền riêng tư hoặc ứng dụng, vui lòng liên hệ với chúng tôi tại pieternatanael@icloud.com.
