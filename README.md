@@ -12,7 +12,7 @@ For any questions, concerns, or support regarding privacy or the app, please con
 
 
 
-Sure! Here are the translations in Arabic, French, German, Japanese, and Spanish:
+
 
 Arabic
 
@@ -86,3 +86,36 @@ No recopilamos datos personales, datos de uso ni análisis de nuestros usuarios.
 Información de Contacto:
 
 Para cualquier pregunta, preocupación o soporte relacionado con la privacidad o la aplicación, por favor contáctanos en pieternatanael@icloud.com.
+
+
+
+---
+
+Chính Sách Bảo Mật:
+
+Chúng tôi tôn trọng quyền riêng tư của bạn và cam kết bảo vệ thông tin cá nhân của bạn. Ứng dụng "BODYCam" của chúng tôi không thu thập bất kỳ dữ liệu nào từ người dùng.
+
+Thu Thập Dữ Liệu:
+
+Chúng tôi không thu thập bất kỳ dữ liệu cá nhân, dữ liệu sử dụng, hoặc phân tích nào từ người dùng của chúng tôi.
+
+Thông Tin Liên Hệ:
+
+Để có bất kỳ câu hỏi, thắc mắc, hoặc hỗ trợ liên quan đến quyền riêng tư hoặc ứng dụng, vui lòng liên hệ với chúng tôi tại pieternatanael@icloud.com.
+
+
+
+-------
+
+
+개인정보 보호정책:
+
+저희는 귀하의 개인정보를 존중하며 보호할 것을 약속드립니다. 저희 앱 "BODYCam"은 사용자로부터 어떠한 데이터도 수집하지 않습니다.
+
+데이터 수집:
+
+저희는 사용자로부터 개인 데이터, 사용 데이터 또는 분석 데이터를 수집하지 않습니다.
+
+연락처 정보:
+
+개인정보 보호 또는 앱에 대한 질문, 우려 사항 또는 지원이 필요하시면 pieternatanael@icloud.com 으로 문의해 주십시오.
