@@ -972,6 +972,7 @@ struct ContentView_Previews: PreviewProvider {
 
 /*
 
+ //Previous app release
 
 //works, but want to improve style and code quality
 
