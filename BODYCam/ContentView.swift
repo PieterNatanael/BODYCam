@@ -117,6 +117,7 @@ class LocationManager: NSObject, ObservableObject {
         placeName = nameParts.joined(separator: ", ")
     }
     
+    
     /// Resets all location details to default values
     private func resetLocationDetails() {
         DispatchQueue.main.async {
