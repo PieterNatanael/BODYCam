@@ -56,6 +56,7 @@
 		218E2A412BCA1F1800E99A2B /* BODYCam */ = {
 			isa = PBXGroup;
 			children = (
+				21D9D0662D1021C100D4B844 /* Supporting Files */,
 				215E96002BCA660D00634871 /* Info.plist */,
 				218E2A422BCA1F1800E99A2B /* BODYCamApp.swift */,
 				218E2A442BCA1F1800E99A2B /* ContentView.swift */,
@@ -73,6 +74,13 @@
 				218E2A492BCA1F1A00E99A2B /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		21D9D0662D1021C100D4B844 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -280,13 +288,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3.3;
+				CURRENT_PROJECT_VERSION = 2.1;
 				DEVELOPMENT_ASSET_PATHS = "\"BODYCam/Preview Content\"";
 				DEVELOPMENT_TEAM = L295MT4VTH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BODYCam/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "BODYCam requires access to your camera. This allows you to capture moments and create videos within the app. we do not collect data.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "BODYCam needs access to your location to provide compass functionality";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = " BODYCam requires access to your microphone. This enables you to add voiceovers and audio recordings to your videos. We do not collect data.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -298,7 +307,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 33.3;
+				MARKETING_VERSION = 36.1;
 				PRODUCT_BUNDLE_IDENTIFIER = PieterNatanael.BODYCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -313,13 +322,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3.3;
+				CURRENT_PROJECT_VERSION = 2.1;
 				DEVELOPMENT_ASSET_PATHS = "\"BODYCam/Preview Content\"";
 				DEVELOPMENT_TEAM = L295MT4VTH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BODYCam/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "BODYCam requires access to your camera. This allows you to capture moments and create videos within the app. we do not collect data.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "BODYCam needs access to your location to provide compass functionality";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = " BODYCam requires access to your microphone. This enables you to add voiceovers and audio recordings to your videos. We do not collect data.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -331,7 +341,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 33.3;
+				MARKETING_VERSION = 36.1;
 				PRODUCT_BUNDLE_IDENTIFIER = PieterNatanael.BODYCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
