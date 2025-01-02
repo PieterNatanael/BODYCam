@@ -968,12 +968,7 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-//kerjaan di branching
-//try branching, kerjaan di branching
-//documentation1
 
-
-//documentation2
 /*
 
  //Previous app release
