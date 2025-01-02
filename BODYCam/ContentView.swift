@@ -920,7 +920,7 @@ struct AppCardView: View {
                         )
                     )
                     .foregroundColor(.white)
-                    .cornerRadius(10)
+                    .cornerRadius(13)
                     .shadow(color: Color.black.opacity(0.3), radius: 6, x: 3, y: 3) // Shadow for 3D effect
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
