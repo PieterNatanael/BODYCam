@@ -1,11 +1,11 @@
 Terms of Use
 
-BodyCam
+BodyCam Z
 
 Last updated: April 18, 2026
 
 
-These Terms of Use ("Terms") govern your use of BodyCam ("the App"), developed by Pieter Yoshua Natanael ("Developer").
+These Terms of Use ("Terms") govern your use of BodyCam Z ("the App"), developed by Pieter Yoshua Natanael ("Developer").
 By downloading or using the App, you agree to these Terms.
 This agreement is based in part on Apple’s standard End User License Agreement (EULA):
 https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
@@ -14,9 +14,9 @@ https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 1. License
 The Developer grants you a limited, non-transferable, non-exclusive license to use the App on devices you own or control, in accordance with the terms of the platform from which you downloaded the App (such as the Apple App Store or Google Play).
 2. Subscriptions
-BodyCam may offer optional auto-renewable subscriptions ("BodyCam Premium").
+BodyCam Z may offer optional auto-renewable subscriptions ("BodyCam Z Premium").
 Pricing
-BodyCam Premium is billed at $9 per year (price may vary by region and will be shown in your local currency in the App before purchase).
+BodyCam Z Premium is billed at $9 per year (price may vary by region and will be shown in your local currency in the App before purchase).
 Free Trial (if offered)
 A free trial period of 7 days may be offered to new users. After the trial ends, the subscription will automatically convert to a paid subscription unless cancelled before the end of the trial period.
 Billing and Auto-Renewal
