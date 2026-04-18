@@ -1,12 +1,12 @@
 Privacy Policy
 
-BodyCam
+BodyCam Z
 
 Last updated: April 18, 2026
 
 
 Overview
-BodyCam ("the App") is a video recording application designed to help users capture moments using their device camera. We are committed to protecting your privacy. This policy explains what data the App accesses and how it is used.
+BodyCam Z ("the App") is a video recording application designed to help users capture moments using their device camera. We are committed to protecting your privacy. This policy explains what data the App accesses and how it is used.
 
 
 Data We Do NOT Collect
