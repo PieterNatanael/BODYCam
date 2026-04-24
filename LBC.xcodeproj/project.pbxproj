@@ -7,23 +7,59 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03333E9B8F9B459D905A847E /* VideoCaptureDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AD6AF32E74242948DF8DFC6 /* VideoCaptureDelegate.swift */; };
 		215E96022BCA669A00634871 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215E96012BCA669A00634871 /* AppDelegate.swift */; };
 		215E96042BCA66B100634871 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215E96032BCA66B100634871 /* SceneDelegate.swift */; };
 		218E2A432BCA1F1800E99A2B /* BODYCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218E2A422BCA1F1800E99A2B /* BODYCamApp.swift */; };
 		218E2A452BCA1F1800E99A2B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218E2A442BCA1F1800E99A2B /* ContentView.swift */; };
 		218E2A472BCA1F1A00E99A2B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 218E2A462BCA1F1A00E99A2B /* Assets.xcassets */; };
 		218E2A4A2BCA1F1A00E99A2B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 218E2A492BCA1F1A00E99A2B /* Preview Assets.xcassets */; };
+		24719CE5DA5D404EBC484981 /* CompassViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A0DBCC2A4149779ACBDCA0 /* CompassViews.swift */; };
+		2AA360407AAE42ED98107A5B /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8436551DF604CB09F1E7405 /* LocationManager.swift */; };
+		36ACCB6DFCDB457FA1A937DF /* AppCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627AB93934FF491AA9240664 /* AppCardView.swift */; };
+		4F94059B97C44539B613DC90 /* DisclaimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E144EF1EEE404093AC6D81 /* DisclaimerView.swift */; };
+		55BFEFB65428456DB73411B5 /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15807B7856B3496BB23F2576 /* CameraPreviewView.swift */; };
+		91F0203186EF44B99F513550 /* VideoThumbnailCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C566D818AA8C4DFFAD2CF657 /* VideoThumbnailCard.swift */; };
+		A49DB1E298DA47B0B3432F43 /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFEB837FABD41119A8E0B83 /* VideoPlayerView.swift */; };
+		A8860F61FE014D8DA2BE5D0A /* ExplainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13512893B0C4570825C1FF4 /* ExplainView.swift */; };
+		AA0536F1E1614D56A52221B6 /* VideoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2698CEE6F9F5461F91B26B35 /* VideoItem.swift */; };
+		AA1E2F3B4C5D67890E1F2A3B /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1F2A3C4D5E67890F1A2B3C /* PaywallView.swift */; };
+		B2926960C51244FCA6C7F6D8 /* VideoQuality.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77D1FAD2EBE4F7982793EE8 /* VideoQuality.swift */; };
+		BC621E2AD0A04B59A843EDF6 /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0609504E575B4BE39E6EACFB /* GalleryView.swift */; };
+		CC1A2B3D4E5F67890A1B2C3D /* ReceiptReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD1B2C3E4F5A67890B1C2D3E /* ReceiptReader.swift */; };
+		E756B3400D7145F5B671BB58 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB0904EF3124A3FAC449D51 /* RootView.swift */; };
+		EE1C2D3F4A5B67890C1D2E3F /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1D2E3A4B5C67890D1E2F3A /* SubscriptionManager.swift */; };
+		GG1E2F3B4C5D67890E1F2A3B /* PhotoCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = HH1F2A3C4D5E67890F1A2B3C /* PhotoCameraView.swift */; };
+		II1E2F3B4C5D67890E1F2A3B /* VolumeButtonObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = JJ1F2A3C4D5E67890F1A2B3C /* VolumeButtonObserver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0609504E575B4BE39E6EACFB /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
+		15807B7856B3496BB23F2576 /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
+		1AB0904EF3124A3FAC449D51 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		215E96002BCA660D00634871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		215E96012BCA669A00634871 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		215E96032BCA66B100634871 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		218E2A3F2BCA1F1800E99A2B /* BODYCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BODYCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		218E2A3F2BCA1F1800E99A2B /* LB Camera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LB Camera.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		218E2A422BCA1F1800E99A2B /* BODYCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BODYCamApp.swift; sourceTree = "<group>"; };
 		218E2A442BCA1F1800E99A2B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		218E2A462BCA1F1A00E99A2B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		218E2A492BCA1F1A00E99A2B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		2698CEE6F9F5461F91B26B35 /* VideoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoItem.swift; sourceTree = "<group>"; };
+		5AD6AF32E74242948DF8DFC6 /* VideoCaptureDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCaptureDelegate.swift; sourceTree = "<group>"; };
+		627AB93934FF491AA9240664 /* AppCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCardView.swift; sourceTree = "<group>"; };
+		85E144EF1EEE404093AC6D81 /* DisclaimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisclaimerView.swift; sourceTree = "<group>"; };
+		AFFEB837FABD41119A8E0B83 /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
+		B8436551DF604CB09F1E7405 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		BB1F2A3C4D5E67890F1A2B3C /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		C566D818AA8C4DFFAD2CF657 /* VideoThumbnailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoThumbnailCard.swift; sourceTree = "<group>"; };
+		D13512893B0C4570825C1FF4 /* ExplainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplainView.swift; sourceTree = "<group>"; };
+		D9A0DBCC2A4149779ACBDCA0 /* CompassViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompassViews.swift; sourceTree = "<group>"; };
+		DD1B2C3E4F5A67890B1C2D3E /* ReceiptReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptReader.swift; sourceTree = "<group>"; };
+		F77D1FAD2EBE4F7982793EE8 /* VideoQuality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoQuality.swift; sourceTree = "<group>"; };
+		FF1D2E3A4B5C67890D1E2F3A /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
+		HH1F2A3C4D5E67890F1A2B3C /* PhotoCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCameraView.swift; sourceTree = "<group>"; };
+		JJ1F2A3C4D5E67890F1A2B3C /* VolumeButtonObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeButtonObserver.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,7 +84,7 @@
 		218E2A402BCA1F1800E99A2B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				218E2A3F2BCA1F1800E99A2B /* BODYCam.app */,
+				218E2A3F2BCA1F1800E99A2B /* LB Camera.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -60,6 +96,24 @@
 				215E96002BCA660D00634871 /* Info.plist */,
 				218E2A422BCA1F1800E99A2B /* BODYCamApp.swift */,
 				218E2A442BCA1F1800E99A2B /* ContentView.swift */,
+				F77D1FAD2EBE4F7982793EE8 /* VideoQuality.swift */,
+				B8436551DF604CB09F1E7405 /* LocationManager.swift */,
+				5AD6AF32E74242948DF8DFC6 /* VideoCaptureDelegate.swift */,
+				D9A0DBCC2A4149779ACBDCA0 /* CompassViews.swift */,
+				627AB93934FF491AA9240664 /* AppCardView.swift */,
+				D13512893B0C4570825C1FF4 /* ExplainView.swift */,
+				2698CEE6F9F5461F91B26B35 /* VideoItem.swift */,
+				0609504E575B4BE39E6EACFB /* GalleryView.swift */,
+				C566D818AA8C4DFFAD2CF657 /* VideoThumbnailCard.swift */,
+				AFFEB837FABD41119A8E0B83 /* VideoPlayerView.swift */,
+				1AB0904EF3124A3FAC449D51 /* RootView.swift */,
+				15807B7856B3496BB23F2576 /* CameraPreviewView.swift */,
+				85E144EF1EEE404093AC6D81 /* DisclaimerView.swift */,
+				DD1B2C3E4F5A67890B1C2D3E /* ReceiptReader.swift */,
+				FF1D2E3A4B5C67890D1E2F3A /* SubscriptionManager.swift */,
+				BB1F2A3C4D5E67890F1A2B3C /* PaywallView.swift */,
+				HH1F2A3C4D5E67890F1A2B3C /* PhotoCameraView.swift */,
+				JJ1F2A3C4D5E67890F1A2B3C /* VolumeButtonObserver.swift */,
 				215E96012BCA669A00634871 /* AppDelegate.swift */,
 				215E96032BCA66B100634871 /* SceneDelegate.swift */,
 				218E2A462BCA1F1A00E99A2B /* Assets.xcassets */,
@@ -86,9 +140,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		218E2A3E2BCA1F1800E99A2B /* BODYCam */ = {
+		218E2A3E2BCA1F1800E99A2B /* LB Camera */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 218E2A4D2BCA1F1A00E99A2B /* Build configuration list for PBXNativeTarget "BODYCam" */;
+			buildConfigurationList = 218E2A4D2BCA1F1A00E99A2B /* Build configuration list for PBXNativeTarget "LB Camera" */;
 			buildPhases = (
 				218E2A3B2BCA1F1800E99A2B /* Sources */,
 				218E2A3C2BCA1F1800E99A2B /* Frameworks */,
@@ -98,9 +152,9 @@
 			);
 			dependencies = (
 			);
-			name = BODYCam;
+			name = "LB Camera";
 			productName = BODYCam;
-			productReference = 218E2A3F2BCA1F1800E99A2B /* BODYCam.app */;
+			productReference = 218E2A3F2BCA1F1800E99A2B /* LB Camera.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -118,7 +172,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 218E2A3A2BCA1F1800E99A2B /* Build configuration list for PBXProject "BODYCam" */;
+			buildConfigurationList = 218E2A3A2BCA1F1800E99A2B /* Build configuration list for PBXProject "LB Camera" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -131,7 +185,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				218E2A3E2BCA1F1800E99A2B /* BODYCam */,
+				218E2A3E2BCA1F1800E99A2B /* LB Camera */,
 			);
 		};
 /* End PBXProject section */
@@ -157,6 +211,24 @@
 				218E2A452BCA1F1800E99A2B /* ContentView.swift in Sources */,
 				218E2A432BCA1F1800E99A2B /* BODYCamApp.swift in Sources */,
 				215E96042BCA66B100634871 /* SceneDelegate.swift in Sources */,
+				B2926960C51244FCA6C7F6D8 /* VideoQuality.swift in Sources */,
+				2AA360407AAE42ED98107A5B /* LocationManager.swift in Sources */,
+				03333E9B8F9B459D905A847E /* VideoCaptureDelegate.swift in Sources */,
+				24719CE5DA5D404EBC484981 /* CompassViews.swift in Sources */,
+				36ACCB6DFCDB457FA1A937DF /* AppCardView.swift in Sources */,
+				A8860F61FE014D8DA2BE5D0A /* ExplainView.swift in Sources */,
+				AA0536F1E1614D56A52221B6 /* VideoItem.swift in Sources */,
+				BC621E2AD0A04B59A843EDF6 /* GalleryView.swift in Sources */,
+				91F0203186EF44B99F513550 /* VideoThumbnailCard.swift in Sources */,
+				A49DB1E298DA47B0B3432F43 /* VideoPlayerView.swift in Sources */,
+				E756B3400D7145F5B671BB58 /* RootView.swift in Sources */,
+				55BFEFB65428456DB73411B5 /* CameraPreviewView.swift in Sources */,
+				4F94059B97C44539B613DC90 /* DisclaimerView.swift in Sources */,
+				CC1A2B3D4E5F67890A1B2C3D /* ReceiptReader.swift in Sources */,
+				EE1C2D3F4A5B67890C1D2E3F /* SubscriptionManager.swift in Sources */,
+				AA1E2F3B4C5D67890E1F2A3B /* PaywallView.swift in Sources */,
+				GG1E2F3B4C5D67890E1F2A3B /* PhotoCameraView.swift in Sources */,
+				II1E2F3B4C5D67890E1F2A3B /* VolumeButtonObserver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,15 +360,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2.1;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BODYCam/Preview Content\"";
 				DEVELOPMENT_TEAM = L295MT4VTH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BODYCam/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "BODYCam requires access to your camera. This allows you to capture moments and create videos within the app. we do not collect data.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "BODYCam needs access to your location to provide compass functionality";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = " BODYCam requires access to your microphone. This enables you to add voiceovers and audio recordings to your videos. We do not collect data.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "LB Camera needs access to your camera to record video and take photos. We do not collect any user data.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "LB Camera needs access to your microphone to record audio with your videos. We do not collect any user data.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -307,7 +378,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 36.1;
+				MARKETING_VERSION = 38;
 				PRODUCT_BUNDLE_IDENTIFIER = PieterNatanael.BODYCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -322,15 +393,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2.1;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BODYCam/Preview Content\"";
 				DEVELOPMENT_TEAM = L295MT4VTH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BODYCam/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "BODYCam requires access to your camera. This allows you to capture moments and create videos within the app. we do not collect data.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "BODYCam needs access to your location to provide compass functionality";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = " BODYCam requires access to your microphone. This enables you to add voiceovers and audio recordings to your videos. We do not collect data.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "LB Camera needs access to your camera to record video and take photos. We do not collect any user data.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "LB Camera needs access to your microphone to record audio with your videos. We do not collect any user data.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -341,7 +411,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 36.1;
+				MARKETING_VERSION = 38;
 				PRODUCT_BUNDLE_IDENTIFIER = PieterNatanael.BODYCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -353,7 +423,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		218E2A3A2BCA1F1800E99A2B /* Build configuration list for PBXProject "BODYCam" */ = {
+		218E2A3A2BCA1F1800E99A2B /* Build configuration list for PBXProject "LB Camera" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				218E2A4B2BCA1F1A00E99A2B /* Debug */,
@@ -362,7 +432,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		218E2A4D2BCA1F1A00E99A2B /* Build configuration list for PBXNativeTarget "BODYCam" */ = {
+		218E2A4D2BCA1F1A00E99A2B /* Build configuration list for PBXNativeTarget "LB Camera" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				218E2A4E2BCA1F1A00E99A2B /* Debug */,
