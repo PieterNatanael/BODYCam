@@ -3,6 +3,8 @@
 <plist version="1.0">
 <dict>
 	<key>NSPrivacyAccessedAPIs</key>
-	<string>Access camera and microphone settings for video recording and audio capture in BODYCam. We do not collect any user data.</string>
+	<string>Access camera and microphone settings for video recording and audio capture in LB Camera. We do not collect any user data.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>LB Camera saves recorded videos and photos to your photo library. We do not collect any user data.</string>
 </dict>
 </plist>

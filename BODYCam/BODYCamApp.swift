@@ -11,7 +11,7 @@ import SwiftUI
 struct BODYCamApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }

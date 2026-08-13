@@ -1,0 +1,727 @@
+import SwiftUI
+import AVFoundation
+import Photos
+
+// MARK: - Photo Quality
+
+enum PhotoQuality: String, CaseIterable {
+    case low  = "LOW"
+    case med  = "MED"
+    case high = "HIGH"
+
+    /// Spatial scale applied before JPEG encoding.
+    /// LOW = 0.5 → ¼ the pixels → dramatically smaller file even before compression.
+    var spatialScale: CGFloat {
+        switch self {
+        case .low:  return 0.5
+        case .med:  return 1.0
+        case .high: return 1.0
+        }
+    }
+
+    /// JPEG compression factor (0 = smallest/worst, 1 = largest/best).
+    var jpegCompression: CGFloat {
+        switch self {
+        case .low:  return 0.25
+        case .med:  return 0.65
+        case .high: return 0.92
+        }
+    }
+}
+
+// MARK: - Photo Capture Delegate
+
+final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, ObservableObject {
+    /// Set before each capture so the delegate knows how to process the image.
+    var quality: PhotoQuality = .high
+    var onFinish: ((Bool) -> Void)?
+
+    func photoOutput(_ output: AVCapturePhotoOutput,
+                     didFinishProcessingPhoto photo: AVCapturePhoto,
+                     error: Error?) {
+        guard error == nil,
+              let rawData = photo.fileDataRepresentation(),
+              let rawImage = UIImage(data: rawData) else {
+            DispatchQueue.main.async { self.onFinish?(false) }
+            return
+        }
+
+        // --- Post-process on the background thread AVFoundation already gave us ---
+
+        // 1. Scale down if needed (LOW = 50 % linear → 25 % of pixels)
+        let scale = quality.spatialScale
+        let processed: UIImage
+        if scale < 1.0 {
+            let targetSize = CGSize(width:  rawImage.size.width  * scale,
+                                    height: rawImage.size.height * scale)
+            let renderer = UIGraphicsImageRenderer(size: targetSize)
+            processed = renderer.image { _ in
+                rawImage.draw(in: CGRect(origin: .zero, size: targetSize))
+            }
+        } else {
+            processed = rawImage
+        }
+
+        // 2. Re-encode as JPEG with the tier's compression factor
+        guard let jpeg = processed.jpegData(compressionQuality: quality.jpegCompression) else {
+            DispatchQueue.main.async { self.onFinish?(false) }
+            return
+        }
+
+        // 3. Save to Photos
+        PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
+            guard status == .authorized || status == .limited else {
+                DispatchQueue.main.async { self.onFinish?(false) }
+                return
+            }
+            PHPhotoLibrary.shared().performChanges({
+                let req = PHAssetCreationRequest.forAsset()
+                req.addResource(with: .photo, data: jpeg, options: nil)
+            }) { success, _ in
+                DispatchQueue.main.async { self.onFinish?(success) }
+            }
+        }
+    }
+}
+
+// MARK: - PhotoCameraView
+
+struct PhotoCameraView: View {
+
+    // MARK: - Session
+
+    @State private var captureSession: AVCaptureSession?
+    @State private var photoOutput: AVCapturePhotoOutput?
+    @StateObject private var captureDelegate  = PhotoCaptureDelegate()
+    @StateObject private var volumeObserver   = VolumeButtonObserver()
+
+    /// ALL AVCaptureSession operations must run on a dedicated serial queue.
+    private static let sessionQueue = DispatchQueue(
+        label: "com.bodycam.photo.session", qos: .userInitiated)
+
+    // MARK: - UI State
+
+    @State private var showPreview      = false        // default OFF — saves battery
+    @AppStorage("SelectedPhotoQuality") private var quality: PhotoQuality = .high
+    @State private var isUsingFront     = false
+    @State private var isCapturing      = false
+    @State private var saveStatus: SaveStatus?
+    @State private var isScreenDimmed   = false
+    @State private var savedBrightness: CGFloat = UIScreen.main.brightness
+    @State private var showAppSettingsSheet = false
+    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.saveBattery.rawValue
+    private var displayMode: CameraDisplayMode { CameraDisplayMode(rawValue: displayModeRaw) ?? .saveBattery }
+    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.normal.rawValue
+    private var isSimpleTheme: Bool { appThemeRaw == AppTheme.simple.rawValue }
+
+    // MARK: - Simple (Bauhaus) theme palette
+    private let simpleRed    = Color(red: 0.85, green: 0.15, blue: 0.1)
+    private let simpleYellow = Color(red: 0.95, green: 0.78, blue: 0.1)
+    private let simpleBlue   = Color(red: 0.15, green: 0.4,  blue: 0.85)
+
+    @EnvironmentObject private var subscriptionManager: SubscriptionManager
+    @State private var showPaywall = false
+
+    enum SaveStatus { case saving, success, failure }
+
+    // MARK: - Adaptive layout
+
+    private var isCompact: Bool        { UIScreen.main.bounds.height < 700 }
+    private var btnFrame: CGFloat      { isCompact ? 100 : 120 }
+    private var btnOuter: CGFloat      { isCompact ? 74  : 90  }
+    private var btnInner: CGFloat      { isCompact ? 56  : 70  }
+    private var btnTickOffset: CGFloat { isCompact ? 44  : 54  }
+    private var bottomPad: CGFloat     { isCompact ? 12  : 36  }
+
+    // Fixed size (not "fit remaining space") so the preview card renders at the
+    // exact same size on this tab and the Video tab, regardless of how much
+    // vertical space each tab's other elements (status label, toolbar, etc.) use.
+    // Clamped against screen height so it can't overflow on the smallest devices
+    // (CameraPreviewView uses .resizeAspectFill, so a shorter frame just crops
+    // the feed slightly rather than breaking layout).
+    private var previewCardWidth: CGFloat { UIScreen.main.bounds.width - 48 }
+    private var previewCardHeight: CGFloat {
+        let natural: CGFloat = previewCardWidth * 4 / 3
+        let reserved: CGFloat = isCompact ? 260 : 300
+        return min(natural, UIScreen.main.bounds.height - reserved)
+    }
+
+    // Simple theme: sharp corners + a bold flat accent border, "frame as object"
+    // rather than the Normal theme's subtle rounded card-with-depth look.
+    private var previewCornerRadius: CGFloat { isSimpleTheme ? 0 : 10 }
+    private var previewBorderColor: Color { isSimpleTheme ? simpleRed : Color(white: 0.3) }
+    private var previewBorderWidth: CGFloat { isSimpleTheme ? 3 : 1 }
+
+    // MARK: - Body
+
+    var body: some View {
+        ZStack {
+            background
+
+            sharedPreviewLayer
+
+            // Top chrome differs by mode, but statusLabel + shutterRow are a
+            // single shared view below — previously each mode had its own copy,
+            // and small layout differences between them caused it to shift
+            // position (and clip behind the tab bar) when switching modes.
+            VStack(spacing: 0) {
+                topChrome
+                Spacer()
+                statusLabel
+                Spacer().frame(height: isCompact ? 6 : 10)
+                shutterRow
+                    .padding(.bottom, bottomPad)
+            }
+        }
+        .sheet(isPresented: $showAppSettingsSheet) {
+            SettingsView()
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView().environmentObject(subscriptionManager)
+        }
+        .onAppear {
+            if let session = captureSession {
+                // Returning from another tab — restart the session
+                PhotoCameraView.sessionQueue.async {
+                    if !session.isRunning { session.startRunning() }
+                }
+            } else {
+                setupCaptureSession()
+            }
+            volumeObserver.start { self.capturePhoto() }
+        }
+        .onDisappear {
+            restoreBrightness()
+            volumeObserver.stop()
+            // Release the camera so the Video tab can reclaim it
+            let session = captureSession
+            PhotoCameraView.sessionQueue.async { session?.stopRunning() }
+        }
+        // RootView → PhotoCameraView: restore brightness when user taps overlay
+        .onReceive(NotificationCenter.default.publisher(for: .userRequestedWake)) { _ in
+            wakeScreen()
+        }
+    }
+
+    // MARK: - Background
+
+    @ViewBuilder
+    private var background: some View {
+        if isSimpleTheme {
+            // Bauhaus: flat, no texture, no gradient.
+            Color.black.ignoresSafeArea()
+        } else {
+            ZStack {
+                Image("pattern1").resizable().ignoresSafeArea()
+                LinearGradient(
+                    colors: [.black, Color(#colorLiteral(red: 0.476, green: 0.476, blue: 0.476, alpha: 1))],
+                    startPoint: .top, endPoint: .bottom
+                ).opacity(0.8).ignoresSafeArea()
+            }
+        }
+    }
+
+    // MARK: - Top chrome (differs by mode)
+
+    @ViewBuilder
+    private var topChrome: some View {
+        if displayMode == .normal {
+            HStack {
+                Spacer()
+                if !subscriptionManager.isUnlocked {
+                    goProBadge
+                }
+            }
+            .padding(.top, 8)
+            .padding(.trailing)
+        } else {
+            toolbar
+        }
+    }
+
+    private var toolbar: some View {
+        HStack {
+            Spacer()
+            if !subscriptionManager.isUnlocked {
+                goProBadge
+                    .padding(.trailing)
+            }
+        }
+        .padding(.vertical, 8)
+        .frame(height: isCompact ? 34 : 42)
+    }
+
+    private var goProBadge: some View {
+        Button(action: { showPaywall = true }) {
+            HStack(spacing: 5) {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 12))
+                Text("PREMIUM")
+                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    .tracking(1)
+            }
+            .foregroundColor(Color(white: 0.85))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color(white: 0.2))
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(Color(white: 0.45), lineWidth: 1)
+                }
+            )
+        }
+    }
+
+    // MARK: - Shared preview layer
+    //
+    // Save Battery and Normal mode used to each build their own CameraPreviewView,
+    // so switching modes destroyed one AVCaptureVideoPreviewLayer and created another —
+    // reattaching a preview layer to a running session is expensive and was the cause
+    // of the visible stall/lag on mode switch. This single instance stays in the same
+    // position in the view tree across both modes; only its size/corner/border VALUES
+    // change, so SwiftUI updates it in place instead of tearing it down.
+    @ViewBuilder
+    private var sharedPreviewLayer: some View {
+        // GeometryReader here measures the actual safe content rectangle (the
+        // same area the tab bar already keeps clear) instead of guessing with
+        // UIScreen.bounds + ignoresSafeArea. That earlier approach inflated
+        // this whole view's reported size, which pushed the shutter row's
+        // Spacer+bottomPad further down than the real safe area — clipping it
+        // behind the tab bar in Normal mode.
+        GeometryReader { geo in
+            let isNormal = displayMode == .normal
+            let w: CGFloat = isNormal ? geo.size.width  : previewCardWidth
+            let h: CGFloat = isNormal ? geo.size.height : previewCardHeight
+            let radius: CGFloat = isNormal ? 0 : previewCornerRadius
+            let borderColor: Color = isNormal ? Color.clear : previewBorderColor
+            let borderWidth: CGFloat = isNormal ? 0 : previewBorderWidth
+            let placeholderFill: Color = (isSimpleTheme || isNormal) ? Color.black : Color(white: 0.05)
+            let accentColor: Color = isSimpleTheme ? simpleRed : Color(white: 0.2)
+            let subtitleColor: Color = isSimpleTheme ? Color(white: 0.5) : Color(white: 0.14)
+
+            ZStack {
+                if let session = captureSession {
+                    CameraPreviewView(session: session)
+                        .frame(width: w, height: h)
+                        .cornerRadius(radius)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: radius)
+                                .stroke(borderColor, lineWidth: borderWidth)
+                        )
+                }
+
+                // Cover the live feed with the placeholder when preview is off
+                // or the session isn't ready. The preview layer stays connected.
+                if !showPreview || captureSession == nil {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(placeholderFill)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: radius)
+                                    .stroke(borderColor, lineWidth: borderWidth)
+                            )
+                        VStack(spacing: 10) {
+                            Image(systemName: "camera.fill")
+                                .font(.system(size: isNormal ? 46 : 38))
+                                .foregroundColor(accentColor)
+                            Text("PREVIEW OFF")
+                                .font(.system(size: isNormal ? 12 : 10, weight: .bold, design: .monospaced))
+                                .foregroundColor(accentColor)
+                                .tracking(isNormal ? 3 : 2)
+                            Text("tap below to capture")
+                                .font(.system(size: isNormal ? 10 : 9, design: .monospaced))
+                                .foregroundColor(subtitleColor)
+                        }
+                    }
+                    .frame(width: w, height: h)
+                }
+
+                // Centered ON/OFF indicator over the live feed. The OFF placeholder
+                // above already shows its own centered "PREVIEW OFF" text, so this
+                // only needs to appear while the live feed is actually visible.
+                if showPreview && captureSession != nil {
+                    previewStatusLabel
+                        .allowsHitTesting(false)
+                }
+            }
+            .frame(width: geo.size.width, height: geo.size.height)
+            // Tap anywhere on the preview (live feed or placeholder) to toggle it.
+            .contentShape(Rectangle())
+            .onTapGesture { showPreview.toggle() }
+        }
+    }
+
+    private var previewStatusLabel: some View {
+        HStack(spacing: 6) {
+            Image(systemName: showPreview ? "eye.fill" : "eye.slash.fill")
+                .font(.system(size: 15))
+            Text(showPreview ? "PREVIEW ON" : "PREVIEW OFF")
+                .font(.system(size: 10, weight: .bold, design: .monospaced))
+                .tracking(1)
+        }
+        .foregroundColor(showPreview ? Color(white: 0.8) : Color(white: 0.5))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 7)
+        .background(
+            ZStack {
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.black.opacity(0.5))
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(showPreview ? Color(white: 0.45) : Color(white: 0.3), lineWidth: 1)
+            }
+        )
+        .shadow(color: .black.opacity(0.4), radius: 3, x: 1, y: 2)
+    }
+
+    @ViewBuilder
+    private var dimButton: some View {
+        if isSimpleTheme {
+            Button(action: toggleDim) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.black)
+                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(simpleYellow, lineWidth: 2))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: isScreenDimmed ? "moon.fill" : "moon")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(isScreenDimmed ? simpleYellow.opacity(0.4) : simpleYellow)
+                }
+            }
+        } else {
+            Button(action: toggleDim) {
+                ZStack {
+                    Circle()
+                        .fill(isScreenDimmed ? Color(white: 0.04) : Color(white: 0.14))
+                        .overlay(
+                            Circle().stroke(isScreenDimmed ? Color(white: 0.15) : Color(white: 0.3), lineWidth: 1)
+                        )
+                        .frame(width: 44, height: 44)
+                        .shadow(color: .black.opacity(0.4), radius: 3, x: 1, y: 2)
+                    Image(systemName: isScreenDimmed ? "moon.fill" : "moon")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(isScreenDimmed ? Color(white: 0.3) : Color(red: 1.0, green: 0.85, blue: 0.4))
+                }
+            }
+        }
+    }
+
+    // MARK: - Status label
+
+    @ViewBuilder
+    private var statusLabel: some View {
+        switch saveStatus {
+        case .saving:
+            HStack(spacing: 6) {
+                ProgressView().scaleEffect(0.75)
+                Text("SAVING…")
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundColor(Color(white: 0.5))
+                    .tracking(2)
+            }
+        case .success:
+            HStack(spacing: 6) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 13))
+                    .foregroundColor(.green)
+                Text("SAVED TO PHOTOS")
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundColor(.green)
+                    .tracking(2)
+            }
+        case .failure:
+            HStack(spacing: 6) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 13))
+                    .foregroundColor(.red)
+                Text("SAVE FAILED")
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundColor(.red)
+                    .tracking(2)
+            }
+        case nil:
+            // Reserve height so layout doesn't jump
+            Text(" ")
+                .font(.system(size: 11, design: .monospaced))
+        }
+    }
+
+    // MARK: - Shutter button
+
+    // Shutter button flanked by: flip-camera + dim-screen toggle (left — flip
+    // outermost, moon closest to the shutter, moon always available so the
+    // user can dim the screen and fire the shutter via the volume button
+    // covertly) and the settings (gear) button (right) for the shared Settings screen.
+    private var shutterRow: some View {
+        ZStack {
+            shutterButton
+
+            HStack {
+                HStack(spacing: 10) {
+                    flipButton
+                    dimButton
+                }
+                .padding(.leading, 20)
+                Spacer()
+                settingsButton
+                    .padding(.trailing, 20)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var flipButton: some View {
+        if isSimpleTheme {
+            Button(action: flipCamera) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.black)
+                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(simpleBlue, lineWidth: 2))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "arrow.triangle.2.circlepath.camera.fill")
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundColor(simpleBlue)
+                }
+            }
+        } else {
+            Button(action: flipCamera) {
+                ZStack {
+                    Circle()
+                        .fill(Color(white: 0.14))
+                        .overlay(Circle().stroke(Color(white: 0.3), lineWidth: 1))
+                        .frame(width: 44, height: 44)
+                        .shadow(color: .black.opacity(0.4), radius: 3, x: 1, y: 2)
+                    Image(systemName: "arrow.triangle.2.circlepath.camera.fill")
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundColor(Color(white: 0.75))
+                }
+            }
+        }
+    }
+
+    // App-wide settings (display mode, video/camera quality, low light) —
+    // shared with the Video tab via @AppStorage.
+    @ViewBuilder
+    private var settingsButton: some View {
+        if isSimpleTheme {
+            Button(action: { showAppSettingsSheet = true }) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.black)
+                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(simpleRed, lineWidth: 2))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundColor(simpleRed)
+                }
+            }
+        } else {
+            Button(action: { showAppSettingsSheet = true }) {
+                ZStack {
+                    Circle()
+                        .fill(Color(white: 0.14))
+                        .overlay(Circle().stroke(Color(white: 0.3), lineWidth: 1))
+                        .frame(width: 44, height: 44)
+                        .shadow(color: .black.opacity(0.4), radius: 3, x: 1, y: 2)
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundColor(Color(white: 0.75))
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var shutterButton: some View {
+        if isSimpleTheme {
+            simpleShutterButton
+        } else {
+            ruggedShutterButton
+        }
+    }
+
+    // Flat Bauhaus shutter button: no gradient, no shadow, no knurling —
+    // a plain ring and a solid geometric disc, matching the Video tab's style.
+    private var simpleShutterButton: some View {
+        Button(action: capturePhoto) {
+            ZStack {
+                Circle()
+                    .fill(Color.black)
+                    .frame(width: btnOuter, height: btnOuter)
+                    .overlay(Circle().stroke(isCapturing ? simpleRed.opacity(0.4) : Color.white, lineWidth: 3))
+
+                Circle()
+                    .fill(isCapturing ? simpleRed.opacity(0.4) : simpleRed)
+                    .frame(width: btnInner, height: btnInner)
+
+                Image(systemName: "camera.fill")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(.black)
+            }
+            .frame(width: btnFrame, height: btnFrame)
+        }
+        .disabled(isCapturing || photoOutput == nil)
+    }
+
+    private var ruggedShutterButton: some View {
+        Button(action: capturePhoto) {
+            ZStack {
+                // Knurled tick marks — identical treatment to the video record button
+                ForEach(0..<36, id: \.self) { i in
+                    Capsule()
+                        .fill(i % 3 == 0 ? Color(white: 0.55) : Color(white: 0.28))
+                        .frame(width: i % 3 == 0 ? 3 : 2,
+                               height: i % 3 == 0 ? 10 : 6)
+                        .offset(y: -btnTickOffset)
+                        .rotationEffect(.degrees(Double(i) * 10))
+                }
+
+                // Outer metallic ring
+                Circle()
+                    .fill(RadialGradient(
+                        gradient: Gradient(colors: [Color(white: 0.38), Color(white: 0.14)]),
+                        center: .topLeading, startRadius: 5, endRadius: 80
+                    ))
+                    .frame(width: btnOuter, height: btnOuter)
+                    .shadow(color: .black.opacity(0.7), radius: 10, x: 5, y: 5)
+                    .overlay(Circle().stroke(Color(white: 0.5), lineWidth: 1))
+
+                // Button face — dims while capturing
+                Circle()
+                    .fill(RadialGradient(
+                        gradient: Gradient(colors: isCapturing
+                            ? [Color(white: 0.6), Color(white: 0.35)]
+                            : [Color(white: 0.92), Color(white: 0.65)]
+                        ),
+                        center: .topLeading, startRadius: 3, endRadius: 55
+                    ))
+                    .frame(width: btnInner, height: btnInner)
+                    .shadow(color: .black.opacity(0.4), radius: 4, x: 2, y: 2)
+
+                // Camera icon
+                Image(systemName: "camera.fill")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(isCapturing ? Color(white: 0.5) : Color(white: 0.2))
+            }
+            .frame(width: btnFrame, height: btnFrame)
+        }
+        .disabled(isCapturing || photoOutput == nil)
+    }
+
+    // MARK: - Session Setup
+
+    private func setupCaptureSession() {
+        PhotoCameraView.sessionQueue.async {
+            let session = AVCaptureSession()
+            session.beginConfiguration()
+            session.sessionPreset = .photo
+
+            guard
+                let device = AVCaptureDevice.default(
+                    .builtInWideAngleCamera, for: .video, position: .back),
+                let input = try? AVCaptureDeviceInput(device: device),
+                session.canAddInput(input)
+            else {
+                print("PhotoCameraView: failed to configure camera input")
+                return
+            }
+            session.addInput(input)
+
+            let output = AVCapturePhotoOutput()
+            guard session.canAddOutput(output) else {
+                print("PhotoCameraView: failed to add photo output")
+                return
+            }
+            session.addOutput(output)
+            session.commitConfiguration()
+            session.startRunning()
+
+            DispatchQueue.main.async {
+                self.photoOutput = output
+                self.captureSession = session
+            }
+        }
+    }
+
+    // MARK: - Capture
+
+    private func capturePhoto() {
+        guard !isCapturing, let output = photoOutput else { return }
+        isCapturing = true
+        saveStatus  = .saving
+
+        // Always request JPEG from the sensor — avoids HEIF/HEVC format issues.
+        // Quality differences are applied in the delegate via post-processing.
+        let settings = AVCapturePhotoSettings(
+            format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
+
+        captureDelegate.quality = quality
+        captureDelegate.onFinish = { success in
+            // Restore volume now that the shutter has fired
+            self.volumeObserver.restoreAfterCapture()
+            self.saveStatus  = success ? .success : .failure
+            self.isCapturing = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                self.saveStatus = nil
+            }
+        }
+
+        // Drop volume to 0 BEFORE the shutter fires — this silences the system
+        // shutter sound without any visible or audible indication to bystanders.
+        // A 60 ms gap gives the audio stack time to apply the new level.
+        volumeObserver.silenceForCapture()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.06) {
+            PhotoCameraView.sessionQueue.async {
+                output.capturePhoto(with: settings, delegate: self.captureDelegate)
+            }
+        }
+    }
+
+    // MARK: - Camera Flip
+
+    private func flipCamera() {
+        guard let session = captureSession else { return }
+        isUsingFront.toggle()
+        let position: AVCaptureDevice.Position = isUsingFront ? .front : .back
+
+        PhotoCameraView.sessionQueue.async {
+            session.beginConfiguration()
+            for input in session.inputs { session.removeInput(input) }
+
+            guard
+                let device = AVCaptureDevice.default(
+                    .builtInWideAngleCamera, for: .video, position: position),
+                let newInput = try? AVCaptureDeviceInput(device: device),
+                session.canAddInput(newInput)
+            else {
+                session.commitConfiguration()
+                return
+            }
+            session.addInput(newInput)
+            session.commitConfiguration()
+        }
+    }
+
+    // MARK: - Screen Dim
+
+    private func toggleDim() { isScreenDimmed ? wakeScreen() : dimScreen() }
+
+    private func dimScreen() {
+        savedBrightness = UIScreen.main.brightness
+        UIScreen.main.brightness = 0.01
+        isScreenDimmed = true
+        NotificationCenter.default.post(name: .screenDidDim, object: nil)
+    }
+
+    private func wakeScreen() {
+        UIScreen.main.brightness = savedBrightness
+        isScreenDimmed = false
+        NotificationCenter.default.post(name: .screenDidWake, object: nil)
+    }
+
+    private func restoreBrightness() {
+        guard isScreenDimmed else { return }
+        wakeScreen()
+    }
+}

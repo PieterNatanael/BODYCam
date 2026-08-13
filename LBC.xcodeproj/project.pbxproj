@@ -31,6 +31,7 @@
 		EE1C2D3F4A5B67890C1D2E3F /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1D2E3A4B5C67890D1E2F3A /* SubscriptionManager.swift */; };
 		GG1E2F3B4C5D67890E1F2A3B /* PhotoCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = HH1F2A3C4D5E67890F1A2B3C /* PhotoCameraView.swift */; };
 		II1E2F3B4C5D67890E1F2A3B /* VolumeButtonObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = JJ1F2A3C4D5E67890F1A2B3C /* VolumeButtonObserver.swift */; };
+		99564158C0234EF9B33247C5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1747C2BCE1D54D29A52EBF34 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,7 +41,7 @@
 		215E96002BCA660D00634871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		215E96012BCA669A00634871 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		215E96032BCA66B100634871 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		218E2A3F2BCA1F1800E99A2B /* LB Camera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LB Camera.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		218E2A3F2BCA1F1800E99A2B /* LBC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LBC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		218E2A422BCA1F1800E99A2B /* BODYCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BODYCamApp.swift; sourceTree = "<group>"; };
 		218E2A442BCA1F1800E99A2B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		218E2A462BCA1F1A00E99A2B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -60,6 +61,7 @@
 		FF1D2E3A4B5C67890D1E2F3A /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
 		HH1F2A3C4D5E67890F1A2B3C /* PhotoCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCameraView.swift; sourceTree = "<group>"; };
 		JJ1F2A3C4D5E67890F1A2B3C /* VolumeButtonObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeButtonObserver.swift; sourceTree = "<group>"; };
+		1747C2BCE1D54D29A52EBF34 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,7 +86,7 @@
 		218E2A402BCA1F1800E99A2B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				218E2A3F2BCA1F1800E99A2B /* LB Camera.app */,
+				218E2A3F2BCA1F1800E99A2B /* LBC.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -114,6 +116,7 @@
 				BB1F2A3C4D5E67890F1A2B3C /* PaywallView.swift */,
 				HH1F2A3C4D5E67890F1A2B3C /* PhotoCameraView.swift */,
 				JJ1F2A3C4D5E67890F1A2B3C /* VolumeButtonObserver.swift */,
+				1747C2BCE1D54D29A52EBF34 /* SettingsView.swift */,
 				215E96012BCA669A00634871 /* AppDelegate.swift */,
 				215E96032BCA66B100634871 /* SceneDelegate.swift */,
 				218E2A462BCA1F1A00E99A2B /* Assets.xcassets */,
@@ -140,9 +143,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		218E2A3E2BCA1F1800E99A2B /* LB Camera */ = {
+		218E2A3E2BCA1F1800E99A2B /* LBC */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 218E2A4D2BCA1F1A00E99A2B /* Build configuration list for PBXNativeTarget "LB Camera" */;
+			buildConfigurationList = 218E2A4D2BCA1F1A00E99A2B /* Build configuration list for PBXNativeTarget "LBC" */;
 			buildPhases = (
 				218E2A3B2BCA1F1800E99A2B /* Sources */,
 				218E2A3C2BCA1F1800E99A2B /* Frameworks */,
@@ -152,9 +155,9 @@
 			);
 			dependencies = (
 			);
-			name = "LB Camera";
+			name = LBC;
 			productName = BODYCam;
-			productReference = 218E2A3F2BCA1F1800E99A2B /* LB Camera.app */;
+			productReference = 218E2A3F2BCA1F1800E99A2B /* LBC.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -172,7 +175,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 218E2A3A2BCA1F1800E99A2B /* Build configuration list for PBXProject "LB Camera" */;
+			buildConfigurationList = 218E2A3A2BCA1F1800E99A2B /* Build configuration list for PBXProject "LBC" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -185,7 +188,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				218E2A3E2BCA1F1800E99A2B /* LB Camera */,
+				218E2A3E2BCA1F1800E99A2B /* LBC */,
 			);
 		};
 /* End PBXProject section */
@@ -229,6 +232,7 @@
 				AA1E2F3B4C5D67890E1F2A3B /* PaywallView.swift in Sources */,
 				GG1E2F3B4C5D67890E1F2A3B /* PhotoCameraView.swift in Sources */,
 				II1E2F3B4C5D67890E1F2A3B /* VolumeButtonObserver.swift in Sources */,
+				99564158C0234EF9B33247C5 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,7 +364,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"BODYCam/Preview Content\"";
 				DEVELOPMENT_TEAM = L295MT4VTH;
 				ENABLE_PREVIEWS = YES;
@@ -393,7 +397,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"BODYCam/Preview Content\"";
 				DEVELOPMENT_TEAM = L295MT4VTH;
 				ENABLE_PREVIEWS = YES;
@@ -423,7 +427,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		218E2A3A2BCA1F1800E99A2B /* Build configuration list for PBXProject "LB Camera" */ = {
+		218E2A3A2BCA1F1800E99A2B /* Build configuration list for PBXProject "LBC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				218E2A4B2BCA1F1A00E99A2B /* Debug */,
@@ -432,7 +436,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		218E2A4D2BCA1F1A00E99A2B /* Build configuration list for PBXNativeTarget "LB Camera" */ = {
+		218E2A4D2BCA1F1A00E99A2B /* Build configuration list for PBXNativeTarget "LBC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				218E2A4E2BCA1F1A00E99A2B /* Debug */,
