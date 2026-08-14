@@ -9,8 +9,11 @@ struct VideoThumbnailCard: View {
     @State private var date: String = ""
 
     @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.normal.rawValue
-    private var isSimpleTheme: Bool { appThemeRaw == AppTheme.simple.rawValue }
+    private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
+    private var isFlatTheme: Bool { appTheme != .normal }
     private let simpleRed = Color(red: 0.85, green: 0.15, blue: 0.1)
+    private let tacticalGreen = Color(red: 0.25, green: 0.95, blue: 0.4)
+    private var accentColor: Color { appTheme == .tactical ? tacticalGreen : simpleRed }
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
@@ -26,21 +29,21 @@ struct VideoThumbnailCard: View {
                         .overlay(
                             Image(systemName: "video.fill")
                                 .font(.system(size: 28))
-                                .foregroundColor(isSimpleTheme ? simpleRed : Color(white: 0.35))
+                                .foregroundColor(isFlatTheme ? accentColor : Color(white: 0.35))
                         )
                 }
             }
             .frame(height: 160)
             .clipped()
-            .cornerRadius(isSimpleTheme ? 0 : 8)
+            .cornerRadius(isFlatTheme ? 0 : 8)
             .overlay(
-                RoundedRectangle(cornerRadius: isSimpleTheme ? 0 : 8)
-                    .stroke(isSimpleTheme ? simpleRed : Color.clear, lineWidth: isSimpleTheme ? 2 : 0)
+                RoundedRectangle(cornerRadius: isFlatTheme ? 0 : 8)
+                    .stroke(isFlatTheme ? accentColor : Color.clear, lineWidth: isFlatTheme ? 2 : 0)
             )
 
-            // Duration + date overlay: flat full-width label plate in Simple
-            // theme, floating translucent pill in Normal theme.
-            if isSimpleTheme {
+            // Duration + date overlay: flat full-width label plate in Simple/
+            // Tactical theme, floating translucent pill in Normal theme.
+            if isFlatTheme {
                 VStack {
                     Spacer()
                     HStack {

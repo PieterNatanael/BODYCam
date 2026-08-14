@@ -8,12 +8,15 @@ struct GalleryView: View {
     @State private var showDeleteAlert = false
     @State private var showPaywall = false
     @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.normal.rawValue
-    private var isSimpleTheme: Bool { appThemeRaw == AppTheme.simple.rawValue }
+    private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
+    private var isFlatTheme: Bool { appTheme != .normal }
     private let simpleRed = Color(red: 0.85, green: 0.15, blue: 0.1)
+    private let tacticalGreen = Color(red: 0.25, green: 0.95, blue: 0.4)
+    private var accentColor: Color { appTheme == .tactical ? tacticalGreen : simpleRed }
 
-    // Simple theme widens the grid gutter so the grid structure itself
+    // Simple/Tactical widens the grid gutter so the grid structure itself
     // reads as a design element, Bauhaus-style, rather than an afterthought.
-    private var gridSpacing: CGFloat { isSimpleTheme ? 8 : 3 }
+    private var gridSpacing: CGFloat { isFlatTheme ? 8 : 3 }
     private var columns: [GridItem] {
         [GridItem(.flexible(), spacing: gridSpacing),
          GridItem(.flexible(), spacing: gridSpacing)]
@@ -49,7 +52,7 @@ struct GalleryView: View {
                 // Persistent disclaimer footer
                 Text("Recordings may be lost due to bugs or device issues. Back up important footage.")
                     .font(.system(size: 10))
-                    .foregroundColor(isSimpleTheme ? Color(white: 0.5) : Color(white: 0.35))
+                    .foregroundColor(isFlatTheme ? Color(white: 0.5) : Color(white: 0.35))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 8)
@@ -84,7 +87,7 @@ struct GalleryView: View {
 
     @ViewBuilder
     private var background: some View {
-        if isSimpleTheme {
+        if isFlatTheme {
             // Bauhaus: flat, no texture, no gradient.
             Color.black.ignoresSafeArea()
         } else {
@@ -100,7 +103,7 @@ struct GalleryView: View {
 
     private var header: some View {
         HStack {
-            if isSimpleTheme {
+            if isFlatTheme {
                 Text("GALLERY")
                     .font(.system(size: 22, weight: .heavy, design: .monospaced))
                     .tracking(3)
@@ -120,23 +123,23 @@ struct GalleryView: View {
                             .font(.system(size: 10, weight: .bold, design: .monospaced))
                             .tracking(1)
                     }
-                    .foregroundColor(isSimpleTheme ? simpleRed : Color(white: 0.85))
+                    .foregroundColor(isFlatTheme ? accentColor : Color(white: 0.85))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
                     .background(
                         ZStack {
-                            RoundedRectangle(cornerRadius: isSimpleTheme ? 4 : 6)
-                                .fill(isSimpleTheme ? Color.black : Color(white: 0.2))
-                            RoundedRectangle(cornerRadius: isSimpleTheme ? 4 : 6)
-                                .stroke(isSimpleTheme ? simpleRed : Color(white: 0.45),
-                                        lineWidth: isSimpleTheme ? 2 : 1)
+                            RoundedRectangle(cornerRadius: isFlatTheme ? 4 : 6)
+                                .fill(isFlatTheme ? Color.black : Color(white: 0.2))
+                            RoundedRectangle(cornerRadius: isFlatTheme ? 4 : 6)
+                                .stroke(isFlatTheme ? accentColor : Color(white: 0.45),
+                                        lineWidth: isFlatTheme ? 2 : 1)
                         }
                     )
                 }
             } else {
                 Text("\(videos.count) video\(videos.count == 1 ? "" : "s")")
-                    .font(isSimpleTheme ? .system(size: 12, weight: .bold, design: .monospaced) : .subheadline)
-                    .foregroundColor(isSimpleTheme ? Color(white: 0.6) : Color(white: 0.5))
+                    .font(isFlatTheme ? .system(size: 12, weight: .bold, design: .monospaced) : .subheadline)
+                    .foregroundColor(isFlatTheme ? Color(white: 0.6) : Color(white: 0.5))
             }
         }
         .padding(.horizontal)
@@ -147,14 +150,14 @@ struct GalleryView: View {
     private var emptyState: some View {
         VStack(spacing: 12) {
             Spacer()
-            if isSimpleTheme {
+            if isFlatTheme {
                 ZStack {
                     RoundedRectangle(cornerRadius: 4)
-                        .stroke(simpleRed, lineWidth: 2)
+                        .stroke(accentColor, lineWidth: 2)
                         .frame(width: 90, height: 90)
                     Image(systemName: "rectangle.stack.fill")
                         .font(.system(size: 34))
-                        .foregroundColor(simpleRed)
+                        .foregroundColor(accentColor)
                 }
             } else {
                 Image(systemName: "film.stack")
@@ -162,17 +165,17 @@ struct GalleryView: View {
                     .foregroundColor(Color(white: 0.35))
             }
             Text("No recordings yet")
-                .font(isSimpleTheme ? .system(size: 14, weight: .bold, design: .monospaced) : .title3)
-                .foregroundColor(isSimpleTheme ? Color(white: 0.6) : Color(white: 0.45))
+                .font(isFlatTheme ? .system(size: 14, weight: .bold, design: .monospaced) : .title3)
+                .foregroundColor(isFlatTheme ? Color(white: 0.6) : Color(white: 0.45))
             Spacer()
         }
     }
 
     @ViewBuilder
     private var footerBackground: some View {
-        if isSimpleTheme {
+        if isFlatTheme {
             VStack(spacing: 0) {
-                Rectangle().fill(simpleRed).frame(height: 1)
+                Rectangle().fill(accentColor).frame(height: 1)
                 Color.black
             }
         } else {

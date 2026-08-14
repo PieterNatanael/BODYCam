@@ -33,26 +33,65 @@ enum CameraDisplayMode: String, CaseIterable {
 enum AppTheme: String, CaseIterable {
     case normal
     case simple
+    case tactical
 
     var title: String {
         switch self {
-        case .normal: return "NORMAL"
-        case .simple: return "SIMPLE"
+        case .normal:   return "NORMAL"
+        case .simple:   return "SIMPLE"
+        case .tactical: return "TACTICAL"
         }
     }
 
     var subtitle: String {
         switch self {
-        case .normal: return "Rugged textured look, current design"
-        case .simple: return "Flat Bauhaus style, bold shapes, no texture"
+        case .normal:   return "Rugged textured look, current design"
+        case .simple:   return "Flat Bauhaus style, bold shapes, no texture"
+        case .tactical: return "Night vision HUD, monochrome green"
         }
     }
 
     var icon: String {
         switch self {
-        case .normal: return "circle.grid.cross.fill"
-        case .simple: return "square.fill"
+        case .normal:   return "circle.grid.cross.fill"
+        case .simple:   return "square.fill"
+        case .tactical: return "viewfinder"
         }
+    }
+}
+
+// MARK: - Corner Brackets
+//
+// Four L-shaped brackets at the corners of a rect — a viewfinder/targeting
+// reticle look for the Tactical theme's preview frame, used instead of a
+// plain stroked rectangle.
+struct CornerBrackets: Shape {
+    var length: CGFloat = 22
+
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+
+        // Top-leading
+        p.move(to: CGPoint(x: rect.minX, y: rect.minY + length))
+        p.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
+        p.addLine(to: CGPoint(x: rect.minX + length, y: rect.minY))
+
+        // Top-trailing
+        p.move(to: CGPoint(x: rect.maxX - length, y: rect.minY))
+        p.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+        p.addLine(to: CGPoint(x: rect.maxX, y: rect.minY + length))
+
+        // Bottom-trailing
+        p.move(to: CGPoint(x: rect.maxX, y: rect.maxY - length))
+        p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        p.addLine(to: CGPoint(x: rect.maxX - length, y: rect.maxY))
+
+        // Bottom-leading
+        p.move(to: CGPoint(x: rect.minX + length, y: rect.maxY))
+        p.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        p.addLine(to: CGPoint(x: rect.minX, y: rect.maxY - length))
+
+        return p
     }
 }
 

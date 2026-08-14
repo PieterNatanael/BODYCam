@@ -22,12 +22,23 @@ struct ContentView: View {
     @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.saveBattery.rawValue
     private var displayMode: CameraDisplayMode { CameraDisplayMode(rawValue: displayModeRaw) ?? .saveBattery }
     @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.normal.rawValue
-    private var isSimpleTheme: Bool { appThemeRaw == AppTheme.simple.rawValue }
+    private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
+    // Simple and Tactical share the same flat/no-gradient/sharp-corner "bones";
+    // only their accent colors (and the preview's corner-bracket treatment) differ.
+    private var isFlatTheme: Bool { appTheme != .normal }
+    private var useCornerBrackets: Bool { appTheme == .tactical }
 
-    // MARK: - Simple (Bauhaus) theme palette
-    private let simpleRed    = Color(red: 0.85, green: 0.15, blue: 0.1)
-    private let simpleYellow = Color(red: 0.95, green: 0.78, blue: 0.1)
-    private let simpleBlue   = Color(red: 0.15, green: 0.4,  blue: 0.85)
+    // MARK: - Theme accent palette
+    private let simpleRed     = Color(red: 0.85, green: 0.15, blue: 0.1)
+    private let simpleYellow  = Color(red: 0.95, green: 0.78, blue: 0.1)
+    private let simpleBlue    = Color(red: 0.15, green: 0.4,  blue: 0.85)
+    private let tacticalGreen = Color(red: 0.25, green: 0.95, blue: 0.4)
+
+    private var flipAccent: Color     { appTheme == .tactical ? tacticalGreen : simpleBlue }
+    private var dimAccent: Color      { appTheme == .tactical ? tacticalGreen : simpleYellow }
+    private var settingsAccent: Color { appTheme == .tactical ? tacticalGreen : simpleRed }
+    private var recordAccent: Color   { appTheme == .tactical ? tacticalGreen : simpleRed }
+    private var previewAccent: Color  { appTheme == .tactical ? tacticalGreen : simpleRed }
 
     // @StateObject keeps the same delegate instance alive across view re-renders.
     // A plain `let` in a SwiftUI struct is recreated on every render, which would
@@ -65,11 +76,25 @@ struct ContentView: View {
         return min(natural, UIScreen.main.bounds.height - reserved)
     }
 
-    // Simple theme: sharp corners + a bold flat accent border, "frame as object"
-    // rather than the Normal theme's subtle rounded card-with-depth look.
-    private var previewCornerRadius: CGFloat { isSimpleTheme ? 0 : 10 }
-    private var previewBorderColor: Color { isSimpleTheme ? simpleRed : Color(white: 0.3) }
-    private var previewBorderWidth: CGFloat { isSimpleTheme ? 3 : 1 }
+    // Simple/Tactical: sharp corners + a bold flat accent border (or corner
+    // brackets for Tactical), "frame as object" rather than the Normal theme's
+    // subtle rounded card-with-depth look.
+    private var previewCornerRadius: CGFloat { isFlatTheme ? 0 : 10 }
+    private var previewBorderColor: Color { isFlatTheme ? previewAccent : Color(white: 0.3) }
+    private var previewBorderWidth: CGFloat { appTheme == .tactical ? 2 : (appTheme == .simple ? 3 : 1) }
+
+    // Tactical gets a viewfinder-style corner-bracket reticle instead of a
+    // plain stroked rectangle around the preview frame.
+    @ViewBuilder
+    private func previewBorderOverlay(radius: CGFloat, color: Color, width: CGFloat, useBrackets: Bool) -> some View {
+        if useBrackets {
+            CornerBrackets(length: 22)
+                .stroke(color, lineWidth: width)
+        } else {
+            RoundedRectangle(cornerRadius: radius)
+                .stroke(color, lineWidth: width)
+        }
+    }
 
     // MARK: - Body
 
@@ -158,8 +183,8 @@ struct ContentView: View {
 
     @ViewBuilder
     private var background: some View {
-        if isSimpleTheme {
-            // Bauhaus: flat, no texture, no gradient.
+        if isFlatTheme {
+            // Bauhaus / Tactical: flat, no texture, no gradient.
             Color.black.ignoresSafeArea()
         } else {
             ZStack {
@@ -237,21 +262,36 @@ struct ContentView: View {
     @ViewBuilder
     private var sharedPreviewLayer: some View {
         // GeometryReader here measures the actual safe content rectangle (the
-        // same area the tab bar already keeps clear) instead of guessing with
-        // UIScreen.bounds + ignoresSafeArea. That earlier approach inflated
-        // this whole view's reported size, which pushed the record row's
-        // Spacer+bottomPad further down than the real safe area — clipping it
-        // behind the tab bar in Normal mode.
+        // same area the tab bar already keeps clear). The outer container below
+        // is pinned to exactly that size — this is what keeps the record row
+        // (a sibling in `body`) from being dragged around by anything that
+        // happens inside here. The CameraPreviewView itself, in Normal mode, is
+        // given an EXPLICITLY larger frame (safe size + real top/bottom safe-area
+        // insets) plus ignoresSafeArea, so it overflows past this pinned
+        // container and bleeds under the notch and tab bar — without changing
+        // the container's own reported size.
+        //
+        // Centering an oversized view distributes the overflow evenly on both
+        // sides, but the top inset (status bar/notch) and bottom inset (tab bar)
+        // are rarely equal — so a plain centered overflow undershoots one edge
+        // and overshoots the other. The vertical offset below corrects for that,
+        // so the bleed lands exactly at the top and exactly at the tab bar.
         GeometryReader { geo in
             let isNormal = displayMode == .normal
-            let w: CGFloat = isNormal ? geo.size.width  : previewCardWidth
-            let h: CGFloat = isNormal ? geo.size.height : previewCardHeight
+            let topInset = geo.safeAreaInsets.top
+            let bottomInset = geo.safeAreaInsets.bottom
+            let w: CGFloat = isNormal
+                ? geo.size.width + geo.safeAreaInsets.leading + geo.safeAreaInsets.trailing
+                : previewCardWidth
+            let h: CGFloat = isNormal ? geo.size.height + topInset + bottomInset : previewCardHeight
+            let verticalOffset: CGFloat = isNormal ? (bottomInset - topInset) / 2 : 0
             let radius: CGFloat = isNormal ? 0 : previewCornerRadius
             let borderColor: Color = isNormal ? Color.clear : previewBorderColor
             let borderWidth: CGFloat = isNormal ? 0 : previewBorderWidth
-            let placeholderFill: Color = (isSimpleTheme || isNormal) ? Color.black : Color(white: 0.05)
-            let accentColor: Color = isSimpleTheme ? simpleRed : Color(white: 0.2)
-            let subtitleColor: Color = isSimpleTheme ? Color(white: 0.5) : Color(white: 0.14)
+            let placeholderFill: Color = (isFlatTheme || isNormal) ? Color.black : Color(white: 0.05)
+            let accentColor: Color = isFlatTheme ? previewAccent : Color(white: 0.2)
+            let subtitleColor: Color = isFlatTheme ? Color(white: 0.5) : Color(white: 0.14)
+            let showBrackets = useCornerBrackets && !isNormal
 
             ZStack {
                 if let session = captureSession {
@@ -259,9 +299,11 @@ struct ContentView: View {
                         .frame(width: w, height: h)
                         .cornerRadius(radius)
                         .overlay(
-                            RoundedRectangle(cornerRadius: radius)
-                                .stroke(borderColor, lineWidth: borderWidth)
+                            previewBorderOverlay(radius: radius, color: borderColor,
+                                                  width: borderWidth, useBrackets: showBrackets)
                         )
+                        .offset(y: verticalOffset)
+                        .ignoresSafeArea(.all, edges: isNormal ? .all : [])
                 }
 
                 // Placeholder overlay — covers the live feed when preview is off
@@ -271,8 +313,8 @@ struct ContentView: View {
                         RoundedRectangle(cornerRadius: radius)
                             .fill(placeholderFill)
                             .overlay(
-                                RoundedRectangle(cornerRadius: radius)
-                                    .stroke(borderColor, lineWidth: borderWidth)
+                                previewBorderOverlay(radius: radius, color: borderColor,
+                                                      width: borderWidth, useBrackets: showBrackets)
                             )
                         VStack(spacing: 10) {
                             Image(systemName: "video.fill")
@@ -288,6 +330,8 @@ struct ContentView: View {
                         }
                     }
                     .frame(width: w, height: h)
+                    .offset(y: verticalOffset)
+                    .ignoresSafeArea(.all, edges: isNormal ? .all : [])
                 }
             }
             .frame(width: geo.size.width, height: geo.size.height)
@@ -321,16 +365,16 @@ struct ContentView: View {
 
     @ViewBuilder
     private var flipButton: some View {
-        if isSimpleTheme {
+        if isFlatTheme {
             Button(action: flipCamera) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color.black)
-                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(simpleBlue, lineWidth: 2))
+                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(flipAccent, lineWidth: 2))
                         .frame(width: 44, height: 44)
                     Image(systemName: "arrow.triangle.2.circlepath.camera.fill")
                         .font(.system(size: 17, weight: .bold))
-                        .foregroundColor(isRecording ? simpleBlue.opacity(0.3) : simpleBlue)
+                        .foregroundColor(isRecording ? flipAccent.opacity(0.3) : flipAccent)
                 }
             }
             .disabled(isRecording)
@@ -355,16 +399,16 @@ struct ContentView: View {
     // shared with the Camera tab via @AppStorage.
     @ViewBuilder
     private var settingsButton: some View {
-        if isSimpleTheme {
+        if isFlatTheme {
             Button(action: { showAppSettingsSheet = true }) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color.black)
-                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(simpleRed, lineWidth: 2))
+                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(settingsAccent, lineWidth: 2))
                         .frame(width: 44, height: 44)
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: 17, weight: .bold))
-                        .foregroundColor(isRecording ? simpleRed.opacity(0.3) : simpleRed)
+                        .foregroundColor(isRecording ? settingsAccent.opacity(0.3) : settingsAccent)
                 }
             }
             .disabled(isRecording)
@@ -387,16 +431,16 @@ struct ContentView: View {
 
     @ViewBuilder
     private var dimButton: some View {
-        if isSimpleTheme {
+        if isFlatTheme {
             Button(action: toggleDim) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color.black)
-                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(simpleYellow, lineWidth: 2))
+                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(dimAccent, lineWidth: 2))
                         .frame(width: 44, height: 44)
                     Image(systemName: isScreenDimmed ? "moon.fill" : "moon")
                         .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(isScreenDimmed ? simpleYellow.opacity(0.4) : simpleYellow)
+                        .foregroundColor(isScreenDimmed ? dimAccent.opacity(0.4) : dimAccent)
                 }
             }
             .opacity(isRecording ? 1 : 0)
@@ -427,21 +471,23 @@ struct ContentView: View {
 
     @ViewBuilder
     private var recordButtonView: some View {
-        if isSimpleTheme {
+        if isFlatTheme {
             simpleRecordButton
         } else {
             ruggedRecordButton
         }
     }
 
-    // Flat Bauhaus record button: no gradient, no shadow, no knurling —
-    // a plain ring and a solid geometric shape signalling state.
+    // Flat Bauhaus/Tactical record button: no gradient, no shadow, no
+    // knurling — a plain ring and a solid geometric shape signalling state.
+    // Tactical adds a faint glow around the ring while recording.
     private var simpleRecordButton: some View {
         ZStack {
             Circle()
                 .fill(Color.black)
                 .frame(width: btnOuter, height: btnOuter)
-                .overlay(Circle().stroke(isRecording ? simpleRed : Color.white, lineWidth: 3))
+                .overlay(Circle().stroke(isRecording ? recordAccent : Color.white, lineWidth: 3))
+                .shadow(color: (appTheme == .tactical && isRecording) ? recordAccent : .clear, radius: 10)
 
             if isRecording {
                 RoundedRectangle(cornerRadius: 2)
@@ -449,7 +495,7 @@ struct ContentView: View {
                     .frame(width: 22, height: 22)
             } else {
                 Circle()
-                    .fill(simpleRed)
+                    .fill(recordAccent)
                     .frame(width: btnInner, height: btnInner)
             }
         }
