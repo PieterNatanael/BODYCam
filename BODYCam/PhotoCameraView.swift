@@ -1,6 +1,5 @@
 import SwiftUI
 import AVFoundation
-import Photos
 
 // MARK: - Photo Quality
 
@@ -68,18 +67,17 @@ final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, Obser
             return
         }
 
-        // 3. Save to Photos
-        PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
-            guard status == .authorized || status == .limited else {
-                DispatchQueue.main.async { self.onFinish?(false) }
-                return
-            }
-            PHPhotoLibrary.shared().performChanges({
-                let req = PHAssetCreationRequest.forAsset()
-                req.addResource(with: .photo, data: jpeg, options: nil)
-            }) { success, _ in
-                DispatchQueue.main.async { self.onFinish?(success) }
-            }
+        // 3. Save to the app's own Documents directory — same place video
+        // recordings go. This shows up in the in-app Gallery tab, where the
+        // user can choose to save it to Photos or share it, same as video.
+        let timestamp = Date().timeIntervalSince1970
+        let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("photo_\(timestamp).jpg")
+        do {
+            try jpeg.write(to: url)
+            DispatchQueue.main.async { self.onFinish?(true) }
+        } catch {
+            DispatchQueue.main.async { self.onFinish?(false) }
         }
     }
 }
@@ -101,7 +99,6 @@ struct PhotoCameraView: View {
 
     // MARK: - UI State
 
-    @State private var showPreview      = false        // default OFF — saves battery
     @AppStorage("SelectedPhotoQuality") private var quality: PhotoQuality = .high
     @State private var isUsingFront     = false
     @State private var isCapturing      = false
@@ -109,9 +106,9 @@ struct PhotoCameraView: View {
     @State private var isScreenDimmed   = false
     @State private var savedBrightness: CGFloat = UIScreen.main.brightness
     @State private var showAppSettingsSheet = false
-    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.saveBattery.rawValue
+    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.normal.rawValue
     private var displayMode: CameraDisplayMode { CameraDisplayMode(rawValue: displayModeRaw) ?? .saveBattery }
-    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.normal.rawValue
+    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     // Simple and Tactical share the same flat/no-gradient/sharp-corner "bones";
     // only their accent colors (and the preview's corner-bracket treatment) differ.
@@ -205,6 +202,10 @@ struct PhotoCameraView: View {
             PaywallView().environmentObject(subscriptionManager)
         }
         .onAppear {
+            // Needed so UIDevice.current.orientation is actually kept up to
+            // date — capturePhoto() reads it to set the shot's orientation
+            // so landscape photos come out right-side-up.
+            UIDevice.current.beginGeneratingDeviceOrientationNotifications()
             if let session = captureSession {
                 // Returning from another tab — restart the session
                 PhotoCameraView.sessionQueue.async {
@@ -218,6 +219,7 @@ struct PhotoCameraView: View {
         .onDisappear {
             restoreBrightness()
             volumeObserver.stop()
+            UIDevice.current.endGeneratingDeviceOrientationNotifications()
             // Release the camera so the Video tab can reclaim it
             let session = captureSession
             PhotoCameraView.sessionQueue.async { session?.stopRunning() }
@@ -337,25 +339,32 @@ struct PhotoCameraView: View {
             let borderWidth: CGFloat = isNormal ? 0 : previewBorderWidth
             let placeholderFill: Color = (isFlatTheme || isNormal) ? Color.black : Color(white: 0.05)
             let accentColor: Color = isFlatTheme ? previewAccent : Color(white: 0.2)
-            let subtitleColor: Color = isFlatTheme ? Color(white: 0.5) : Color(white: 0.14)
             let showBrackets = useCornerBrackets && !isNormal
 
             ZStack {
                 if let session = captureSession {
-                    CameraPreviewView(session: session)
-                        .frame(width: w, height: h)
-                        .cornerRadius(radius)
-                        .overlay(
-                            previewBorderOverlay(radius: radius, color: borderColor,
-                                                  width: borderWidth, useBrackets: showBrackets)
-                        )
-                        .offset(y: verticalOffset)
-                        .ignoresSafeArea(.all, edges: isNormal ? .all : [])
+                    // Tapping focuses (and re-meters exposure) rather than
+                    // toggling the preview. Battery saving is the dim-screen
+                    // button's job — it kills the backlight, which dwarfs the
+                    // preview layer's own draw cost.
+                    CameraPreviewView(session: session) { devicePoint in
+                        applyTapToFocus(session: captureSession,
+                                        devicePoint: devicePoint,
+                                        on: PhotoCameraView.sessionQueue)
+                    }
+                    .frame(width: w, height: h)
+                    .cornerRadius(radius)
+                    .overlay(
+                        previewBorderOverlay(radius: radius, color: borderColor,
+                                              width: borderWidth, useBrackets: showBrackets)
+                    )
+                    .offset(y: verticalOffset)
+                    .ignoresSafeArea(.all, edges: isNormal ? .all : [])
                 }
 
-                // Cover the live feed with the placeholder when preview is off
-                // or the session isn't ready. The preview layer stays connected.
-                if !showPreview || captureSession == nil {
+                // Shown only until the capture session is ready. The preview is
+                // never user-hidden any more, so this is purely a loading state.
+                if captureSession == nil {
                     ZStack {
                         RoundedRectangle(cornerRadius: radius)
                             .fill(placeholderFill)
@@ -367,13 +376,10 @@ struct PhotoCameraView: View {
                             Image(systemName: "camera.fill")
                                 .font(.system(size: isNormal ? 46 : 38))
                                 .foregroundColor(accentColor)
-                            Text("PREVIEW OFF")
+                            Text("STARTING CAMERA")
                                 .font(.system(size: isNormal ? 12 : 10, weight: .bold, design: .monospaced))
                                 .foregroundColor(accentColor)
                                 .tracking(isNormal ? 3 : 2)
-                            Text("tap below to capture")
-                                .font(.system(size: isNormal ? 10 : 9, design: .monospaced))
-                                .foregroundColor(subtitleColor)
                         }
                     }
                     .frame(width: w, height: h)
@@ -382,9 +388,6 @@ struct PhotoCameraView: View {
                 }
             }
             .frame(width: geo.size.width, height: geo.size.height)
-            // Tap anywhere on the preview (live feed or placeholder) to toggle it.
-            .contentShape(Rectangle())
-            .onTapGesture { showPreview.toggle() }
         }
     }
 
@@ -438,7 +441,7 @@ struct PhotoCameraView: View {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 13))
                     .foregroundColor(.green)
-                Text("SAVED TO PHOTOS")
+                Text("SAVED TO GALLERY")
                     .font(.system(size: 11, weight: .bold, design: .monospaced))
                     .foregroundColor(.green)
                     .tracking(2)
@@ -682,12 +685,20 @@ struct PhotoCameraView: View {
             }
         }
 
+        // Read on the main thread (UIKit call); AVFoundation defaults new
+        // connections to portrait, so without this landscape photos come out
+        // sideways.
+        let captureOrientation = currentCaptureOrientation()
+
         // Drop volume to 0 BEFORE the shutter fires — this silences the system
         // shutter sound without any visible or audible indication to bystanders.
         // A 60 ms gap gives the audio stack time to apply the new level.
         volumeObserver.silenceForCapture()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.06) {
             PhotoCameraView.sessionQueue.async {
+                if let connection = output.connection(with: .video) {
+                    connection.videoOrientation = captureOrientation
+                }
                 output.capturePhoto(with: settings, delegate: self.captureDelegate)
             }
         }
@@ -715,6 +726,9 @@ struct PhotoCameraView: View {
             }
             session.addInput(newInput)
             session.commitConfiguration()
+            // Otherwise the newly selected camera inherits the previous one's
+            // tap-to-focus point, which rarely makes sense for a different lens.
+            resetFocusToContinuous(session: session, on: PhotoCameraView.sessionQueue)
         }
     }
 

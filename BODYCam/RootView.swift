@@ -27,27 +27,37 @@ struct RootView: View {
     @State private var showDisclaimer = !UserDefaults.standard.bool(forKey: "hasSeenDisclaimer")
     @State private var isScreenDimmed = false
     @State private var wakeHintBlink  = false
+    @State private var selectedTab    = 0
+    @ObservedObject private var notificationRouter = NotificationRouter.shared
 
     var body: some View {
         ZStack {
-            TabView {
+            TabView(selection: $selectedTab) {
                 ContentView()
                     .environmentObject(subscriptionManager)
                     .tabItem {
                         Label("Video", systemImage: "video.fill")
                     }
+                    .tag(0)
                 PhotoCameraView()
                     .environmentObject(subscriptionManager)
                     .tabItem {
-                        Label("Camera", systemImage: "camera.fill")
+                        Label("Photo", systemImage: "camera.fill")
                     }
+                    .tag(1)
                 GalleryView()
                     .environmentObject(subscriptionManager)
                     .tabItem {
                         Label("Gallery", systemImage: "film.stack")
                     }
+                    .tag(2)
             }
             .onAppear { subscriptionManager.start() }
+            // A tapped alarm/reminder names a photo or video — switch to the
+            // Gallery tab so GalleryView (which owns the item list) can open it.
+            .onReceive(notificationRouter.$mediaToOpen.compactMap { $0 }) { _ in
+                selectedTab = 2
+            }
 
             // Full-screen screen-off overlay — covers tab bar so iOS's adaptive
             // "go white on low brightness" behaviour is completely hidden

@@ -42,12 +42,26 @@ final class SubscriptionManager: NSObject, ObservableObject {
     static var simulateFreeUser = false
     #endif
 
+    /// Set true in Xcode to simulate an unlocked (paid/grandfathered) user —
+    /// useful in Simulator, where real StoreKit purchases aren't available.
+    /// Takes priority over `simulateFreeUser` if both are somehow true.
+    /// MUST be false before submitting to App Store.
+    #if DEBUG
+    static var simulateUnlockedUser = false
+    #endif
+
     // MARK: - Published state
 
     @Published var isSubscribed    = false
     @Published var isGrandfathered = false
     @Published var products: [SKProduct] = []
-    @Published var selectedProductID: String = "com.lb.pro.yearly"
+    // Preferred default selection, and the fallback order used to correct it
+    // if the preferred product isn't actually configured in App Store
+    // Connect — see reconcileSelectedProduct().
+    private static let preferredProductOrder = [
+        "com.lb.pro.monthly", "com.lb.pro.yearly", "com.lb.pro.weekly"
+    ]
+    @Published var selectedProductID: String = SubscriptionManager.preferredProductOrder[0]
     @Published var isLoading       = false
     @Published var errorMessage: String?
 
@@ -68,6 +82,7 @@ final class SubscriptionManager: NSObject, ObservableObject {
     /// True when the user should have full access.
     var isUnlocked: Bool {
         #if DEBUG
+        if Self.simulateUnlockedUser { return true }
         if Self.simulateFreeUser { return false }
         #endif
         return isSubscribed || isGrandfathered
@@ -179,6 +194,29 @@ extension SubscriptionManager: SKProductsRequestDelegate {
         DispatchQueue.main.async {
             self.products = response.products
             self.isLoading = false
+            self.reconcileSelectedProduct()
+        }
+    }
+
+    /// Keeps `selectedProductID` pointing at a product that actually exists.
+    /// The default is monthly, but if App Store Connect doesn't have that
+    /// product configured (removed, not yet approved, wrong region, etc.),
+    /// StoreKit simply omits it from `response.products` with no error — so
+    /// without this, the paywall would show no plan selected and "Subscribe"
+    /// would stay permanently disabled. Falls through the preferred order,
+    /// then to whatever's actually available. Never overrides an already
+    /// valid selection, so a user's own tap is respected across a re-fetch.
+    private func reconcileSelectedProduct() {
+        guard !products.isEmpty,
+              !products.contains(where: { $0.productIdentifier == selectedProductID })
+        else { return }
+
+        if let match = Self.preferredProductOrder.first(where: { pid in
+            products.contains { $0.productIdentifier == pid }
+        }) {
+            selectedProductID = match
+        } else if let first = products.first {
+            selectedProductID = first.productIdentifier
         }
     }
 

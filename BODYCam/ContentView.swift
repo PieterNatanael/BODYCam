@@ -11,7 +11,6 @@ struct ContentView: View {
     @State private var videoURL: URL?
     @AppStorage("SelectedVideoQuality") private var selectedQuality: VideoQuality = .low
     @AppStorage("IsLowLight") private var isLowLight: Bool = false
-    @State private var showPreview   = false   // default OFF — saves battery
     @State private var isUsingFront  = false
     @State private var alertTitle = ""
     @State private var alertMessage = ""
@@ -19,9 +18,13 @@ struct ContentView: View {
     @State private var isScreenDimmed = false
     @State private var savedBrightness: CGFloat = UIScreen.main.brightness
     @State private var showAppSettingsSheet = false
-    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.saveBattery.rawValue
+    /// Whether this tab is currently on screen. Camera setup is asynchronous
+    /// and slow (1 to 3 seconds), so the user can easily leave before it
+    /// finishes — see setupCaptureSession's completion block.
+    @State private var isTabVisible = false
+    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.normal.rawValue
     private var displayMode: CameraDisplayMode { CameraDisplayMode(rawValue: displayModeRaw) ?? .saveBattery }
-    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.normal.rawValue
+    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     // Simple and Tactical share the same flat/no-gradient/sharp-corner "bones";
     // only their accent colors (and the preview's corner-bracket treatment) differ.
@@ -117,6 +120,11 @@ struct ContentView: View {
             }
         }
         .onAppear {
+            isTabVisible = true
+            // Needed so UIDevice.current.orientation is actually kept up to
+            // date — startRecording() reads it to set the recording's
+            // orientation so landscape footage comes out right-side-up.
+            UIDevice.current.beginGeneratingDeviceOrientationNotifications()
             if let session = captureSession {
                 // Returning from another tab — camera was stopped; restart it
                 ContentView.sessionQueue.async {
@@ -131,8 +139,10 @@ struct ContentView: View {
             }
         }
         .onDisappear {
+            isTabVisible = false
             stopRecording()
             volumeObserver.stop()
+            UIDevice.current.endGeneratingDeviceOrientationNotifications()
             // Stop the session so the Camera tab (or any other consumer)
             // can claim the hardware. iOS cannot run two sessions at once.
             let session = captureSession
@@ -290,25 +300,32 @@ struct ContentView: View {
             let borderWidth: CGFloat = isNormal ? 0 : previewBorderWidth
             let placeholderFill: Color = (isFlatTheme || isNormal) ? Color.black : Color(white: 0.05)
             let accentColor: Color = isFlatTheme ? previewAccent : Color(white: 0.2)
-            let subtitleColor: Color = isFlatTheme ? Color(white: 0.5) : Color(white: 0.14)
             let showBrackets = useCornerBrackets && !isNormal
 
             ZStack {
                 if let session = captureSession {
-                    CameraPreviewView(session: session)
-                        .frame(width: w, height: h)
-                        .cornerRadius(radius)
-                        .overlay(
-                            previewBorderOverlay(radius: radius, color: borderColor,
-                                                  width: borderWidth, useBrackets: showBrackets)
-                        )
-                        .offset(y: verticalOffset)
-                        .ignoresSafeArea(.all, edges: isNormal ? .all : [])
+                    // Tapping focuses (and re-meters exposure) rather than
+                    // toggling the preview. Battery saving is the dim-screen
+                    // button's job — it kills the backlight, which dwarfs the
+                    // preview layer's own draw cost.
+                    CameraPreviewView(session: session) { devicePoint in
+                        applyTapToFocus(session: captureSession,
+                                        devicePoint: devicePoint,
+                                        on: ContentView.sessionQueue)
+                    }
+                    .frame(width: w, height: h)
+                    .cornerRadius(radius)
+                    .overlay(
+                        previewBorderOverlay(radius: radius, color: borderColor,
+                                              width: borderWidth, useBrackets: showBrackets)
+                    )
+                    .offset(y: verticalOffset)
+                    .ignoresSafeArea(.all, edges: isNormal ? .all : [])
                 }
 
-                // Placeholder overlay — covers the live feed when preview is off
-                // or the session isn't ready yet. The preview layer stays connected.
-                if !showPreview || captureSession == nil {
+                // Shown only until the capture session is ready. The preview is
+                // never user-hidden any more, so this is purely a loading state.
+                if captureSession == nil {
                     ZStack {
                         RoundedRectangle(cornerRadius: radius)
                             .fill(placeholderFill)
@@ -320,13 +337,10 @@ struct ContentView: View {
                             Image(systemName: "video.fill")
                                 .font(.system(size: isNormal ? 46 : 38))
                                 .foregroundColor(accentColor)
-                            Text("PREVIEW OFF")
+                            Text("STARTING CAMERA")
                                 .font(.system(size: isNormal ? 12 : 10, weight: .bold, design: .monospaced))
                                 .foregroundColor(accentColor)
                                 .tracking(isNormal ? 3 : 2)
-                            Text("saves battery")
-                                .font(.system(size: isNormal ? 10 : 9, design: .monospaced))
-                                .foregroundColor(subtitleColor)
                         }
                     }
                     .frame(width: w, height: h)
@@ -335,9 +349,6 @@ struct ContentView: View {
                 }
             }
             .frame(width: geo.size.width, height: geo.size.height)
-            // Tap anywhere on the preview (live feed or placeholder) to toggle it.
-            .contentShape(Rectangle())
-            .onTapGesture { showPreview.toggle() }
         }
     }
 
@@ -443,9 +454,6 @@ struct ContentView: View {
                         .foregroundColor(isScreenDimmed ? dimAccent.opacity(0.4) : dimAccent)
                 }
             }
-            .opacity(isRecording ? 1 : 0)
-            .disabled(!isRecording)
-            .animation(.easeInOut(duration: 0.25), value: isRecording)
         } else {
             Button(action: toggleDim) {
                 ZStack {
@@ -461,11 +469,6 @@ struct ContentView: View {
                         .foregroundColor(isScreenDimmed ? Color(white: 0.3) : Color(red: 1.0, green: 0.85, blue: 0.4))
                 }
             }
-            // Only relevant while recording — fades in/out with recording state,
-            // same as the rest of the recording-only controls.
-            .opacity(isRecording ? 1 : 0)
-            .disabled(!isRecording)
-            .animation(.easeInOut(duration: 0.25), value: isRecording)
         }
     }
 
@@ -574,6 +577,9 @@ struct ContentView: View {
             }
             session.addInput(newInput)
             session.commitConfiguration()
+            // Otherwise the newly selected camera inherits the previous one's
+            // tap-to-focus point, which rarely makes sense for a different lens.
+            resetFocusToContinuous(session: session, on: ContentView.sessionQueue)
         }
     }
 
@@ -683,6 +689,19 @@ struct ContentView: View {
             DispatchQueue.main.async {
                 self.videoOutput = output
                 self.captureSession = session
+
+                // The user can leave this tab while the camera is still
+                // starting up — most notably when a tapped alarm/reminder
+                // routes straight to the Gallery. onDisappear already ran, but
+                // it captured `captureSession` while it was still nil, so its
+                // `session?.stopRunning()` silently no-opped and left this
+                // session running. That matters beyond wasted battery: this
+                // session carries an audio input, and a running capture
+                // session with a mic interrupts other audio, which is what
+                // was pausing a playing video a few seconds in.
+                if !self.isTabVisible {
+                    ContentView.sessionQueue.async { session.stopRunning() }
+                }
             }
         }
     }
@@ -719,7 +738,14 @@ struct ContentView: View {
         // Capture the delegate directly so the closure doesn't need to go through
         // self (avoiding any SwiftUI property-wrapper access on a background thread)
         let delegate = videoCaptureDelegate
+        // Read on the main thread (UIKit call); AVFoundation defaults new
+        // connections to portrait, so without this landscape recordings come
+        // out sideways.
+        let recordingOrientation = currentCaptureOrientation()
         ContentView.sessionQueue.async {
+            if let connection = videoOutput.connection(with: .video) {
+                connection.videoOrientation = recordingOrientation
+            }
             delegate.destinationURL = finalURL
             videoOutput.startRecording(to: tmpURL, recordingDelegate: delegate)
         }

@@ -1,34 +1,18 @@
 import SwiftUI
-import AVKit
 import Photos
-import Combine
 
-struct VideoPlayerView: View {
+struct PhotoDetailView: View {
     let item: VideoItem
     var onDelete: () -> Void
-
-    /// False for the pager's off-screen neighbours. Paging TabView keeps
-    /// adjacent pages alive, so without this every nearby video would start
-    /// playing at once and their audio would pile up.
-    var isActive: Bool = true
 
     @EnvironmentObject var subscriptionManager: SubscriptionManager
     @Environment(\.presentationMode) private var presentationMode
 
-    @State private var player: AVPlayer?
+    @State private var image: UIImage?
     @State private var showDeleteAlert = false
     @State private var showPaywall     = false
     @State private var saveStatus: SaveStatus?
     @State private var scheduleMode: ScheduleMode?
-    /// Persisted, so someone who wants looping doesn't have to re-enable it
-    /// for every clip.
-    @AppStorage("LoopVideoPlayback") private var loopPlayback = false
-
-    /// Fires every 0.25 s to enforce the 15-second preview cap.
-    /// Only active while the view is visible — cancelled in .onDisappear.
-    private let previewTimer = Timer.publish(every: 0.25, on: .main, in: .common).autoconnect()
-
-    private static let previewLimit: Double = 15
 
     enum SaveStatus { case saving, success, failure }
 
@@ -38,10 +22,7 @@ struct VideoPlayerView: View {
 
             VStack(spacing: 0) {
                 topBar
-                playerArea
-                if !subscriptionManager.isUnlocked {
-                    previewBanner
-                }
+                imageArea
                 actionBar
             }
         }
@@ -51,76 +32,12 @@ struct VideoPlayerView: View {
         .sheet(item: $scheduleMode) { mode in
             ScheduleSheet(item: item, mode: mode) {}
         }
-        .onAppear {
-            let newPlayer = AVPlayer(url: item.url)
-            player = newPlayer
-            if isActive { newPlayer.play() }
-        }
-        .onDisappear {
-            player?.pause()
-            player = nil
-        }
-        // Swiping between pages in the gallery pager makes this page active or
-        // inactive without it ever appearing/disappearing, so playback has to
-        // follow the selection rather than the view lifecycle.
-        .onChange(of: isActive) { active in
-            if active { player?.play() } else { player?.pause() }
-        }
-        // AVPlayer pauses itself when the audio session is interrupted and never
-        // resumes on its own, so without this the video just sits there until
-        // the user taps play. Interruptions here come from phone calls and Siri,
-        // and previously from this app's own camera session starting up behind
-        // the Gallery — see setupCaptureSession in ContentView.
-        .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)) { note in
-            guard let raw = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
-                  AVAudioSession.InterruptionType(rawValue: raw) == .ended,
-                  // Don't resume a page the user has swiped away from, and
-                  // don't fight the free-tier cap that deliberately paused us.
-                  isActive, !showPaywall
-            else { return }
-            try? AVAudioSession.sharedInstance().setActive(true)
-            player?.play()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime)) { note in
-            // This publisher fires for every player item in the process, so
-            // check identity — otherwise a neighbouring page finishing would
-            // restart this one.
-            guard loopPlayback,
-                  let finished = note.object as? AVPlayerItem,
-                  finished === player?.currentItem else { return }
-            player?.seek(to: .zero)
-            player?.play()
-        }
-        // Enforce 15-second preview for free users
-        .onReceive(previewTimer) { _ in
-            guard !subscriptionManager.isUnlocked,
-                  let player = player,
-                  !showPaywall,
-                  // Only while actually playing — not just "sitting at the
-                  // limit." We pause and seek to exactly 15s below, so once
-                  // paused, "seconds >= limit" stays permanently true; without
-                  // this check, dismissing the paywall (which just flips
-                  // showPaywall back to false) would immediately fire this
-                  // again and reopen it, trapping the user in a loop with no
-                  // way to back out. Gating on rate != 0 means it only
-                  // re-triggers if they actually try to resume past the cap.
-                  player.rate != 0
-            else { return }
-
-            let seconds = player.currentTime().seconds
-            guard seconds.isFinite, seconds >= Self.previewLimit else { return }
-
-            player.pause()
-            player.seek(to: CMTime(seconds: Self.previewLimit,
-                                   preferredTimescale: 600))
-            showPaywall = true
-        }
+        .onAppear(perform: loadImage)
         .alert(isPresented: $showDeleteAlert) {
             Alert(
-                title: Text("Delete video?"),
+                title: Text("Delete photo?"),
                 message: Text("This cannot be undone."),
                 primaryButton: .destructive(Text("Delete")) {
-                    player?.pause()
                     onDelete()
                     presentationMode.wrappedValue.dismiss()
                 },
@@ -133,10 +50,7 @@ struct VideoPlayerView: View {
 
     private var topBar: some View {
         HStack {
-            Button(action: {
-                player?.pause()
-                presentationMode.wrappedValue.dismiss()
-            }) {
+            Button(action: { presentationMode.wrappedValue.dismiss() }) {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 28))
                     .foregroundColor(Color(white: 0.6))
@@ -145,21 +59,10 @@ struct VideoPlayerView: View {
             Text(formattedDate)
                 .font(.caption)
                 .foregroundColor(Color(white: 0.5))
-            loopButton
             scheduleMenu
         }
         .padding(.horizontal)
         .padding(.vertical, 10)
-    }
-
-    /// Tinted when on, so the current state is readable without opening a menu.
-    private var loopButton: some View {
-        Button(action: { loopPlayback.toggle() }) {
-            Image(systemName: "repeat")
-                .font(.system(size: 17, weight: .bold))
-                .foregroundColor(loopPlayback ? .white : Color(white: 0.35))
-                .padding(.leading, 14)
-        }
     }
 
     private var scheduleMenu: some View {
@@ -182,26 +85,17 @@ struct VideoPlayerView: View {
         }
     }
 
-    private var playerArea: some View {
+    private var imageArea: some View {
         Group {
-            if let player {
-                VideoPlayer(player: player)
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                Spacer()
             }
         }
-    }
-
-    /// Shown below the player for free-tier users.
-    private var previewBanner: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "lock.fill")
-                .font(.system(size: 11))
-            Text("FREE PREVIEW (first 15 seconds only)")
-                .font(.system(size: 11, weight: .bold, design: .monospaced))
-        }
-        .foregroundColor(Color(white: 0.5))
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 7)
-        .background(Color(white: 0.07))
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var actionBar: some View {
@@ -301,6 +195,14 @@ struct VideoPlayerView: View {
 
     // MARK: - Actions
 
+    private func loadImage() {
+        let url = item.url
+        DispatchQueue.global(qos: .userInitiated).async {
+            let loaded = (try? Data(contentsOf: url)).flatMap { UIImage(data: $0) }
+            DispatchQueue.main.async { image = loaded }
+        }
+    }
+
     private func saveToPhotos() {
         guard saveStatus == nil else { return }
         saveStatus = .saving
@@ -310,7 +212,7 @@ struct VideoPlayerView: View {
                 return
             }
             PHPhotoLibrary.shared().performChanges({
-                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: item.url)
+                PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: item.url)
             }) { success, _ in
                 DispatchQueue.main.async {
                     saveStatus = success ? .success : .failure

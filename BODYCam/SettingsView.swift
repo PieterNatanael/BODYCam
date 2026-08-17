@@ -99,11 +99,13 @@ struct CornerBrackets: Shape {
 
 struct SettingsView: View {
 
-    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.saveBattery.rawValue
-    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.normal.rawValue
+    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.normal.rawValue
+    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
     @AppStorage("SelectedVideoQuality") private var videoQuality: VideoQuality = .low
     @AppStorage("IsLowLight") private var isLowLight: Bool = false
     @AppStorage("SelectedPhotoQuality") private var photoQuality: PhotoQuality = .high
+    @ObservedObject private var scheduleStore = ScheduleStore.shared
+    @State private var showScheduledList = false
 
     var body: some View {
         ZStack {
@@ -141,11 +143,122 @@ struct SettingsView: View {
 
                     cameraRecordSection
 
+                    scheduledSection
+
+                    moreAppsSection
+
                     Spacer(minLength: 20)
                 }
                 .padding(.horizontal, 24)
             }
         }
+        .sheet(isPresented: $showScheduledList) {
+            ScheduledListSheet(store: scheduleStore)
+        }
+        .onAppear { scheduleStore.refresh() }
+    }
+
+    // MARK: - More From Us
+    //
+    // Deliberately understated: plain rows rather than the image-and-button
+    // treatment of AppCardView, so it reads as a footnote rather than an ad.
+
+    private var moreAppsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionLabel("ALSO FROM US")
+
+            appLink(
+                icon: "waveform",
+                name: "Low Battery Voice Recorder",
+                platform: "iPhone",
+                url: "https://apps.apple.com/id/app/low-battery-voice-recorder/id6670330613"
+            )
+
+            appLink(
+                icon: "desktopcomputer",
+                name: "GoodMood Screen Companion",
+                platform: "Mac",
+                url: "https://apps.apple.com/id/app/goodmood-screen-companion/id6765573775?mt=12"
+            )
+        }
+        .padding(16)
+        .background(cardBackground)
+    }
+
+    private func appLink(icon: String, name: String, platform: String, url: String) -> some View {
+        Button(action: {
+            guard let link = URL(string: url) else { return }
+            UIApplication.shared.open(link)
+        }) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 15))
+                    .foregroundColor(Color(white: 0.5))
+                    .frame(width: 22)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(name)
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor(Color(white: 0.7))
+                        .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.leading)
+                    Text(platform)
+                        .font(.system(size: 9, design: .monospaced))
+                        .foregroundColor(Color(white: 0.4))
+                }
+
+                Spacer()
+
+                Image(systemName: "arrow.up.right")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(Color(white: 0.3))
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Alarms & Reminders
+
+    private var scheduledSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            sectionLabel("ALARMS AND REMINDERS")
+
+            Button(action: { showScheduledList = true }) {
+                HStack(spacing: 14) {
+                    Image(systemName: "alarm.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(Color(white: 0.6))
+                        .frame(width: 26)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("SCHEDULED")
+                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                            .tracking(1)
+                            .foregroundColor(Color(white: 0.85))
+                        Text(scheduleStore.items.isEmpty
+                             ? "Nothing scheduled"
+                             : "\(scheduleStore.items.count) waiting")
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundColor(Color(white: 0.4))
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(Color(white: 0.35))
+                }
+                .padding(.vertical, 4)
+            }
+            .buttonStyle(.plain)
+
+            Text("Set one from the ⋯ menu when viewing a photo or video in the Gallery.")
+                .font(.system(size: 10, design: .monospaced))
+                .foregroundColor(Color(white: 0.35))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(16)
+        .background(cardBackground)
     }
 
     // MARK: - Video Record
@@ -199,11 +312,11 @@ struct SettingsView: View {
         .background(cardBackground)
     }
 
-    // MARK: - Camera Record
+    // MARK: - Photo Capture
 
     private var cameraRecordSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            sectionLabel("CAMERA RECORD")
+            sectionLabel("PHOTO CAPTURE")
 
             VStack(alignment: .leading, spacing: 6) {
                 sectionLabel("QUALITY")
@@ -273,7 +386,7 @@ struct SettingsView: View {
                     .foregroundColor(Color(white: 0.5))
                     .frame(width: 26)
 
-                Text("Tap anywhere on the camera preview to turn it on or off. Tap again to switch it back. Keeping preview off saves battery during long recordings.")
+                Text("Tap the camera preview to focus on whatever you tapped, like the built in Camera app. To save battery during long recordings, use the moon button to dim the screen.")
                     .font(.system(size: 11, design: .monospaced))
                     .foregroundColor(Color(white: 0.55))
                     .fixedSize(horizontal: false, vertical: true)

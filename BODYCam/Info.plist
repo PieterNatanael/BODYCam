@@ -6,5 +6,7 @@
 	<string>Access camera and microphone settings for video recording and audio capture in LB Camera. We do not collect any user data.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>LB Camera saves recorded videos and photos to your photo library. We do not collect any user data.</string>
+	<key>NSAlarmKitUsageDescription</key>
+	<string>LB Camera needs alarm access to alert you at the time you set for a photo or video.</string>
 </dict>
 </plist>

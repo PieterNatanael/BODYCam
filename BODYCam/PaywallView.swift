@@ -88,11 +88,9 @@ struct PaywallView: View {
 
     private var featuresSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            featureRow(icon: "play.rectangle.fill",    text: "Full playback — no 15-second cap")
-            featureRow(icon: "square.and.arrow.down.fill", text: "Save recordings to Photos")
-            featureRow(icon: "square.and.arrow.up.fill",   text: "Share recordings")
-            featureRow(icon: "waveform",               text: "All quality levels & settings")
-            featureRow(icon: "arrow.clockwise",        text: "Free updates")
+            featureRow(icon: "play.rectangle.fill",    text: "Full video playback, no 15 second cap")
+            featureRow(icon: "square.and.arrow.down.fill", text: "Save photos and videos to your library")
+            featureRow(icon: "square.and.arrow.up.fill",   text: "Share photos and videos")
         }
         .padding(20)
         .background(
@@ -299,7 +297,7 @@ struct PaywallView: View {
 
     private var footerSection: some View {
         VStack(spacing: 10) {
-            Text("Bought LB Camera before April 2026? Your full access is restored automatically — no action needed.")
+            Text("Bought LB Camera before April 2026? Your full access is restored automatically, no action needed.")
                 .font(.system(size: 10, design: .monospaced))
                 .foregroundColor(Color(white: 0.32))
                 .multilineTextAlignment(.center)
