@@ -20,6 +20,16 @@ struct VideoPlayerView: View {
     @State private var showPaywall     = false
     @State private var saveStatus: SaveStatus?
     @State private var scheduleMode: ScheduleMode?
+    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
+    private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
+    private var isFlatTheme: Bool { appTheme.isFlat }
+    private var accentColor: Color { appTheme.galleryAccent }
+    @State private var chromeVisible = true
+    /// Set once the first auto-hide has run OR the user has taken manual
+    /// control, whichever comes first. After that the chrome only ever moves
+    /// by tapping — matching the native gallery, where the timed hide happens
+    /// on open and never again.
+    @State private var autoHideSpent = false
     /// Persisted, so someone who wants looping doesn't have to re-enable it
     /// for every clip.
     @AppStorage("LoopVideoPlayback") private var loopPlayback = false
@@ -36,15 +46,28 @@ struct VideoPlayerView: View {
         ZStack {
             Color.black.ignoresSafeArea()
 
+            // Unlike the photo viewer, the chrome is NOT overlaid on top of the
+            // video while it's showing. AVKit draws its own transport controls
+            // along the bottom of the player, so a floating action bar would
+            // land straight on top of the scrubber. Insetting the video while
+            // the chrome is up keeps the two sets of controls apart, and the
+            // video still goes fully edge to edge in the state that matters —
+            // chrome hidden, which is where you watch from.
             VStack(spacing: 0) {
-                topBar
-                playerArea
-                if !subscriptionManager.isUnlocked {
-                    previewBanner
+                if chromeVisible {
+                    topBar
                 }
-                actionBar
+                playerArea
+                if chromeVisible {
+                    if !subscriptionManager.isUnlocked {
+                        previewBanner
+                    }
+                    actionBar
+                }
             }
+            .ignoresSafeArea(edges: chromeVisible ? [] : .all)
         }
+        .statusBarHidden(!chromeVisible)
         .sheet(isPresented: $showPaywall) {
             PaywallView().environmentObject(subscriptionManager)
         }
@@ -54,7 +77,10 @@ struct VideoPlayerView: View {
         .onAppear {
             let newPlayer = AVPlayer(url: item.url)
             player = newPlayer
-            if isActive { newPlayer.play() }
+            if isActive {
+                newPlayer.play()
+                scheduleInitialAutoHide()
+            }
         }
         .onDisappear {
             player?.pause()
@@ -64,7 +90,12 @@ struct VideoPlayerView: View {
         // inactive without it ever appearing/disappearing, so playback has to
         // follow the selection rather than the view lifecycle.
         .onChange(of: isActive) { active in
-            if active { player?.play() } else { player?.pause() }
+            if active {
+                player?.play()
+                scheduleInitialAutoHide()
+            } else {
+                player?.pause()
+            }
         }
         // AVPlayer pauses itself when the audio session is interrupted and never
         // resumes on its own, so without this the video just sits there until
@@ -139,7 +170,7 @@ struct VideoPlayerView: View {
             }) {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 28))
-                    .foregroundColor(Color(white: 0.6))
+                    .foregroundColor(isFlatTheme ? accentColor : Color(white: 0.6))
             }
             Spacer()
             Text(formattedDate)
@@ -157,7 +188,8 @@ struct VideoPlayerView: View {
         Button(action: { loopPlayback.toggle() }) {
             Image(systemName: "repeat")
                 .font(.system(size: 17, weight: .bold))
-                .foregroundColor(loopPlayback ? .white : Color(white: 0.35))
+                .foregroundColor(loopPlayback ? (isFlatTheme ? accentColor : .white)
+                                               : Color(white: 0.35))
                 .padding(.leading, 14)
         }
     }
@@ -177,7 +209,7 @@ struct VideoPlayerView: View {
         } label: {
             Image(systemName: "ellipsis.circle")
                 .font(.system(size: 22))
-                .foregroundColor(Color(white: 0.6))
+                .foregroundColor(isFlatTheme ? accentColor : Color(white: 0.6))
                 .padding(.leading, 12)
         }
     }
@@ -186,7 +218,31 @@ struct VideoPlayerView: View {
         Group {
             if let player {
                 VideoPlayer(player: player)
+                    // simultaneousGesture, not onTapGesture: AVKit owns taps in
+                    // this area for its own play/pause and scrubber. A normal
+                    // tap gesture would steal them and break playback control.
+                    // This way the tap reaches both, so our chrome toggles at
+                    // the same moment AVKit shows or hides its own controls.
+                    .simultaneousGesture(TapGesture().onEnded { toggleChrome() })
             }
+        }
+    }
+
+    // MARK: - Chrome visibility
+
+    private func toggleChrome() {
+        // Any manual tap also cancels a still-pending initial auto-hide, so the
+        // chrome can't vanish a moment after the user deliberately brought it back.
+        autoHideSpent = true
+        withAnimation(.easeInOut(duration: 0.25)) { chromeVisible.toggle() }
+    }
+
+    private func scheduleInitialAutoHide() {
+        guard !autoHideSpent else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            guard !autoHideSpent, isActive else { return }
+            autoHideSpent = true
+            withAnimation(.easeInOut(duration: 0.25)) { chromeVisible = false }
         }
     }
 
@@ -221,7 +277,7 @@ struct VideoPlayerView: View {
             actionButton(
                 icon: "square.and.arrow.up",
                 label: "Share",
-                color: .lightGray,
+                color: isFlatTheme ? accentColor : .lightGray,
                 locked: !subscriptionManager.isUnlocked
             ) {
                 if subscriptionManager.isUnlocked { share() }
@@ -242,24 +298,35 @@ struct VideoPlayerView: View {
                                color: Color, locked: Bool,
                                action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack(spacing: 5) {
-                ZStack(alignment: .topTrailing) {
+            ZStack(alignment: .topTrailing) {
+                ZStack {
+                    // Locked keeps the dark, outlined treatment — a solid bright
+                    // circle would read as enabled and invite the tap it refuses.
+                    Circle()
+                        .fill(locked ? Color(white: 0.14) : color)
+                        .overlay(
+                            Circle().stroke(locked ? Color(white: 0.3) : Color.white.opacity(0.18),
+                                            lineWidth: 1)
+                        )
+                        .frame(width: 52, height: 52)
+                        .shadow(color: locked ? .clear : color.opacity(0.35), radius: 5, x: 0, y: 2)
                     Image(systemName: icon)
-                        .font(.system(size: 22))
-                    if locked {
-                        Image(systemName: "lock.fill")
-                            .font(.system(size: 9))
-                            .foregroundColor(Color(white: 0.55))
-                            .offset(x: 6, y: -4)
-                    }
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(locked ? Color(white: 0.38) : color.contrastingForeground)
                 }
-                Text(label)
-                    .font(.caption)
+                if locked {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 9))
+                        .foregroundColor(Color(white: 0.55))
+                        .offset(x: 2, y: -2)
+                }
             }
-            .foregroundColor(locked ? Color(white: 0.38) : color)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
         }
+        // The visible caption is gone, so carry it for VoiceOver instead —
+        // otherwise these become three unlabelled buttons.
+        .accessibilityLabel(label)
     }
 
     // MARK: - Computed helpers
@@ -295,7 +362,7 @@ struct VideoPlayerView: View {
         switch saveStatus {
         case .success: return .green
         case .failure: return .red
-        default:       return .lightGray
+        default:       return isFlatTheme ? accentColor : .lightGray
         }
     }
 

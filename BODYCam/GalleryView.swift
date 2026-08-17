@@ -12,10 +12,8 @@ struct GalleryView: View {
     @State private var showScheduledList = false
     @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
-    private var isFlatTheme: Bool { appTheme != .normal }
-    private let simpleRed = Color(red: 0.85, green: 0.15, blue: 0.1)
-    private let tacticalGreen = Color(red: 0.25, green: 0.95, blue: 0.4)
-    private var accentColor: Color { appTheme == .tactical ? tacticalGreen : simpleRed }
+    private var isFlatTheme: Bool { appTheme.isFlat }
+    private var accentColor: Color { appTheme.galleryAccent }
 
     // Simple/Tactical widens the grid gutter so the grid structure itself
     // reads as a design element, Bauhaus-style, rather than an afterthought.

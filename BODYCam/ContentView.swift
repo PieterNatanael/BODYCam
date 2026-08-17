@@ -22,26 +22,28 @@ struct ContentView: View {
     /// and slow (1 to 3 seconds), so the user can easily leave before it
     /// finishes — see setupCaptureSession's completion block.
     @State private var isTabVisible = false
+    /// Wall-clock start of the current recording. Elapsed time is derived from
+    /// this rather than counted up tick by tick, so a missed or late tick can
+    /// never make the displayed duration drift away from the real one.
+    @State private var recordingStartedAt: Date?
+    @State private var elapsed: TimeInterval = 0
+    private let recordingTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.normal.rawValue
     private var displayMode: CameraDisplayMode { CameraDisplayMode(rawValue: displayModeRaw) ?? .saveBattery }
     @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     // Simple and Tactical share the same flat/no-gradient/sharp-corner "bones";
     // only their accent colors (and the preview's corner-bracket treatment) differ.
-    private var isFlatTheme: Bool { appTheme != .normal }
-    private var useCornerBrackets: Bool { appTheme == .tactical }
+    private var isFlatTheme: Bool { appTheme.isFlat }
+    private var previewDecoration: PreviewFrameDecoration { appTheme.previewDecoration }
 
-    // MARK: - Theme accent palette
-    private let simpleRed     = Color(red: 0.85, green: 0.15, blue: 0.1)
-    private let simpleYellow  = Color(red: 0.95, green: 0.78, blue: 0.1)
-    private let simpleBlue    = Color(red: 0.15, green: 0.4,  blue: 0.85)
-    private let tacticalGreen = Color(red: 0.25, green: 0.95, blue: 0.4)
+    // MARK: - Theme accent palette (defined once on AppTheme)
 
-    private var flipAccent: Color     { appTheme == .tactical ? tacticalGreen : simpleBlue }
-    private var dimAccent: Color      { appTheme == .tactical ? tacticalGreen : simpleYellow }
-    private var settingsAccent: Color { appTheme == .tactical ? tacticalGreen : simpleRed }
-    private var recordAccent: Color   { appTheme == .tactical ? tacticalGreen : simpleRed }
-    private var previewAccent: Color  { appTheme == .tactical ? tacticalGreen : simpleRed }
+    private var flipAccent: Color { appTheme.flipAccent }
+    private var dimAccent: Color { appTheme.dimAccent }
+    private var settingsAccent: Color { appTheme.settingsAccent }
+    private var recordAccent: Color { appTheme.recordAccent }
+    private var previewAccent: Color { appTheme.previewAccent }
 
     // @StateObject keeps the same delegate instance alive across view re-renders.
     // A plain `let` in a SwiftUI struct is recreated on every render, which would
@@ -84,18 +86,20 @@ struct ContentView: View {
     // subtle rounded card-with-depth look.
     private var previewCornerRadius: CGFloat { isFlatTheme ? 0 : 10 }
     private var previewBorderColor: Color { isFlatTheme ? previewAccent : Color(white: 0.3) }
-    private var previewBorderWidth: CGFloat { appTheme == .tactical ? 2 : (appTheme == .simple ? 3 : 1) }
+    private var previewBorderWidth: CGFloat { appTheme.previewBorderWidth }
 
     // Tactical gets a viewfinder-style corner-bracket reticle instead of a
     // plain stroked rectangle around the preview frame.
     @ViewBuilder
-    private func previewBorderOverlay(radius: CGFloat, color: Color, width: CGFloat, useBrackets: Bool) -> some View {
-        if useBrackets {
-            CornerBrackets(length: 22)
-                .stroke(color, lineWidth: width)
-        } else {
-            RoundedRectangle(cornerRadius: radius)
-                .stroke(color, lineWidth: width)
+    private func previewBorderOverlay(radius: CGFloat, color: Color, width: CGFloat,
+                                       decoration: PreviewFrameDecoration) -> some View {
+        switch decoration {
+        case .brackets:
+            CornerBrackets(length: 22).stroke(color, lineWidth: width)
+        case .web:
+            SpiderWebCorners(radius: 64).stroke(color, lineWidth: width)
+        case .border:
+            RoundedRectangle(cornerRadius: radius).stroke(color, lineWidth: width)
         }
     }
 
@@ -118,6 +122,25 @@ struct ContentView: View {
                 recordRow
                     .padding(.bottom, bottomPad)
             }
+
+            // Overlaid rather than placed in the VStack above. The old REC
+            // indicator sat in that stack, so it resized the preview every time
+            // recording started or stopped — this can't, because it takes no
+            // part in the layout.
+            VStack {
+                if isRecording {
+                    recordingTimerBadge
+                        .padding(.top, 6)
+                        .transition(.opacity)
+                }
+                Spacer()
+            }
+            .animation(.easeInOut(duration: 0.2), value: isRecording)
+        }
+        .onReceive(recordingTimer) { _ in
+            // Guarded so nothing is written (and no redraw happens) when idle.
+            guard isRecording, let start = recordingStartedAt else { return }
+            elapsed = Date().timeIntervalSince(start)
         }
         .onAppear {
             isTabVisible = true
@@ -141,6 +164,11 @@ struct ContentView: View {
         .onDisappear {
             isTabVisible = false
             stopRecording()
+            // Explicit, not via stopRecording — that early-returns unless a
+            // recording is in progress, so dimming without recording and then
+            // leaving would strand the screen at 1% brightness (and now the
+            // preview connection switched off with it).
+            restoreBrightness()
             volumeObserver.stop()
             UIDevice.current.endGeneratingDeviceOrientationNotifications()
             // Stop the session so the Camera tab (or any other consumer)
@@ -150,6 +178,10 @@ struct ContentView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
             stopRecording()
+            // Screen brightness is a system-wide setting that survives the app,
+            // so backgrounding while dimmed would otherwise leave the user's
+            // phone at 1% until they fixed it themselves.
+            restoreBrightness()
         }
         .onReceive(NotificationCenter.default.publisher(for: .recordingStoppedWithError)) { notification in
             handleRecordingError(notification.userInfo?["error"] as? Error)
@@ -238,6 +270,33 @@ struct ContentView: View {
         .padding(.vertical, 8)
     }
 
+    /// Elapsed recording time, so it's unmistakable that recording is running.
+    private var recordingTimerBadge: some View {
+        HStack(spacing: 7) {
+            // Blink is driven off the same one-second tick that updates the
+            // clock, rather than a repeatForever animation — no separate
+            // always-running animation just to pulse a dot.
+            Circle()
+                .fill(Color.white)
+                .frame(width: 7, height: 7)
+                .opacity(Int(elapsed) % 2 == 0 ? 1 : 0.3)
+                .animation(.easeInOut(duration: 0.3), value: Int(elapsed) % 2)
+
+            Text(elapsedText)
+                .font(.system(size: 14, weight: .bold, design: .monospaced))
+                .foregroundColor(.white)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(Capsule().fill(Color.red))
+        .shadow(color: .black.opacity(0.35), radius: 3, x: 0, y: 1)
+    }
+
+    private var elapsedText: String {
+        let total = max(0, Int(elapsed))
+        return String(format: "%02d:%02d:%02d", total / 3600, (total % 3600) / 60, total % 60)
+    }
+
     private var goProBadge: some View {
         Button(action: { showPaywall = true }) {
             HStack(spacing: 5) {
@@ -300,7 +359,7 @@ struct ContentView: View {
             let borderWidth: CGFloat = isNormal ? 0 : previewBorderWidth
             let placeholderFill: Color = (isFlatTheme || isNormal) ? Color.black : Color(white: 0.05)
             let accentColor: Color = isFlatTheme ? previewAccent : Color(white: 0.2)
-            let showBrackets = useCornerBrackets && !isNormal
+            let decoration: PreviewFrameDecoration = isNormal ? .border : previewDecoration
 
             ZStack {
                 if let session = captureSession {
@@ -308,7 +367,13 @@ struct ContentView: View {
                     // toggling the preview. Battery saving is the dim-screen
                     // button's job — it kills the backlight, which dwarfs the
                     // preview layer's own draw cost.
-                    CameraPreviewView(session: session) { devicePoint in
+                    // isPreviewActive is bound to the dim state rather than
+                    // toggled imperatively, so every route back out of dim
+                    // (wake tap, stop recording, tab switch, backgrounding)
+                    // re-enables the preview automatically — there's no path
+                    // that can leave it stuck off.
+                    CameraPreviewView(session: session,
+                                      isPreviewActive: !isScreenDimmed) { devicePoint in
                         applyTapToFocus(session: captureSession,
                                         devicePoint: devicePoint,
                                         on: ContentView.sessionQueue)
@@ -317,7 +382,7 @@ struct ContentView: View {
                     .cornerRadius(radius)
                     .overlay(
                         previewBorderOverlay(radius: radius, color: borderColor,
-                                              width: borderWidth, useBrackets: showBrackets)
+                                              width: borderWidth, decoration: decoration)
                     )
                     .offset(y: verticalOffset)
                     .ignoresSafeArea(.all, edges: isNormal ? .all : [])
@@ -331,7 +396,7 @@ struct ContentView: View {
                             .fill(placeholderFill)
                             .overlay(
                                 previewBorderOverlay(radius: radius, color: borderColor,
-                                                      width: borderWidth, useBrackets: showBrackets)
+                                                      width: borderWidth, decoration: decoration)
                             )
                         VStack(spacing: 10) {
                             Image(systemName: "video.fill")
@@ -732,6 +797,8 @@ struct ContentView: View {
             .appendingPathComponent("video_\(timestamp).mov")
 
         isRecording = true
+        recordingStartedAt = Date()
+        elapsed = 0
         videoURL = finalURL
         UIApplication.shared.isIdleTimerDisabled = true
 
@@ -754,6 +821,7 @@ struct ContentView: View {
     private func stopRecording() {
         guard isRecording, let output = videoOutput else { return }
         isRecording = false
+        recordingStartedAt = nil
         UIApplication.shared.isIdleTimerDisabled = false
         restoreBrightness()
         // Capture output locally so we don't touch @State from the background thread

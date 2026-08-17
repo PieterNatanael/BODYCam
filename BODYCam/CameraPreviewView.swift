@@ -110,6 +110,10 @@ func resetFocusToContinuous(session: AVCaptureSession?, on queue: DispatchQueue)
 
 struct CameraPreviewView: UIViewRepresentable {
     let session: AVCaptureSession
+    /// When false, the preview connection is switched off so no frames are
+    /// delivered or composited. Used while the screen is dimmed, where the
+    /// preview is hidden behind a black overlay and rendering it is pure waste.
+    var isPreviewActive: Bool = true
     /// Receives a normalized device point (0...1) when the user taps to focus.
     var onFocusTap: ((CGPoint) -> Void)? = nil
 
@@ -119,11 +123,13 @@ struct CameraPreviewView: UIViewRepresentable {
         view.previewLayer.videoGravity = .resizeAspectFill
         view.applyCurrentOrientation()
         view.onFocusTap = onFocusTap
+        view.setPreviewActive(isPreviewActive)
         return view
     }
 
     func updateUIView(_ uiView: PreviewUIView, context: Context) {
         uiView.onFocusTap = onFocusTap
+        uiView.setPreviewActive(isPreviewActive)
     }
 
     class PreviewUIView: UIView {
@@ -154,6 +160,20 @@ struct CameraPreviewView: UIViewRepresentable {
 
         deinit {
             NotificationCenter.default.removeObserver(self)
+        }
+
+        /// Switches only the PREVIEW connection. A capture session keeps a
+        /// separate connection per output, so this leaves the movie-file output
+        /// (and therefore any recording in progress) completely untouched.
+        /// Deliberately not `previewLayer.session = nil`, which tears down the
+        /// layer's session association and can interrupt an active recording.
+        func setPreviewActive(_ active: Bool) {
+            guard let connection = previewLayer.connection,
+                  connection.isEnabled != active else { return }
+            connection.isEnabled = active
+            // The orientation is applied to the connection, so re-assert it on
+            // the way back rather than trusting whatever it held while off.
+            if active { applyCurrentOrientation() }
         }
 
         @objc private func handleFocusTap(_ recognizer: UITapGestureRecognizer) {

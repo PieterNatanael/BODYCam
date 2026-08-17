@@ -28,7 +28,12 @@ struct MediaPagerView: View {
             ForEach(items) { item in
                 Group {
                     if item.isPhoto {
-                        PhotoDetailView(item: item) { onDelete(item) }
+                        // isActive so the chrome's one-shot auto-hide starts
+                        // when the page is actually reached, not while it's
+                        // still being built off screen as a neighbour.
+                        PhotoDetailView(item: item,
+                                        onDelete: { onDelete(item) },
+                                        isActive: item.id == currentID)
                     } else {
                         // Only the visible page plays — paging TabView keeps
                         // neighbours alive, so without this their audio would

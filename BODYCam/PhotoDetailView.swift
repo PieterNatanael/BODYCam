@@ -5,6 +5,12 @@ struct PhotoDetailView: View {
     let item: VideoItem
     var onDelete: () -> Void
 
+    /// False for the pager's off-screen neighbours. Paging TabView builds
+    /// adjacent pages ahead of time, so the auto-hide has to start when a page
+    /// actually becomes visible — not in onAppear, which fires while it is
+    /// still off screen and would leave the chrome already gone on arrival.
+    var isActive: Bool = true
+
     @EnvironmentObject var subscriptionManager: SubscriptionManager
     @Environment(\.presentationMode) private var presentationMode
 
@@ -13,6 +19,16 @@ struct PhotoDetailView: View {
     @State private var showPaywall     = false
     @State private var saveStatus: SaveStatus?
     @State private var scheduleMode: ScheduleMode?
+    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
+    private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
+    private var isFlatTheme: Bool { appTheme.isFlat }
+    private var accentColor: Color { appTheme.galleryAccent }
+    @State private var chromeVisible = true
+    /// Set once the first auto-hide has run OR the user has taken manual
+    /// control, whichever comes first. After that the chrome only ever moves
+    /// by tapping — matching the native gallery, where the timed hide happens
+    /// on open and never again.
+    @State private var autoHideSpent = false
 
     enum SaveStatus { case saving, success, failure }
 
@@ -20,19 +36,38 @@ struct PhotoDetailView: View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                topBar
-                imageArea
-                actionBar
+            // Chrome floats over a full-screen photo rather than sharing space
+            // with it. That gives the photo the whole screen to fit into, and
+            // means hiding the chrome fades it out instead of reflowing the
+            // layout underneath.
+            imageArea
+                .ignoresSafeArea()
+                .contentShape(Rectangle())
+                .onTapGesture { toggleChrome() }
+
+            if chromeVisible {
+                VStack(spacing: 0) {
+                    topBar.background(topScrim)
+                    Spacer()
+                    actionBar
+                }
+                .transition(.opacity)
             }
         }
+        .statusBarHidden(!chromeVisible)
         .sheet(isPresented: $showPaywall) {
             PaywallView().environmentObject(subscriptionManager)
         }
         .sheet(item: $scheduleMode) { mode in
             ScheduleSheet(item: item, mode: mode) {}
         }
-        .onAppear(perform: loadImage)
+        .onChange(of: isActive) { active in
+            if active { scheduleInitialAutoHide() }
+        }
+        .onAppear {
+            loadImage()
+            if isActive { scheduleInitialAutoHide() }
+        }
         .alert(isPresented: $showDeleteAlert) {
             Alert(
                 title: Text("Delete photo?"),
@@ -53,7 +88,7 @@ struct PhotoDetailView: View {
             Button(action: { presentationMode.wrappedValue.dismiss() }) {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 28))
-                    .foregroundColor(Color(white: 0.6))
+                    .foregroundColor(isFlatTheme ? accentColor : Color(white: 0.6))
             }
             Spacer()
             Text(formattedDate)
@@ -80,22 +115,48 @@ struct PhotoDetailView: View {
         } label: {
             Image(systemName: "ellipsis.circle")
                 .font(.system(size: 22))
-                .foregroundColor(Color(white: 0.6))
+                .foregroundColor(isFlatTheme ? accentColor : Color(white: 0.6))
                 .padding(.leading, 12)
         }
     }
 
+    /// Whole photo, never cropped. With the chrome overlaid rather than taking
+    /// space, this now has the full screen to fit into, so it renders far
+    /// larger than it did when it was sandwiched between the two bars.
     private var imageArea: some View {
         Group {
             if let image {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
-            } else {
-                Spacer()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    /// Keeps the close button and date legible over a bright photo.
+    private var topScrim: some View {
+        LinearGradient(colors: [Color.black.opacity(0.55), Color.black.opacity(0)],
+                       startPoint: .top, endPoint: .bottom)
+            .ignoresSafeArea(edges: .top)
+    }
+
+    // MARK: - Chrome visibility
+
+    private func toggleChrome() {
+        // Any manual tap also cancels a still-pending initial auto-hide, so the
+        // chrome can't vanish a moment after the user deliberately brought it back.
+        autoHideSpent = true
+        withAnimation(.easeInOut(duration: 0.25)) { chromeVisible.toggle() }
+    }
+
+    private func scheduleInitialAutoHide() {
+        guard !autoHideSpent else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            guard !autoHideSpent, isActive else { return }
+            autoHideSpent = true
+            withAnimation(.easeInOut(duration: 0.25)) { chromeVisible = false }
+        }
     }
 
     private var actionBar: some View {
@@ -115,7 +176,7 @@ struct PhotoDetailView: View {
             actionButton(
                 icon: "square.and.arrow.up",
                 label: "Share",
-                color: .lightGray,
+                color: isFlatTheme ? accentColor : .lightGray,
                 locked: !subscriptionManager.isUnlocked
             ) {
                 if subscriptionManager.isUnlocked { share() }
@@ -136,24 +197,35 @@ struct PhotoDetailView: View {
                                color: Color, locked: Bool,
                                action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack(spacing: 5) {
-                ZStack(alignment: .topTrailing) {
+            ZStack(alignment: .topTrailing) {
+                ZStack {
+                    // Locked keeps the dark, outlined treatment — a solid bright
+                    // circle would read as enabled and invite the tap it refuses.
+                    Circle()
+                        .fill(locked ? Color(white: 0.14) : color)
+                        .overlay(
+                            Circle().stroke(locked ? Color(white: 0.3) : Color.white.opacity(0.18),
+                                            lineWidth: 1)
+                        )
+                        .frame(width: 52, height: 52)
+                        .shadow(color: locked ? .clear : color.opacity(0.35), radius: 5, x: 0, y: 2)
                     Image(systemName: icon)
-                        .font(.system(size: 22))
-                    if locked {
-                        Image(systemName: "lock.fill")
-                            .font(.system(size: 9))
-                            .foregroundColor(Color(white: 0.55))
-                            .offset(x: 6, y: -4)
-                    }
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(locked ? Color(white: 0.38) : color.contrastingForeground)
                 }
-                Text(label)
-                    .font(.caption)
+                if locked {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 9))
+                        .foregroundColor(Color(white: 0.55))
+                        .offset(x: 2, y: -2)
+                }
             }
-            .foregroundColor(locked ? Color(white: 0.38) : color)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
         }
+        // The visible caption is gone, so carry it for VoiceOver instead —
+        // otherwise these become three unlabelled buttons.
+        .accessibilityLabel(label)
     }
 
     // MARK: - Computed helpers
@@ -189,7 +261,7 @@ struct PhotoDetailView: View {
         switch saveStatus {
         case .success: return .green
         case .failure: return .red
-        default:       return .lightGray
+        default:       return isFlatTheme ? accentColor : .lightGray
         }
     }
 

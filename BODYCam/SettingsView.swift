@@ -34,12 +34,18 @@ enum AppTheme: String, CaseIterable {
     case normal
     case simple
     case tactical
+    case matcha
+    case iceCream
+    case spider
 
     var title: String {
         switch self {
         case .normal:   return "NORMAL"
         case .simple:   return "SIMPLE"
         case .tactical: return "TACTICAL"
+        case .matcha:   return "MATCHA"
+        case .iceCream: return "ICE CREAM"
+        case .spider:   return "SPIDER"
         }
     }
 
@@ -48,6 +54,9 @@ enum AppTheme: String, CaseIterable {
         case .normal:   return "Rugged textured look, current design"
         case .simple:   return "Flat Bauhaus style, bold shapes, no texture"
         case .tactical: return "Night vision HUD, monochrome green"
+        case .matcha:   return "Flat and calm, soft green accents"
+        case .iceCream: return "Flat and playful, pastel accents"
+        case .spider:   return "Red and blue, webbed corners"
         }
     }
 
@@ -56,7 +65,178 @@ enum AppTheme: String, CaseIterable {
         case .normal:   return "circle.grid.cross.fill"
         case .simple:   return "square.fill"
         case .tactical: return "viewfinder"
+        case .matcha:   return "leaf.fill"
+        case .iceCream: return "paintpalette.fill"
+        case .spider:   return "network"
         }
+    }
+}
+
+// MARK: - Theme palette
+//
+// Lives on the enum rather than being repeated in every view that draws themed
+// chrome. The views previously each carried their own copy of these colours
+// plus `appTheme == .tactical ? green : red` ternaries, which only ever worked
+// while there were exactly two flat themes — adding a third would have meant
+// nested ternaries in a dozen places across four files.
+extension AppTheme {
+    /// Simple, Tactical and Matcha share the same flat bones: no gradient, no
+    /// texture, sharp corners. Only Normal keeps the rugged treatment.
+    var isFlat: Bool { self != .normal }
+
+    /// How the preview frame is drawn. Was a `usesCornerBrackets` boolean while
+    /// Tactical was the only theme with a custom frame; Spider needs a third
+    /// option, so it is an enum rather than a second parallel flag.
+    var previewDecoration: PreviewFrameDecoration {
+        switch self {
+        case .tactical: return .brackets
+        case .spider:   return .web
+        default:        return .border
+        }
+    }
+
+    /// One colour per control, so a theme can be monochrome or multi-coloured
+    /// without any call site needing to know which. Replaced an earlier
+    /// "one tint, or fall back to Simple's triad" model, which couldn't express
+    /// a second multi-coloured theme with its own distinct set.
+    private struct Palette {
+        let flip: Color
+        let dim: Color
+        let settings: Color
+        let record: Color
+        let preview: Color
+        let gallery: Color
+
+        /// Themes that tint every control identically.
+        static func uniform(_ color: Color) -> Palette {
+            Palette(flip: color, dim: color, settings: color,
+                    record: color, preview: color, gallery: color)
+        }
+    }
+
+    // Bauhaus primaries
+    private static let simpleRed     = Color(red: 0.85, green: 0.15, blue: 0.1)
+    private static let simpleYellow  = Color(red: 0.95, green: 0.78, blue: 0.1)
+    private static let simpleBlue    = Color(red: 0.15, green: 0.4,  blue: 0.85)
+
+    private static let tacticalGreen = Color(red: 0.25, green: 0.95, blue: 0.4)
+    /// Muted and desaturated, so it reads as calm next to Tactical's near-neon
+    /// green while still holding enough contrast against black.
+    private static let matchaGreen   = Color(red: 0.52, green: 0.68, blue: 0.45)
+
+    // Ice cream: pastel, but kept saturated enough to stay legible on black —
+    // true washed-out pastels disappear against a dark background.
+    private static let strawberry    = Color(red: 0.98, green: 0.52, blue: 0.63)
+    private static let mint          = Color(red: 0.58, green: 0.87, blue: 0.75)
+    private static let vanilla       = Color(red: 0.99, green: 0.85, blue: 0.52)
+    private static let blueberry     = Color(red: 0.62, green: 0.70, blue: 0.95)
+
+    // Spider: the suit's scarlet and royal blue, plus a pale silk tone.
+    private static let scarlet       = Color(red: 0.86, green: 0.12, blue: 0.16)
+    private static let royalBlue     = Color(red: 0.16, green: 0.30, blue: 0.78)
+    private static let webSilk       = Color(white: 0.88)
+
+    private var palette: Palette {
+        switch self {
+        case .normal, .simple:
+            return Palette(flip: Self.simpleBlue, dim: Self.simpleYellow,
+                           settings: Self.simpleRed, record: Self.simpleRed,
+                           preview: Self.simpleRed, gallery: Self.simpleRed)
+        case .tactical:
+            return .uniform(Self.tacticalGreen)
+        case .matcha:
+            return .uniform(Self.matchaGreen)
+        case .iceCream:
+            return Palette(flip: Self.blueberry, dim: Self.vanilla,
+                           settings: Self.mint, record: Self.strawberry,
+                           preview: Self.strawberry, gallery: Self.strawberry)
+        case .spider:
+            return Palette(flip: Self.royalBlue, dim: Self.webSilk,
+                           settings: Self.royalBlue, record: Self.scarlet,
+                           preview: Self.scarlet, gallery: Self.scarlet)
+        }
+    }
+
+    var flipAccent: Color     { palette.flip }
+    var dimAccent: Color      { palette.dim }
+    var settingsAccent: Color { palette.settings }
+    var recordAccent: Color   { palette.record }
+    var previewAccent: Color  { palette.preview }
+    /// Single accent for Gallery chrome and thumbnails.
+    var galleryAccent: Color  { palette.gallery }
+
+    var previewBorderWidth: CGFloat {
+        switch self {
+        case .tactical, .spider:          return 2
+        case .simple, .matcha, .iceCream: return 3
+        case .normal:                     return 1
+        }
+    }
+}
+
+extension Color {
+    /// Black or white, whichever stays legible on top of this colour. Picked by
+    /// Rec. 601 luma, which is plenty for a binary choice and means every theme
+    /// accent (and the red delete / green save states) gets a readable glyph
+    /// without hand-tuning a foreground per colour.
+    var contrastingForeground: Color {
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        guard UIColor(self).getRed(&r, green: &g, blue: &b, alpha: &a) else { return .white }
+        return (0.299 * r + 0.587 * g + 0.114 * b) > 0.6 ? .black : .white
+    }
+}
+
+/// How a theme frames the camera preview.
+enum PreviewFrameDecoration {
+    case border    // plain stroked rectangle
+    case brackets  // Tactical's viewfinder reticle
+    case web       // Spider's corner webs
+}
+
+// MARK: - Spider Web Corners
+//
+// A quarter web in each corner: radial strands fanning out from the corner
+// point, crossed by concentric arcs. Drawn as a Shape so it strokes with the
+// theme accent exactly like the other frame styles.
+struct SpiderWebCorners: Shape {
+    var radius: CGFloat = 64
+    /// Gaps between radial strands. 4 gaps means 5 strands including both edges.
+    var strands: Int = 4
+    var rings: Int = 3
+
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        let quarter = CGFloat.pi / 2
+
+        // Each corner with the angle its web sweeps FROM. Angles run clockwise
+        // on screen because the y axis points down.
+        let corners: [(CGPoint, CGFloat)] = [
+            (CGPoint(x: rect.minX, y: rect.minY), 0),          // top left, sweeps right then down
+            (CGPoint(x: rect.maxX, y: rect.minY), quarter),    // top right, down then left
+            (CGPoint(x: rect.maxX, y: rect.maxY), .pi),        // bottom right, left then up
+            (CGPoint(x: rect.minX, y: rect.maxY), .pi * 1.5)   // bottom left, up then right
+        ]
+
+        for (origin, start) in corners {
+            for i in 0...strands {
+                let a = start + quarter * CGFloat(i) / CGFloat(strands)
+                p.move(to: origin)
+                p.addLine(to: CGPoint(x: origin.x + cos(a) * radius,
+                                      y: origin.y + sin(a) * radius))
+            }
+            for r in 1...rings {
+                let rr = radius * CGFloat(r) / CGFloat(rings)
+                // Move to the arc's own start, or the path would draw a stray
+                // connecting line from wherever the last strand ended.
+                p.move(to: CGPoint(x: origin.x + cos(start) * rr,
+                                   y: origin.y + sin(start) * rr))
+                p.addArc(center: origin, radius: rr,
+                         startAngle: .radians(Double(start)),
+                         endAngle: .radians(Double(start + quarter)),
+                         clockwise: false)
+            }
+        }
+        return p
     }
 }
 
@@ -120,7 +300,7 @@ struct SettingsView: View {
                         .padding(.top, 20)
 
                     VStack(alignment: .leading, spacing: 10) {
-                        sectionLabel("DISPLAY MODE FOR VIDEO TAB")
+                        sectionLabel("DISPLAY MODE")
                         VStack(spacing: 10) {
                             ForEach(CameraDisplayMode.allCases, id: \.self) { mode in
                                 modeRow(mode)
@@ -129,7 +309,7 @@ struct SettingsView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 10) {
-                        sectionLabel("APPEARANCE FOR VIDEO TAB")
+                        sectionLabel("APPEARANCE")
                         VStack(spacing: 10) {
                             ForEach(AppTheme.allCases, id: \.self) { theme in
                                 themeRow(theme)
