@@ -113,6 +113,20 @@ struct VideoThumbnailCard: View {
             loadThumbnail()
             loadMetadata()
         }
+        // onAppear alone is not enough. Adding new recordings shifts every
+        // existing cell down the grid, and SwiftUI reuses those cell views with
+        // a different `item` rather than rebuilding them — but @State survives
+        // that reuse, so the cell carried on showing the PREVIOUS item's
+        // thumbnail while its tap handler already pointed at the new one. That
+        // is what made tapping a cell open something else.
+        .onChange(of: item.id) { _ in
+            // Cleared first so the old image can't linger during the async load.
+            thumbnail = nil
+            duration = ""
+            date = ""
+            loadThumbnail()
+            loadMetadata()
+        }
     }
 
     // MARK: - Loaders

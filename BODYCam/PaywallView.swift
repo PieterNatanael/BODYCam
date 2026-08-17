@@ -304,9 +304,9 @@ struct PaywallView: View {
 
             HStack(spacing: 24) {
                 Link("Privacy Policy",
-                     destination: URL(string: "https://github.com/PieterNatanael/Low-Battery-Camera/tree/main")!)
+                     destination: URL(string: "https://gogoodmood.com/apps/en/lbc/privacy/")!)
                 Link("Terms of Use",
-                     destination: URL(string: "https://github.com/PieterNatanael/Low-Battery-Camera/blob/main/terms.md")!)
+                     destination: URL(string: "https://gogoodmood.com/apps/en/lbc/terms/")!)
             }
             .font(.system(size: 10, design: .monospaced))
             .foregroundColor(Color(white: 0.28))

@@ -258,7 +258,12 @@ struct GalleryView: View {
             .sorted {
                 let d1 = (try? $0.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? .distantPast
                 let d2 = (try? $1.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? .distantPast
-                return d1 > d2
+                // Swift's sort isn't stable, so equal timestamps could come back
+                // in a different order on each reload and shuffle the grid.
+                // Filenames carry the capture time, so they break ties in the
+                // same order and keep the listing deterministic.
+                if d1 != d2 { return d1 > d2 }
+                return $0.lastPathComponent > $1.lastPathComponent
             }
             .map { VideoItem(url: $0) }
     }
