@@ -13,40 +13,33 @@ struct VideoThumbnailCard: View {
     private var isFlatTheme: Bool { appTheme.isFlat }
     private var accentColor: Color { appTheme.galleryAccent }
 
+    /// Fixed cell height. Declared once and used for the frame so the drawn
+    /// content and the layout box can never disagree.
+    private static let cellHeight: CGFloat = 160
+
     var body: some View {
-        // GeometryReader forces an EXPLICIT, concrete width/height (matching
-        // exactly what the grid column proposes) rather than relying on
-        // .frame(maxWidth: .infinity) to cap things. scaledToFill's aspect-
-        // ratio-driven intrinsic sizing could still leak a wide (landscape)
-        // source image's natural width through a maxWidth-based frame,
-        // ballooning the card past its column — geo.size leaves no ambiguity
-        // for that to hide in.
-        GeometryReader { geo in
-            ZStack(alignment: .bottomLeading) {
-                // Thumbnail or placeholder
-                Group {
-                    if let thumbnail {
-                        Image(uiImage: thumbnail)
-                            .resizable()
-                            .scaledToFill()
-                    } else {
-                        Rectangle()
-                            .fill(Color(white: 0.12))
-                            .overlay(
-                                Image(systemName: item.isPhoto ? "photo.fill" : "video.fill")
-                                    .font(.system(size: 28))
-                                    .foregroundColor(isFlatTheme ? accentColor : Color(white: 0.35))
-                            )
-                    }
-                }
-                .frame(width: geo.size.width, height: geo.size.height)
+        ZStack(alignment: .bottomLeading) {
+            // Color.clear accepts the frame exactly, and overlay content can
+            // never influence its parent's size — so a wide landscape
+            // thumbnail is cropped rather than stretching the cell.
+            //
+            // This replaces a GeometryReader, which allowed the cell's layout
+            // box and its drawn content to disagree: the visible artwork sat
+            // lower than the box the grid actually reserved, so a tap near the
+            // bottom of a cell landed on the row beneath it. In a two column
+            // grid that neighbour is index + 2, which is exactly why tapping
+            // the first item opened the third.
+            Color.clear
+                .frame(maxWidth: .infinity, minHeight: Self.cellHeight, maxHeight: Self.cellHeight)
+                .overlay(thumbnailContent)
                 .clipped()
                 .cornerRadius(isFlatTheme ? 0 : 8)
                 .overlay(
                     RoundedRectangle(cornerRadius: isFlatTheme ? 0 : 8)
-                        .stroke(isFlatTheme ? accentColor : Color.clear, lineWidth: isFlatTheme ? 2 : 0)
+                        .stroke(isFlatTheme ? accentColor : Color.clear,
+                                lineWidth: isFlatTheme ? 2 : 0)
                 )
-                // Small media-type badge, top-trailing, so photos and videos are
+                // Media type badge, top trailing, so photos and videos are
                 // distinguishable at a glance in the mixed grid.
                 .overlay(
                     VStack {
@@ -64,51 +57,12 @@ struct VideoThumbnailCard: View {
                     }
                 )
 
-                // Duration + date overlay: flat full-width label plate in Simple/
-                // Tactical theme, floating translucent pill in Normal theme.
-                if isFlatTheme {
-                    VStack {
-                        Spacer()
-                        HStack {
-                            if !duration.isEmpty {
-                                Text(duration)
-                                    .font(.system(size: 11, weight: .bold, design: .monospaced))
-                                    .foregroundColor(.white)
-                            }
-                            Spacer()
-                            if !date.isEmpty {
-                                Text(date)
-                                    .font(.system(size: 9, design: .monospaced))
-                                    .foregroundColor(Color(white: 0.7))
-                            }
-                        }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 4)
-                        .background(Color.black)
-                    }
-                    .frame(width: geo.size.width, height: geo.size.height)
-                } else {
-                    VStack(alignment: .leading, spacing: 2) {
-                        if !duration.isEmpty {
-                            Text(duration)
-                                .font(.caption.bold())
-                                .foregroundColor(.white)
-                        }
-                        if !date.isEmpty {
-                            Text(date)
-                                .font(.caption2)
-                                .foregroundColor(Color(white: 0.75))
-                        }
-                    }
-                    .padding(6)
-                    .background(Color.black.opacity(0.55))
-                    .cornerRadius(6)
-                    .padding(6)
-                }
-            }
-            .frame(width: geo.size.width, height: geo.size.height)
+            metadataPlate
         }
-        .frame(height: 160)
+        .frame(maxWidth: .infinity, minHeight: Self.cellHeight, maxHeight: Self.cellHeight)
+        // Pins the tappable region to exactly the cell box, rather than letting
+        // hit testing follow whatever happens to be drawn.
+        .contentShape(Rectangle())
         .onAppear {
             loadThumbnail()
             loadMetadata()
@@ -117,8 +71,7 @@ struct VideoThumbnailCard: View {
         // existing cell down the grid, and SwiftUI reuses those cell views with
         // a different `item` rather than rebuilding them — but @State survives
         // that reuse, so the cell carried on showing the PREVIOUS item's
-        // thumbnail while its tap handler already pointed at the new one. That
-        // is what made tapping a cell open something else.
+        // thumbnail while its tap handler already pointed at the new one.
         .onChange(of: item.id) { _ in
             // Cleared first so the old image can't linger during the async load.
             thumbnail = nil
@@ -126,6 +79,64 @@ struct VideoThumbnailCard: View {
             date = ""
             loadThumbnail()
             loadMetadata()
+        }
+    }
+
+    @ViewBuilder
+    private var thumbnailContent: some View {
+        if let thumbnail {
+            Image(uiImage: thumbnail)
+                .resizable()
+                .scaledToFill()
+        } else {
+            Rectangle()
+                .fill(Color(white: 0.12))
+                .overlay(
+                    Image(systemName: item.isPhoto ? "photo.fill" : "video.fill")
+                        .font(.system(size: 28))
+                        .foregroundColor(isFlatTheme ? accentColor : Color(white: 0.35))
+                )
+        }
+    }
+
+    /// Duration and date: a flat full width plate in the flat themes, a floating
+    /// translucent pill in Normal.
+    @ViewBuilder
+    private var metadataPlate: some View {
+        if isFlatTheme {
+            HStack {
+                if !duration.isEmpty {
+                    Text(duration)
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white)
+                }
+                Spacer()
+                if !date.isEmpty {
+                    Text(date)
+                        .font(.system(size: 9, design: .monospaced))
+                        .foregroundColor(Color(white: 0.7))
+                }
+            }
+            .padding(.horizontal, 6)
+            .padding(.vertical, 4)
+            .background(Color.black)
+        } else {
+            VStack(alignment: .leading, spacing: 2) {
+                if !duration.isEmpty {
+                    Text(duration)
+                        .font(.caption.bold())
+                        .foregroundColor(.white)
+                }
+                if !date.isEmpty {
+                    Text(date)
+                        .font(.caption2)
+                        .foregroundColor(Color(white: 0.75))
+                }
+            }
+            .padding(6)
+            .background(Color.black.opacity(0.55))
+            .cornerRadius(6)
+            .padding(6)
         }
     }
 
