@@ -770,56 +770,38 @@ struct ContentView: View {
 
     // MARK: - Quality
 
-    /// Applies the selected tier to a running session. Every tier but Max
-    /// uses a fixed AVFoundation preset. Max instead switches the session to
-    /// .inputPriority and hands the device its own highest resolution format
-    /// directly — the same numbers AVFoundation's presets would otherwise cap
-    /// below on capable hardware. Static, and takes the session explicitly,
-    /// so it can run from the session queue without capturing `self`.
+    /// Applies the selected tier to a running session. Every tier but Max uses
+    /// its own fixed preset; Max asks for the largest video preset this
+    /// particular device will accept, so better hardware genuinely gets more.
+    /// Static, and takes the session explicitly, so it can run from the
+    /// session queue without capturing `self`.
     private static func applyQuality(_ quality: VideoQuality, to session: AVCaptureSession) {
-        guard let device = session.inputs
-            .compactMap({ $0 as? AVCaptureDeviceInput })
-            .first(where: { $0.device.hasMediaType(.video) })?.device
-        else { return }
-
         session.beginConfiguration()
         defer { session.commitConfiguration() }
 
-        guard quality == .max, let format = bestFormat(for: device) else {
-            // Switching the preset away from .inputPriority makes the session
-            // take back format management on its own, so no explicit reset of
-            // activeFormat is needed here even coming from Max.
+        guard quality == .max else {
             session.sessionPreset = quality.preset
             return
         }
 
-        session.sessionPreset = .inputPriority
-        guard (try? device.lockForConfiguration()) != nil else { return }
-        device.activeFormat = format
-        device.unlockForConfiguration()
-    }
-
-    /// The device's own highest resolution capture format, chosen by pixel
-    /// area rather than width alone so an unusually shaped format can't win
-    /// on one dimension while losing on the other.
-    private static func bestFormat(for device: AVCaptureDevice) -> AVCaptureDevice.Format? {
-        // device.formats includes every format the sensor supports, not just
-        // ones meant for recording — some still-photography formats report
-        // more total pixels than any real video format, at a different aspect
-        // ratio, and can't sustain a real recording frame rate. Picking by
-        // pixel count alone let one of those through as "best", so Max
-        // recorded at the wrong aspect ratio instead of a proper video format.
-        // A genuine video format always supports at least a normal recording
-        // frame rate; a stills-only format's ceiling sits far below that.
-        let videoCapable = device.formats.filter { format in
-            format.videoSupportedFrameRateRanges.contains { $0.maxFrameRate >= 24 }
+        // Deliberately preset based rather than scanning device.formats for
+        // the most pixels. That scan is what made Max letterboxed: the 12MP
+        // stills format (4032x3024) has MORE total pixels than 4K, and it also
+        // advertises 30fps video support, so neither a pixel count nor a frame
+        // rate filter excludes it — it just quietly won, and recorded 4:3 while
+        // every other tier recorded 16:9.
+        //
+        // These presets are defined as video formats, so the aspect ratio is
+        // correct by construction. Ordered largest first; canSetSessionPreset
+        // is what makes this device relative, giving capable hardware 4K and
+        // letting older hardware fall through to what it can actually do.
+        for preset in [AVCaptureSession.Preset.hd4K3840x2160,
+                       .hd1920x1080,
+                       .high] where session.canSetSessionPreset(preset) {
+            session.sessionPreset = preset
+            return
         }
-        let candidates = videoCapable.isEmpty ? device.formats : videoCapable
-        return candidates.max { a, b in
-            let da = CMVideoFormatDescriptionGetDimensions(a.formatDescription)
-            let db = CMVideoFormatDescriptionGetDimensions(b.formatDescription)
-            return Int64(da.width) * Int64(da.height) < Int64(db.width) * Int64(db.height)
-        }
+        session.sessionPreset = quality.preset
     }
 
     // MARK: - Recording
