@@ -803,7 +803,19 @@ struct ContentView: View {
     /// area rather than width alone so an unusually shaped format can't win
     /// on one dimension while losing on the other.
     private static func bestFormat(for device: AVCaptureDevice) -> AVCaptureDevice.Format? {
-        device.formats.max { a, b in
+        // device.formats includes every format the sensor supports, not just
+        // ones meant for recording — some still-photography formats report
+        // more total pixels than any real video format, at a different aspect
+        // ratio, and can't sustain a real recording frame rate. Picking by
+        // pixel count alone let one of those through as "best", so Max
+        // recorded at the wrong aspect ratio instead of a proper video format.
+        // A genuine video format always supports at least a normal recording
+        // frame rate; a stills-only format's ceiling sits far below that.
+        let videoCapable = device.formats.filter { format in
+            format.videoSupportedFrameRateRanges.contains { $0.maxFrameRate >= 24 }
+        }
+        let candidates = videoCapable.isEmpty ? device.formats : videoCapable
+        return candidates.max { a, b in
             let da = CMVideoFormatDescriptionGetDimensions(a.formatDescription)
             let db = CMVideoFormatDescriptionGetDimensions(b.formatDescription)
             return Int64(da.width) * Int64(da.height) < Int64(db.width) * Int64(db.height)
