@@ -218,12 +218,12 @@ struct VideoPlayerView: View {
         Group {
             if let player {
                 VideoPlayer(player: player)
-                    // simultaneousGesture, not onTapGesture: AVKit owns taps in
-                    // this area for its own play/pause and scrubber. A normal
-                    // tap gesture would steal them and break playback control.
-                    // This way the tap reaches both, so our chrome toggles at
-                    // the same moment AVKit shows or hides its own controls.
-                    .simultaneousGesture(TapGesture().onEnded { toggleChrome() })
+                    // zoomable's own tap handling is layered with
+                    // simultaneousGesture, not an exclusive one — AVKit still
+                    // owns taps in this area for its own play/pause and
+                    // scrubber, so both fire, and our chrome toggles at the
+                    // same moment AVKit shows or hides its own controls.
+                    .zoomable(onSingleTap: toggleChrome)
             }
         }
     }

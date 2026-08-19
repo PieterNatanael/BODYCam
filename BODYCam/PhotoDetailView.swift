@@ -43,7 +43,7 @@ struct PhotoDetailView: View {
             imageArea
                 .ignoresSafeArea()
                 .contentShape(Rectangle())
-                .onTapGesture { toggleChrome() }
+                .zoomable(onSingleTap: toggleChrome)
 
             if chromeVisible {
                 VStack(spacing: 0) {

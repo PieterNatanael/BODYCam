@@ -29,6 +29,7 @@
 		AA0536F1E1614D56A52221B6 /* VideoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2698CEE6F9F5461F91B26B35 /* VideoItem.swift */; };
 		AA1E2F3B4C5D67890E1F2A3B /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1F2A3C4D5E67890F1A2B3C /* PaywallView.swift */; };
 		B2926960C51244FCA6C7F6D8 /* VideoQuality.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77D1FAD2EBE4F7982793EE8 /* VideoQuality.swift */; };
+		1E3DD51F8D56400CB2FB9F25 /* ZoomableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67F7257E8164851BF4F74A0 /* ZoomableModifier.swift */; };
 		BC621E2AD0A04B59A843EDF6 /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0609504E575B4BE39E6EACFB /* GalleryView.swift */; };
 		CC1A2B3D4E5F67890A1B2C3D /* ReceiptReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD1B2C3E4F5A67890B1C2D3E /* ReceiptReader.swift */; };
 		CF255DB3A7354E18BA86BF4A /* PhotoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FAA85BDC194859A6110CB7 /* PhotoDetailView.swift */; };
@@ -71,6 +72,7 @@
 		D9A0DBCC2A4149779ACBDCA0 /* CompassViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompassViews.swift; sourceTree = "<group>"; };
 		DD1B2C3E4F5A67890B1C2D3E /* ReceiptReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptReader.swift; sourceTree = "<group>"; };
 		F77D1FAD2EBE4F7982793EE8 /* VideoQuality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoQuality.swift; sourceTree = "<group>"; };
+		E67F7257E8164851BF4F74A0 /* ZoomableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableModifier.swift; sourceTree = "<group>"; };
 		FF1D2E3A4B5C67890D1E2F3A /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
 		HH1F2A3C4D5E67890F1A2B3C /* PhotoCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCameraView.swift; sourceTree = "<group>"; };
 		JJ1F2A3C4D5E67890F1A2B3C /* VolumeButtonObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeButtonObserver.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 				218E2A422BCA1F1800E99A2B /* BODYCamApp.swift */,
 				218E2A442BCA1F1800E99A2B /* ContentView.swift */,
 				F77D1FAD2EBE4F7982793EE8 /* VideoQuality.swift */,
+				E67F7257E8164851BF4F74A0 /* ZoomableModifier.swift */,
 				B8436551DF604CB09F1E7405 /* LocationManager.swift */,
 				5AD6AF32E74242948DF8DFC6 /* VideoCaptureDelegate.swift */,
 				D9A0DBCC2A4149779ACBDCA0 /* CompassViews.swift */,
@@ -233,6 +236,7 @@
 				218E2A432BCA1F1800E99A2B /* BODYCamApp.swift in Sources */,
 				215E96042BCA66B100634871 /* SceneDelegate.swift in Sources */,
 				B2926960C51244FCA6C7F6D8 /* VideoQuality.swift in Sources */,
+				1E3DD51F8D56400CB2FB9F25 /* ZoomableModifier.swift in Sources */,
 				2AA360407AAE42ED98107A5B /* LocationManager.swift in Sources */,
 				03333E9B8F9B459D905A847E /* VideoCaptureDelegate.swift in Sources */,
 				24719CE5DA5D404EBC484981 /* CompassViews.swift in Sources */,
