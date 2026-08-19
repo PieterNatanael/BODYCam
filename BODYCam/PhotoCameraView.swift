@@ -7,14 +7,18 @@ enum PhotoQuality: String, CaseIterable {
     case low  = "LOW"
     case med  = "MED"
     case high = "HIGH"
+    case max  = "MAX"
 
     /// Spatial scale applied before JPEG encoding.
     /// LOW = 0.5 → ¼ the pixels → dramatically smaller file even before compression.
+    /// Max's resolution boost happens earlier, at capture (see
+    /// PhotoCameraView.capturePhoto), so no extra scale is needed here.
     var spatialScale: CGFloat {
         switch self {
         case .low:  return 0.5
         case .med:  return 1.0
         case .high: return 1.0
+        case .max:  return 1.0
         }
     }
 
@@ -24,6 +28,7 @@ enum PhotoQuality: String, CaseIterable {
         case .low:  return 0.25
         case .med:  return 0.65
         case .high: return 0.92
+        case .max:  return 0.95
         }
     }
 }
@@ -671,6 +676,14 @@ struct PhotoCameraView: View {
         }
     }
 
+    /// The device's true maximum still image size, largest first so `.max`
+    /// can just take the first entry.
+    @available(iOS 16.0, *)
+    private static func bestPhotoDimensions(for device: AVCaptureDevice) -> CMVideoDimensions? {
+        device.activeFormat.supportedMaxPhotoDimensions
+            .max { Int64($0.width) * Int64($0.height) < Int64($1.width) * Int64($1.height) }
+    }
+
     // MARK: - Capture
 
     private func capturePhoto() {
@@ -679,7 +692,8 @@ struct PhotoCameraView: View {
         saveStatus  = .saving
 
         // Always request JPEG from the sensor — avoids HEIF/HEVC format issues.
-        // Quality differences are applied in the delegate via post-processing.
+        // Quality differences other than resolution are applied in the
+        // delegate via post-processing.
         let settings = AVCapturePhotoSettings(
             format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
 
@@ -705,6 +719,27 @@ struct PhotoCameraView: View {
         volumeObserver.silenceForCapture()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.06) {
             PhotoCameraView.sessionQueue.async {
+                // Computed fresh, right here, rather than cached at setup or on
+                // a settings change. The device backing this session can change
+                // out from under a cached value — most concretely, flipping to
+                // the front camera swaps in hardware with a much smaller
+                // ceiling — and a stale maxPhotoDimensions that no longer
+                // matches the CURRENT active format's supportedMaxPhotoDimensions
+                // throws inside AVFoundation rather than failing gracefully.
+                // Reading and applying it in the same breath as the capture
+                // call removes that gap entirely.
+                if #available(iOS 16.0, *), self.quality == .max,
+                   let session = self.captureSession,
+                   let device = session.inputs
+                       .compactMap({ $0 as? AVCaptureDeviceInput })
+                       .first(where: { $0.device.hasMediaType(.video) })?.device,
+                   let dims = PhotoCameraView.bestPhotoDimensions(for: device) {
+                    session.beginConfiguration()
+                    output.maxPhotoDimensions = dims
+                    session.commitConfiguration()
+                    settings.maxPhotoDimensions = dims
+                }
+
                 if let connection = output.connection(with: .video) {
                     connection.videoOrientation = captureOrientation
                 }
@@ -723,6 +758,15 @@ struct PhotoCameraView: View {
         PhotoCameraView.sessionQueue.async {
             session.beginConfiguration()
             for input in session.inputs { session.removeInput(input) }
+
+            // A ceiling raised for the outgoing device rarely matches the
+            // incoming one's own supportedMaxPhotoDimensions — most concretely,
+            // the front camera's sensor is smaller than the back one's. Reset
+            // it here, in the same transaction as the swap, so it can never be
+            // left pointing at a dimension the new device doesn't recognize.
+            if #available(iOS 16.0, *), let output = self.photoOutput {
+                output.maxPhotoDimensions = CMVideoDimensions(width: 0, height: 0)
+            }
 
             guard
                 let device = AVCaptureDevice.default(

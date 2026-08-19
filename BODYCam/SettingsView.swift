@@ -462,6 +462,12 @@ struct SettingsView: View {
                         }
                     }
                 }
+                if videoQuality == .max {
+                    Text("USES SIGNIFICANTLY MORE STORAGE AND BATTERY")
+                        .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                        .tracking(1)
+                        .foregroundColor(Color(white: 0.5))
+                }
             }
 
             VStack(alignment: .leading, spacing: 6) {
@@ -512,6 +518,12 @@ struct SettingsView: View {
                                 .background(qualityBackground(active: photoQuality == q))
                         }
                     }
+                }
+                if photoQuality == .max {
+                    Text("USES SIGNIFICANTLY MORE STORAGE")
+                        .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                        .tracking(1)
+                        .foregroundColor(Color(white: 0.5))
                 }
             }
         }

@@ -198,9 +198,8 @@ struct ContentView: View {
         // regardless of which tab's Settings sheet made the change.
         .onChange(of: selectedQuality) { newValue in
             ContentView.sessionQueue.async {
-                captureSession?.beginConfiguration()
-                captureSession?.sessionPreset = newValue.preset
-                captureSession?.commitConfiguration()
+                guard let session = captureSession else { return }
+                ContentView.applyQuality(newValue, to: session)
             }
         }
         .onChange(of: isLowLight) { newValue in
@@ -742,9 +741,7 @@ struct ContentView: View {
                 ], for: audioConnection)
             }
 
-            session.beginConfiguration()
-            session.sessionPreset = self.selectedQuality.preset
-            session.commitConfiguration()
+            ContentView.applyQuality(self.selectedQuality, to: session)
 
             session.startRunning()
 
@@ -771,18 +768,64 @@ struct ContentView: View {
         }
     }
 
+    // MARK: - Quality
+
+    /// Applies the selected tier to a running session. Every tier but Max
+    /// uses a fixed AVFoundation preset. Max instead switches the session to
+    /// .inputPriority and hands the device its own highest resolution format
+    /// directly — the same numbers AVFoundation's presets would otherwise cap
+    /// below on capable hardware. Static, and takes the session explicitly,
+    /// so it can run from the session queue without capturing `self`.
+    private static func applyQuality(_ quality: VideoQuality, to session: AVCaptureSession) {
+        guard let device = session.inputs
+            .compactMap({ $0 as? AVCaptureDeviceInput })
+            .first(where: { $0.device.hasMediaType(.video) })?.device
+        else { return }
+
+        session.beginConfiguration()
+        defer { session.commitConfiguration() }
+
+        guard quality == .max, let format = bestFormat(for: device) else {
+            // Switching the preset away from .inputPriority makes the session
+            // take back format management on its own, so no explicit reset of
+            // activeFormat is needed here even coming from Max.
+            session.sessionPreset = quality.preset
+            return
+        }
+
+        session.sessionPreset = .inputPriority
+        guard (try? device.lockForConfiguration()) != nil else { return }
+        device.activeFormat = format
+        device.unlockForConfiguration()
+    }
+
+    /// The device's own highest resolution capture format, chosen by pixel
+    /// area rather than width alone so an unusually shaped format can't win
+    /// on one dimension while losing on the other.
+    private static func bestFormat(for device: AVCaptureDevice) -> AVCaptureDevice.Format? {
+        device.formats.max { a, b in
+            let da = CMVideoFormatDescriptionGetDimensions(a.formatDescription)
+            let db = CMVideoFormatDescriptionGetDimensions(b.formatDescription)
+            return Int64(da.width) * Int64(da.height) < Int64(db.width) * Int64(db.height)
+        }
+    }
+
     // MARK: - Recording
 
     private func startRecording() {
         guard let videoOutput else { return }
 
-        // Check available storage before starting
+        // Check available storage before starting. The minimum scales with
+        // quality: Max can run several MB per second, so the same 50MB
+        // cushion that's plenty for Low would let the framework's own end of
+        // disk safety stop cut the recording off within seconds.
         let freeMB = availableStorageMB()
-        guard freeMB > 50 else {
+        let requiredMB = selectedQuality.minRecordingStorageMB
+        guard freeMB > requiredMB else {
             alertTitle = "Not Enough Storage"
             alertMessage = freeMB <= 0
                 ? "Unable to determine available storage. Free up space and try again."
-                : "Only \(freeMB) MB remaining. Free up storage space before recording."
+                : "Only \(freeMB) MB remaining. \(selectedQuality.shortLabel) quality needs at least \(requiredMB) MB free. Free up storage space or lower the quality before recording."
             showAlert = true
             return
         }
