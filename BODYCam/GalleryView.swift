@@ -164,7 +164,12 @@ struct GalleryView: View {
                     )
                 }
             } else {
-                Text("\(videos.count) item\(videos.count == 1 ? "" : "s")")
+                // Two full literal keys ("%lld item" / "%lld items") rather
+                // than a nested interpolation building the "s" suffix in
+                // code — the catalog can then hold a properly pluralized
+                // translation per language instead of an English-only rule
+                // baked into the source.
+                Text(videos.count == 1 ? "\(videos.count) item" : "\(videos.count) items")
                     .font(isFlatTheme ? .system(size: 12, weight: .bold, design: .monospaced) : .subheadline)
                     .foregroundColor(.white)
             }
