@@ -30,6 +30,16 @@ struct ScheduleSheet: View {
         mode == .alarm && !MediaScheduler.supportsAlarms
     }
 
+    // Resolved through NSLocalizedString before being interpolated into the
+    // sentences below — a plain Swift String interpolated into a
+    // LocalizedStringKey is inserted verbatim as data, not translated just
+    // because it happens to hold an English word.
+    private var mediaTypeWord: String {
+        item.isPhoto
+            ? NSLocalizedString("photo", comment: "The media type word, as in 'open this photo'")
+            : NSLocalizedString("video", comment: "The media type word, as in 'open this video'")
+    }
+
     var body: some View {
         NavigationView {
             Form {
@@ -70,13 +80,13 @@ struct ScheduleSheet: View {
                             Image(systemName: "alarm.fill")
                         }
                         Label {
-                            Text("Tap View on the alarm to open this \(item.isPhoto ? "photo" : "video").")
+                            Text("Tap View on the alarm to open this \(mediaTypeWord).")
                         } icon: {
                             Image(systemName: "eye.fill")
                         }
                     } else {
                         Label {
-                            Text("Tap the notification to open this \(item.isPhoto ? "photo" : "video").")
+                            Text("Tap the notification to open this \(mediaTypeWord).")
                         } icon: {
                             Image(systemName: "hand.tap.fill")
                         }

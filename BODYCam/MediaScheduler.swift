@@ -143,10 +143,18 @@ final class MediaScheduler {
         case notAuthorized
         case alarmsUnavailable
 
+        // NSLocalizedString rather than a plain literal: this is consumed both
+        // as errorDescription (LocalizedError's own String? requirement, so it
+        // has to already be display ready) and directly as ScheduleSheet's
+        // plain String errorMessage — neither has a Text() call site of its
+        // own to hang a LocalizedStringKey lookup off, so the lookup has to
+        // happen here instead.
         var messageKey: String {
             switch self {
-            case .notAuthorized:     return "Permission denied. Enable it in iOS Settings."
-            case .alarmsUnavailable: return "Alarms need iOS 26 or later."
+            case .notAuthorized:
+                return NSLocalizedString("Permission denied. Enable it in iOS Settings.", comment: "")
+            case .alarmsUnavailable:
+                return NSLocalizedString("Alarms need iOS 26 or later.", comment: "")
             }
         }
 
