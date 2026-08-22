@@ -12,8 +12,12 @@ struct ContentView: View {
     @AppStorage("SelectedVideoQuality") private var selectedQuality: VideoQuality = .high
     @AppStorage("IsLowLight") private var isLowLight: Bool = false
     @State private var isUsingFront  = false
-    @State private var alertTitle = ""
-    @State private var alertMessage = ""
+    // LocalizedStringKey rather than String: every assignment site below is
+    // a literal (with or without interpolation), which converts to this type
+    // automatically, and only this type makes Text(alertTitle)/Text(alertMessage)
+    // actually look the value up in Localizable.xcstrings.
+    @State private var alertTitle: LocalizedStringKey = ""
+    @State private var alertMessage: LocalizedStringKey = ""
     @State private var showAlert = false
     @State private var isScreenDimmed = false
     @State private var savedBrightness: CGFloat = UIScreen.main.brightness
@@ -39,8 +43,16 @@ struct ContentView: View {
     // Default only ever shows up before someone's typed or pasted anything of
     // their own — once yappingText is written to even once, this literal
     // never appears again for that user, on this device.
+    // NSLocalizedString rather than a plain literal: this is stored data in
+    // an editable TextEditor, not a label, so there's no Text() call site to
+    // hang a LocalizedStringKey lookup off — the lookup has to happen right
+    // here, once, in whatever language the device is in when this default is
+    // first evaluated. String(localized:) would do the same thing but needs
+    // iOS 15; NSLocalizedString reads the exact same compiled String Catalog
+    // table and works back to iOS 2.
     @AppStorage("YappingScriptText") private var yappingText: String =
-        "Replace this with your own text. Type or paste your script here. Press CLEAR to erase this text and start fresh."
+        NSLocalizedString("Replace this with your own text. Type or paste your script here. Press CLEAR to erase this text and start fresh.",
+                          comment: "Default Yapping mode script text, shown until the user types or pastes their own")
     @AppStorage("YappingNarrowColumn") private var yappingNarrow: Bool = false
     @State private var yappingPipCenter: CGPoint?
     @GestureState private var yappingPipDrag: CGSize = .zero
@@ -594,7 +606,7 @@ struct ContentView: View {
         }
     }
 
-    private func yappingChip(title: String, icon: String, action: @escaping () -> Void) -> some View {
+    private func yappingChip(title: LocalizedStringKey, icon: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 5) {
                 Image(systemName: icon).font(.system(size: 11))
