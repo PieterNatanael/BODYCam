@@ -101,7 +101,7 @@ struct PaywallView: View {
         )
     }
 
-    private func featureRow(icon: String, text: String) -> some View {
+    private func featureRow(icon: String, text: LocalizedStringKey) -> some View {
         HStack(spacing: 14) {
             Image(systemName: icon)
                 .font(.system(size: 15))
@@ -180,13 +180,23 @@ struct PaywallView: View {
         .padding(.top, 4)
     }
 
-    private var disclosureText: String {
+    // LocalizedStringKey rather than String — this is Apple-required
+    // disclosure text (guideline 3.1.2), so it needs to actually localize
+    // rather than just carry a translated `period` inside an English shell.
+    // `period` is resolved through NSLocalizedString BEFORE interpolation,
+    // since a plain Swift String interpolated into a LocalizedStringKey is
+    // inserted verbatim as data, not translated just because it happens to
+    // hold an English word.
+    private var disclosureText: LocalizedStringKey {
         let selected = subscriptionManager.selectedProductID
         let period: String
         switch selected {
-        case "com.lb.pro.weekly":  period = "week"
-        case "com.lb.pro.monthly": period = "month"
-        default:                   period = "year"
+        case "com.lb.pro.weekly":
+            period = NSLocalizedString("week", comment: "Subscription period, as in 'the current week'")
+        case "com.lb.pro.monthly":
+            period = NSLocalizedString("month", comment: "Subscription period, as in 'the current month'")
+        default:
+            period = NSLocalizedString("year", comment: "Subscription period, as in 'the current year'")
         }
         return """
         Payment will be charged to your Apple ID account at confirmation of purchase. \
@@ -269,7 +279,7 @@ struct PaywallView: View {
 
     // MARK: - Plan helpers
 
-    private func planName(for pid: String) -> String {
+    private func planName(for pid: String) -> LocalizedStringKey {
         switch pid {
         case "com.lb.pro.weekly":  return "Weekly"
         case "com.lb.pro.monthly": return "Monthly"
@@ -277,7 +287,7 @@ struct PaywallView: View {
         }
     }
 
-    private func periodLabel(for pid: String) -> String {
+    private func periodLabel(for pid: String) -> LocalizedStringKey {
         switch pid {
         case "com.lb.pro.weekly":  return "billed every 7 days · auto-renews"
         case "com.lb.pro.monthly": return "billed every 30 days · auto-renews"
@@ -285,7 +295,7 @@ struct PaywallView: View {
         }
     }
 
-    private func pricePeriod(for pid: String) -> String {
+    private func pricePeriod(for pid: String) -> LocalizedStringKey {
         switch pid {
         case "com.lb.pro.weekly":  return "/ week"
         case "com.lb.pro.monthly": return "/ month"
