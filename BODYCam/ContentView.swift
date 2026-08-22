@@ -9,7 +9,7 @@ struct ContentView: View {
     @State private var captureSession: AVCaptureSession?
     @State private var videoOutput: AVCaptureMovieFileOutput?
     @State private var videoURL: URL?
-    @AppStorage("SelectedVideoQuality") private var selectedQuality: VideoQuality = .low
+    @AppStorage("SelectedVideoQuality") private var selectedQuality: VideoQuality = .high
     @AppStorage("IsLowLight") private var isLowLight: Bool = false
     @State private var isUsingFront  = false
     @State private var alertTitle = ""
@@ -30,6 +30,20 @@ struct ContentView: View {
     private let recordingTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.normal.rawValue
     private var displayMode: CameraDisplayMode { CameraDisplayMode(rawValue: displayModeRaw) ?? .saveBattery }
+    // Yapping mode: script text takes the main area, the camera preview
+    // shrinks to a small draggable corner window instead. Text persists
+    // across launches like everything else here; the PiP's position is
+    // session only — resetting to a sensible default corner each time this
+    // view is rebuilt is simpler than persisting a point that has to stay
+    // valid across every screen size the app runs on.
+    // Default only ever shows up before someone's typed or pasted anything of
+    // their own — once yappingText is written to even once, this literal
+    // never appears again for that user, on this device.
+    @AppStorage("YappingScriptText") private var yappingText: String =
+        "Replace this with your own text. Type or paste your script here. Press CLEAR to erase this text and start fresh."
+    @AppStorage("YappingNarrowColumn") private var yappingNarrow: Bool = false
+    @State private var yappingPipCenter: CGPoint?
+    @GestureState private var yappingPipDrag: CGSize = .zero
     @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     // Simple and Tactical share the same flat/no-gradient/sharp-corner "bones";
@@ -81,6 +95,14 @@ struct ContentView: View {
         return min(natural, UIScreen.main.bounds.height - reserved)
     }
 
+    /// Reaches the screen's corners, the farthest a centered gradient ever has
+    /// to travel, so it reads as fully faded to black there rather than
+    /// stopping short on larger devices.
+    private var screenGlowRadius: CGFloat {
+        let size = UIScreen.main.bounds.size
+        return sqrt(size.width * size.width + size.height * size.height) / 2
+    }
+
     // Simple/Tactical: sharp corners + a bold flat accent border (or corner
     // brackets for Tactical), "frame as object" rather than the Normal theme's
     // subtle rounded card-with-depth look.
@@ -109,6 +131,14 @@ struct ContentView: View {
         ZStack {
             background
 
+            // Behind the preview rather than replacing it — the live preview
+            // stays the single shared instance below regardless of mode (see
+            // sharedPreviewLayer), so this can come and go freely without
+            // ever tearing down and recreating the expensive camera layer.
+            if displayMode == .yapping {
+                yappingTextArea
+            }
+
             sharedPreviewLayer
 
             // Top chrome differs by mode, but the record row (record button,
@@ -119,6 +149,21 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 topChrome
                 Spacer(minLength: 0)
+                if displayMode == .yapping {
+                    // Same leading padding as flip/dim below, so this sits
+                    // directly above that cluster rather than the text area's
+                    // own top, where it used to compete with the Premium badge.
+                    HStack(spacing: 10) {
+                        yappingChip(title: "CLEAR", icon: "xmark.circle") { yappingText = "" }
+                        yappingChip(title: yappingNarrow ? "WIDE" : "NARROW",
+                                   icon: yappingNarrow ? "arrow.left.and.right" : "arrow.right.and.left") {
+                            yappingNarrow.toggle()
+                        }
+                        Spacer()
+                    }
+                    .padding(.leading, 20)
+                    .padding(.bottom, 10)
+                }
                 recordRow
                     .padding(.bottom, bottomPad)
             }
@@ -225,8 +270,22 @@ struct ContentView: View {
     @ViewBuilder
     private var background: some View {
         if isFlatTheme {
-            // Bauhaus / Tactical: flat, no texture, no gradient.
-            Color.black.ignoresSafeArea()
+            if let glow = appTheme.cameraBackgroundGlow, displayMode == .saveBattery {
+                // Only relevant in Save Battery: that's the one mode where the
+                // preview is a centered card rather than filling the screen
+                // (Normal) or sharing it with script text (Yapping), so this
+                // is the only mode where a background glow is ever actually
+                // visible around it.
+                // startRadius reaches roughly the card's own edge — the card
+                // covers the true center, so a small startRadius meant the
+                // gradient had already faded well past full strength by the
+                // time it emerged from behind the card, reading as weak.
+                RadialGradient(colors: [glow, .black],
+                               center: .center, startRadius: previewCardWidth / 2, endRadius: screenGlowRadius)
+                    .ignoresSafeArea()
+            } else {
+                Color.black.ignoresSafeArea()
+            }
         } else {
             ZStack {
                 Image("pattern1").resizable().ignoresSafeArea()
@@ -346,16 +405,43 @@ struct ContentView: View {
         // so the bleed lands exactly at the top and exactly at the tab bar.
         GeometryReader { geo in
             let isNormal = displayMode == .normal
+            let isYapping = displayMode == .yapping
             let topInset = geo.safeAreaInsets.top
             let bottomInset = geo.safeAreaInsets.bottom
-            let w: CGFloat = isNormal
+
+            // Yapping's PiP center, draggable and clamped to stay fully on
+            // screen. Computed unconditionally (cheap) so the modifier chain
+            // below never has to branch in a way that would change the
+            // preview's view identity between modes.
+            let pipSize = CGSize(width: 108, height: 148)
+            let pipBaseCenter = yappingPipCenter
+                ?? CGPoint(x: geo.size.width - pipSize.width / 2 - 16, y: geo.size.height * 0.2)
+            let pipLiveCenter = CGPoint(x: pipBaseCenter.x + yappingPipDrag.width,
+                                        y: pipBaseCenter.y + yappingPipDrag.height)
+            let pipClampedCenter = CGPoint(
+                x: min(max(pipLiveCenter.x, pipSize.width / 2), geo.size.width - pipSize.width / 2),
+                y: min(max(pipLiveCenter.y, pipSize.height / 2), geo.size.height - pipSize.height / 2))
+
+            let w: CGFloat = isYapping ? pipSize.width : isNormal
                 ? geo.size.width + geo.safeAreaInsets.leading + geo.safeAreaInsets.trailing
                 : previewCardWidth
-            let h: CGFloat = isNormal ? geo.size.height + topInset + bottomInset : previewCardHeight
-            let verticalOffset: CGFloat = isNormal ? (bottomInset - topInset) / 2 : 0
-            let radius: CGFloat = isNormal ? 0 : previewCornerRadius
-            let borderColor: Color = isNormal ? Color.clear : previewBorderColor
-            let borderWidth: CGFloat = isNormal ? 0 : previewBorderWidth
+            let h: CGFloat = isYapping ? pipSize.height : isNormal ? geo.size.height + topInset + bottomInset : previewCardHeight
+            // An offset FROM the ZStack's default centered position, rather
+            // than an absolute .position(). .position() makes a view greedy
+            // for its parent's proposed size before placing it, which doesn't
+            // compose with ignoresSafeArea() the same way .offset() does —
+            // using it here left Normal mode's bleed short at the bottom
+            // edge, a thin black strip where the tab bar used to be covered.
+            // .offset() is what the original, working Normal/Save Battery
+            // logic used, so Yapping's drag is expressed the same way: as the
+            // offset from center that lands the PiP at its dragged point.
+            let offset: CGSize = isYapping
+                ? CGSize(width: pipClampedCenter.x - geo.size.width / 2,
+                        height: pipClampedCenter.y - geo.size.height / 2)
+                : CGSize(width: 0, height: isNormal ? (bottomInset - topInset) / 2 : 0)
+            let radius: CGFloat = isYapping ? 10 : isNormal ? 0 : previewCornerRadius
+            let borderColor: Color = isYapping ? Color.white.opacity(0.55) : isNormal ? Color.clear : previewBorderColor
+            let borderWidth: CGFloat = isYapping ? 1.5 : isNormal ? 0 : previewBorderWidth
             let placeholderFill: Color = (isFlatTheme || isNormal) ? Color.black : Color(white: 0.05)
             let accentColor: Color = isFlatTheme ? previewAccent : Color(white: 0.2)
             let decoration: PreviewFrameDecoration = isNormal ? .border : previewDecoration
@@ -383,8 +469,28 @@ struct ContentView: View {
                         previewBorderOverlay(radius: radius, color: borderColor,
                                               width: borderWidth, decoration: decoration)
                     )
-                    .offset(y: verticalOffset)
+                    .shadow(color: isYapping ? .black.opacity(0.5) : .clear, radius: isYapping ? 6 : 0, x: 0, y: 3)
+                    .offset(offset)
                     .ignoresSafeArea(.all, edges: isNormal ? .all : [])
+                    // A drag can never actually be recognized outside Yapping
+                    // — the minimum distance is effectively infinite — so this
+                    // is always attached rather than conditionally, keeping
+                    // the view identity above stable across every mode switch.
+                    // That stability is what makes switching fast; a
+                    // conditionally attached gesture doesn't itself break it,
+                    // but a conditionally attached VIEW upstream of it would.
+                    .gesture(
+                        DragGesture(minimumDistance: isYapping ? 0 : 100_000)
+                            .updating($yappingPipDrag) { value, state, _ in state = value.translation }
+                            .onEnded { value in
+                                guard isYapping else { return }
+                                let moved = CGPoint(x: pipBaseCenter.x + value.translation.width,
+                                                    y: pipBaseCenter.y + value.translation.height)
+                                yappingPipCenter = CGPoint(
+                                    x: min(max(moved.x, pipSize.width / 2), geo.size.width - pipSize.width / 2),
+                                    y: min(max(moved.y, pipSize.height / 2), geo.size.height - pipSize.height / 2))
+                            }
+                    )
                 }
 
                 // Shown only until the capture session is ready. The preview is
@@ -408,11 +514,101 @@ struct ContentView: View {
                         }
                     }
                     .frame(width: w, height: h)
-                    .offset(y: verticalOffset)
+                    .offset(offset)
                     .ignoresSafeArea(.all, edges: isNormal ? .all : [])
                 }
             }
             .frame(width: geo.size.width, height: geo.size.height)
+        }
+    }
+
+    // MARK: - Yapping mode
+    //
+    // A script fills the screen so it reads like a teleprompter, and the live
+    // camera preview (still the single shared instance above) shrinks to a
+    // small window the user can drag out of the way of whatever they're
+    // reading. Recording itself is untouched — same session, same record
+    // button below — this only changes what's on screen above it.
+
+    private var yappingTextArea: some View {
+        VStack(spacing: 10) {
+            yappingToolbar
+            yappingTextEditor
+        }
+        .padding(.top, 8)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black.ignoresSafeArea())
+    }
+
+    @ViewBuilder
+    private var yappingTextEditor: some View {
+        let editor = TextEditor(text: $yappingText)
+            .font(.system(size: yappingNarrow ? 26 : 22, weight: .semibold, design: .rounded))
+            .foregroundColor(.white)
+            .frame(maxWidth: yappingNarrow ? UIScreen.main.bounds.width * 0.62 : .infinity)
+            .padding(.horizontal, yappingNarrow ? 0 : 16)
+            .padding(.bottom, 140) // keeps the last lines clear of the record row
+
+        // .toolbar(placement: .keyboard) needs iOS 15, so Done sits in a
+        // keyboard accessory bar there — right above the keyboard, appearing
+        // only while it's up, rather than sharing the top row with the
+        // Premium badge where the two were colliding. Below iOS 15 it falls
+        // back to always being visible at the top, same as before.
+        if #available(iOS 16.0, *) {
+            editor
+                .scrollContentBackground(.hidden)
+                .background(Color.black)
+                .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); doneKeyboardButton } }
+        } else if #available(iOS 15.0, *) {
+            editor
+                .background(Color.black)
+                .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); doneKeyboardButton } }
+        } else {
+            editor.background(Color.black)
+        }
+    }
+
+    private var doneKeyboardButton: some View {
+        Button(action: {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                            to: nil, from: nil, for: nil)
+        }) {
+            Text("Done").font(.system(size: 15, weight: .bold))
+        }
+    }
+
+    // Only reachable below iOS 15, where there's no keyboard toolbar to put
+    // Done in instead — see yappingTextEditor. Clear and Narrow moved down to
+    // sit above the flip/dim buttons instead — see body.
+    @ViewBuilder
+    private var yappingToolbar: some View {
+        if #unavailable(iOS 15.0) {
+            HStack {
+                Spacer()
+                yappingChip(title: "DONE", icon: "keyboard.chevron.compact.down") {
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                                    to: nil, from: nil, for: nil)
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+    }
+
+    private func yappingChip(title: String, icon: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 5) {
+                Image(systemName: icon).font(.system(size: 11))
+                Text(title).font(.system(size: 11, weight: .bold, design: .monospaced)).tracking(1)
+            }
+            .foregroundColor(Color(white: 0.85))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6).fill(Color(white: 0.2))
+                    RoundedRectangle(cornerRadius: 6).stroke(Color(white: 0.45), lineWidth: 1)
+                }
+            )
         }
     }
 

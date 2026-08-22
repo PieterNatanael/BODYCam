@@ -12,6 +12,7 @@ struct VideoThumbnailCard: View {
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     private var isFlatTheme: Bool { appTheme.isFlat }
     private var accentColor: Color { appTheme.galleryAccent }
+    @AppStorage("ShowThumbnailMetadata") private var showThumbnailMetadata: Bool = false
 
     /// Fixed cell height. Declared once and used for the frame so the drawn
     /// content and the layout box can never disagree.
@@ -34,11 +35,6 @@ struct VideoThumbnailCard: View {
                 .overlay(thumbnailContent)
                 .clipped()
                 .cornerRadius(isFlatTheme ? 0 : 8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: isFlatTheme ? 0 : 8)
-                        .stroke(isFlatTheme ? accentColor : Color.clear,
-                                lineWidth: isFlatTheme ? 2 : 0)
-                )
                 // Media type badge, top trailing, so photos and videos are
                 // distinguishable at a glance in the mixed grid.
                 .overlay(
@@ -57,7 +53,9 @@ struct VideoThumbnailCard: View {
                     }
                 )
 
-            metadataPlate
+            if showThumbnailMetadata {
+                metadataPlate
+            }
         }
         .frame(maxWidth: .infinity, minHeight: Self.cellHeight, maxHeight: Self.cellHeight)
         // Pins the tappable region to exactly the cell box, rather than letting

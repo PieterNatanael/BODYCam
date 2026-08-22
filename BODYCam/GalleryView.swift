@@ -53,7 +53,7 @@ struct GalleryView: View {
                 // Persistent disclaimer footer
                 Text("Photos and videos may be lost due to bugs or device issues. Back up important footage.")
                     .font(.system(size: 10))
-                    .foregroundColor(isFlatTheme ? Color(white: 0.5) : Color(white: 0.35))
+                    .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 8)
@@ -107,9 +107,11 @@ struct GalleryView: View {
 
     @ViewBuilder
     private var background: some View {
-        if isFlatTheme {
-            // Bauhaus: flat, no texture, no gradient.
-            Color.black.ignoresSafeArea()
+        if let flatBackground = appTheme.galleryBackground {
+            // Flat theme's own ground colour — plain black for most, Matcha's
+            // theme green for Matcha, where it stands in for the thumbnail
+            // border that theme deliberately goes without.
+            flatBackground.ignoresSafeArea()
         } else {
             ZStack {
                 Image("pattern1").resizable().ignoresSafeArea()
@@ -164,7 +166,7 @@ struct GalleryView: View {
             } else {
                 Text("\(videos.count) item\(videos.count == 1 ? "" : "s")")
                     .font(isFlatTheme ? .system(size: 12, weight: .bold, design: .monospaced) : .subheadline)
-                    .foregroundColor(isFlatTheme ? Color(white: 0.6) : Color(white: 0.5))
+                    .foregroundColor(.white)
             }
         }
         .padding(.horizontal)
@@ -231,12 +233,12 @@ struct GalleryView: View {
     @ViewBuilder
     private var footerBackground: some View {
         if isFlatTheme {
-            VStack(spacing: 0) {
-                Rectangle().fill(accentColor).frame(height: 1)
-                Color.black
-            }
+            // No fill: the disclaimer just sits directly on the gallery's own
+            // background across every theme, rather than on a distinct bar.
+            // The thin accent line on top is a divider, not a background.
+            Rectangle().fill(accentColor).frame(height: 1).frame(maxHeight: .infinity, alignment: .top)
         } else {
-            Color.black.opacity(0.4)
+            Color.clear
         }
     }
 

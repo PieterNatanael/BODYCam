@@ -155,6 +155,14 @@ struct PhotoCameraView: View {
         return min(natural, UIScreen.main.bounds.height - reserved)
     }
 
+    /// Reaches the screen's corners, the farthest a centered gradient ever has
+    /// to travel, so it reads as fully faded to black there rather than
+    /// stopping short on larger devices.
+    private var screenGlowRadius: CGFloat {
+        let size = UIScreen.main.bounds.size
+        return sqrt(size.width * size.width + size.height * size.height) / 2
+    }
+
     // Simple/Tactical: sharp corners + a bold flat accent border (or corner
     // brackets for Tactical), "frame as object" rather than the Normal theme's
     // subtle rounded card-with-depth look.
@@ -244,8 +252,20 @@ struct PhotoCameraView: View {
     @ViewBuilder
     private var background: some View {
         if isFlatTheme {
-            // Bauhaus / Tactical: flat, no texture, no gradient.
-            Color.black.ignoresSafeArea()
+            // Not normal rather than == .saveBattery specifically: this tab has
+            // no separate Yapping treatment, so any non-normal mode already
+            // renders the same compact card the glow is meant to sit behind.
+            if let glow = appTheme.cameraBackgroundGlow, displayMode != .normal {
+                // startRadius reaches roughly the card's own edge — the card
+                // covers the true center, so a small startRadius meant the
+                // gradient had already faded well past full strength by the
+                // time it emerged from behind the card, reading as weak.
+                RadialGradient(colors: [glow, .black],
+                               center: .center, startRadius: previewCardWidth / 2, endRadius: screenGlowRadius)
+                    .ignoresSafeArea()
+            } else {
+                Color.black.ignoresSafeArea()
+            }
         } else {
             ZStack {
                 Image("pattern1").resizable().ignoresSafeArea()
@@ -676,12 +696,22 @@ struct PhotoCameraView: View {
         }
     }
 
-    /// The device's true maximum still image size, largest first so `.max`
-    /// can just take the first entry.
+    /// The still image size to request from `device` for a given tier: its true
+    /// maximum for Max, its smallest supported size otherwise.
+    ///
+    /// Always drawn from the device's CURRENT activeFormat, because those are
+    /// the only values AVFoundation will accept for maxPhotoDimensions — any
+    /// other value, including zero, throws rather than being rejected politely.
     @available(iOS 16.0, *)
-    private static func bestPhotoDimensions(for device: AVCaptureDevice) -> CMVideoDimensions? {
-        device.activeFormat.supportedMaxPhotoDimensions
-            .max { Int64($0.width) * Int64($0.height) < Int64($1.width) * Int64($1.height) }
+    private static func photoDimensions(for device: AVCaptureDevice,
+                                        quality: PhotoQuality) -> CMVideoDimensions? {
+        let supported = device.activeFormat.supportedMaxPhotoDimensions
+        let smallerByArea: (CMVideoDimensions, CMVideoDimensions) -> Bool = {
+            Int64($0.width) * Int64($0.height) < Int64($1.width) * Int64($1.height)
+        }
+        return quality == .max
+            ? supported.max(by: smallerByArea)
+            : supported.min(by: smallerByArea)
     }
 
     // MARK: - Capture
@@ -719,21 +749,22 @@ struct PhotoCameraView: View {
         volumeObserver.silenceForCapture()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.06) {
             PhotoCameraView.sessionQueue.async {
-                // Computed fresh, right here, rather than cached at setup or on
-                // a settings change. The device backing this session can change
-                // out from under a cached value — most concretely, flipping to
-                // the front camera swaps in hardware with a much smaller
-                // ceiling — and a stale maxPhotoDimensions that no longer
-                // matches the CURRENT active format's supportedMaxPhotoDimensions
-                // throws inside AVFoundation rather than failing gracefully.
-                // Reading and applying it in the same breath as the capture
-                // call removes that gap entirely.
-                if #available(iOS 16.0, *), self.quality == .max,
+                // The single place this property is ever written. Computed fresh
+                // from whichever device is attached RIGHT NOW, rather than
+                // cached at setup, on a settings change, or on a camera flip:
+                // the device can change out from under any cached value, and a
+                // maxPhotoDimensions that doesn't match the current active
+                // format's supportedMaxPhotoDimensions throws inside
+                // AVFoundation rather than failing gracefully. Applying it in
+                // the same breath as the capture call leaves no such window,
+                // and covers every tier so a value set for Max on one camera
+                // can't linger into a later shot on another.
+                if #available(iOS 16.0, *),
                    let session = self.captureSession,
                    let device = session.inputs
                        .compactMap({ $0 as? AVCaptureDeviceInput })
                        .first(where: { $0.device.hasMediaType(.video) })?.device,
-                   let dims = PhotoCameraView.bestPhotoDimensions(for: device) {
+                   let dims = PhotoCameraView.photoDimensions(for: device, quality: self.quality) {
                     session.beginConfiguration()
                     output.maxPhotoDimensions = dims
                     session.commitConfiguration()
@@ -759,15 +790,12 @@ struct PhotoCameraView: View {
             session.beginConfiguration()
             for input in session.inputs { session.removeInput(input) }
 
-            // A ceiling raised for the outgoing device rarely matches the
-            // incoming one's own supportedMaxPhotoDimensions — most concretely,
-            // the front camera's sensor is smaller than the back one's. Reset
-            // it here, in the same transaction as the swap, so it can never be
-            // left pointing at a dimension the new device doesn't recognize.
-            if #available(iOS 16.0, *), let output = self.photoOutput {
-                output.maxPhotoDimensions = CMVideoDimensions(width: 0, height: 0)
-            }
-
+            // Deliberately does NOT touch photoOutput.maxPhotoDimensions here.
+            // At this point every input is gone, so there is no video source
+            // device and no activeFormat to validate a new value against —
+            // AVFoundation throws on ANY value in that state, including zero.
+            // capturePhoto owns that property instead, setting it fresh from
+            // whichever device is attached at the moment of capture.
             guard
                 let device = AVCaptureDevice.default(
                     .builtInWideAngleCamera, for: .video, position: position),

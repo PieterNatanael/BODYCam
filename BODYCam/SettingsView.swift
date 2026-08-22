@@ -5,11 +5,13 @@ import SwiftUI
 enum CameraDisplayMode: String, CaseIterable {
     case saveBattery
     case normal
+    case yapping
 
     var title: String {
         switch self {
         case .saveBattery: return "SAVE BATTERY MODE"
         case .normal:       return "NORMAL MODE"
+        case .yapping:      return "YAPPING MODE"
         }
     }
 
@@ -17,6 +19,7 @@ enum CameraDisplayMode: String, CaseIterable {
         switch self {
         case .saveBattery: return "Compact preview, lower power use"
         case .normal:       return "Full screen preview, uses more battery"
+        case .yapping:      return "Script on screen, preview shrinks to a movable corner"
         }
     }
 
@@ -24,6 +27,7 @@ enum CameraDisplayMode: String, CaseIterable {
         switch self {
         case .saveBattery: return "battery.75"
         case .normal:       return "rectangle.fill"
+        case .yapping:      return "text.alignleft"
         }
     }
 }
@@ -172,6 +176,27 @@ extension AppTheme {
         case .normal:                     return 1
         }
     }
+
+    /// Gallery screen background. Nil keeps Normal's own textured pattern;
+    /// every other flat theme is plain black except Matcha, whose gallery
+    /// ground IS the theme colour rather than black behind bordered thumbnails.
+    /// A soft glow behind the Save Battery preview card, the theme colour at
+    /// its center fading out to black at the screen's edges. Nil for every
+    /// theme except Matcha, which otherwise stays plain black like the rest.
+    var cameraBackgroundGlow: Color? {
+        switch self {
+        case .matcha, .iceCream, .spider: return galleryAccent
+        default:                          return nil
+        }
+    }
+
+    var galleryBackground: Color? {
+        switch self {
+        case .normal:                      return nil
+        case .matcha, .iceCream, .spider:  return galleryAccent
+        default:                           return .black
+        }
+    }
 }
 
 extension Color {
@@ -279,11 +304,13 @@ struct CornerBrackets: Shape {
 
 struct SettingsView: View {
 
+    @Environment(\.presentationMode) private var presentationMode
     @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.normal.rawValue
     @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
-    @AppStorage("SelectedVideoQuality") private var videoQuality: VideoQuality = .low
+    @AppStorage("SelectedVideoQuality") private var videoQuality: VideoQuality = .high
     @AppStorage("IsLowLight") private var isLowLight: Bool = false
     @AppStorage("SelectedPhotoQuality") private var photoQuality: PhotoQuality = .high
+    @AppStorage("ShowThumbnailMetadata") private var showThumbnailMetadata: Bool = false
     @ObservedObject private var scheduleStore = ScheduleStore.shared
     @State private var showScheduledList = false
 
@@ -293,11 +320,19 @@ struct SettingsView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    Text("SETTINGS")
-                        .font(.system(size: 20, weight: .heavy, design: .monospaced))
-                        .tracking(3)
-                        .foregroundColor(.white)
-                        .padding(.top, 20)
+                    HStack {
+                        Text("SETTINGS")
+                            .font(.system(size: 20, weight: .heavy, design: .monospaced))
+                            .tracking(3)
+                            .foregroundColor(.white)
+                        Spacer()
+                        Button(action: { presentationMode.wrappedValue.dismiss() }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 26))
+                                .foregroundColor(Color(white: 0.6))
+                        }
+                    }
+                    .padding(.top, 20)
 
                     VStack(alignment: .leading, spacing: 10) {
                         sectionLabel("DISPLAY MODE")
@@ -322,6 +357,8 @@ struct SettingsView: View {
                     videoRecordSection
 
                     cameraRecordSection
+
+                    gallerySection
 
                     scheduledSection
 
@@ -524,6 +561,40 @@ struct SettingsView: View {
                         .font(.system(size: 9, weight: .semibold, design: .monospaced))
                         .tracking(1)
                         .foregroundColor(Color(white: 0.5))
+                }
+            }
+        }
+        .padding(16)
+        .background(cardBackground)
+    }
+
+    // MARK: - Gallery
+
+    private var gallerySection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            sectionLabel("GALLERY")
+
+            VStack(alignment: .leading, spacing: 6) {
+                sectionLabel("THUMBNAIL DATE AND TIME")
+                Button(action: { showThumbnailMetadata.toggle() }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: showThumbnailMetadata ? "clock.fill" : "clock")
+                            .font(.system(size: 14))
+                        Text(showThumbnailMetadata ? "ON" : "OFF")
+                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                            .tracking(1)
+                    }
+                    .foregroundColor(showThumbnailMetadata ? Color(white: 0.85) : Color(white: 0.4))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(showThumbnailMetadata ? Color(white: 0.25) : Color(white: 0.1))
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(showThumbnailMetadata ? Color(white: 0.45) : Color(white: 0.2), lineWidth: 1)
+                        }
+                    )
                 }
             }
         }

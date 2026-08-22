@@ -32,13 +32,7 @@ struct VideoPlayerView: View {
     @State private var autoHideSpent = false
     /// Persisted, so someone who wants looping doesn't have to re-enable it
     /// for every clip.
-    @AppStorage("LoopVideoPlayback") private var loopPlayback = false
-
-    /// Fires every 0.25 s to enforce the 15-second preview cap.
-    /// Only active while the view is visible — cancelled in .onDisappear.
-    private let previewTimer = Timer.publish(every: 0.25, on: .main, in: .common).autoconnect()
-
-    private static let previewLimit: Double = 15
+    @AppStorage("LoopVideoPlayback") private var loopPlayback = true
 
     enum SaveStatus { case saving, success, failure }
 
@@ -59,9 +53,6 @@ struct VideoPlayerView: View {
                 }
                 playerArea
                 if chromeVisible {
-                    if !subscriptionManager.isUnlocked {
-                        previewBanner
-                    }
                     actionBar
                 }
             }
@@ -121,30 +112,6 @@ struct VideoPlayerView: View {
                   finished === player?.currentItem else { return }
             player?.seek(to: .zero)
             player?.play()
-        }
-        // Enforce 15-second preview for free users
-        .onReceive(previewTimer) { _ in
-            guard !subscriptionManager.isUnlocked,
-                  let player = player,
-                  !showPaywall,
-                  // Only while actually playing — not just "sitting at the
-                  // limit." We pause and seek to exactly 15s below, so once
-                  // paused, "seconds >= limit" stays permanently true; without
-                  // this check, dismissing the paywall (which just flips
-                  // showPaywall back to false) would immediately fire this
-                  // again and reopen it, trapping the user in a loop with no
-                  // way to back out. Gating on rate != 0 means it only
-                  // re-triggers if they actually try to resume past the cap.
-                  player.rate != 0
-            else { return }
-
-            let seconds = player.currentTime().seconds
-            guard seconds.isFinite, seconds >= Self.previewLimit else { return }
-
-            player.pause()
-            player.seek(to: CMTime(seconds: Self.previewLimit,
-                                   preferredTimescale: 600))
-            showPaywall = true
         }
         .alert(isPresented: $showDeleteAlert) {
             Alert(
@@ -244,20 +211,6 @@ struct VideoPlayerView: View {
             autoHideSpent = true
             withAnimation(.easeInOut(duration: 0.25)) { chromeVisible = false }
         }
-    }
-
-    /// Shown below the player for free-tier users.
-    private var previewBanner: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "lock.fill")
-                .font(.system(size: 11))
-            Text("FREE PREVIEW (first 15 seconds only)")
-                .font(.system(size: 11, weight: .bold, design: .monospaced))
-        }
-        .foregroundColor(Color(white: 0.5))
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 7)
-        .background(Color(white: 0.07))
     }
 
     private var actionBar: some View {

@@ -88,9 +88,9 @@ struct PaywallView: View {
 
     private var featuresSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            featureRow(icon: "play.rectangle.fill",    text: "Full video playback, no 15 second cap")
             featureRow(icon: "square.and.arrow.down.fill", text: "Save photos and videos to your library")
             featureRow(icon: "square.and.arrow.up.fill",   text: "Share photos and videos")
+            featureRow(icon: "heart.fill",                 text: "Support ongoing development of the app")
         }
         .padding(20)
         .background(
