@@ -183,20 +183,22 @@ struct PaywallView: View {
     // LocalizedStringKey rather than String — this is Apple-required
     // disclosure text (guideline 3.1.2), so it needs to actually localize
     // rather than just carry a translated `period` inside an English shell.
-    // `period` is resolved through NSLocalizedString BEFORE interpolation,
+    // `period` is resolved through Bundle.appPreferred BEFORE interpolation,
     // since a plain Swift String interpolated into a LocalizedStringKey is
     // inserted verbatim as data, not translated just because it happens to
-    // hold an English word.
+    // hold an English word. Bundle.appPreferred rather than the bare
+    // NSLocalizedString function so this also respects an in-app language
+    // override, not just the device's own system language.
     private var disclosureText: LocalizedStringKey {
         let selected = subscriptionManager.selectedProductID
         let period: String
         switch selected {
         case "com.lb.pro.weekly":
-            period = NSLocalizedString("week", comment: "Subscription period, as in 'the current week'")
+            period = Bundle.appPreferred.localizedString(forKey: "week", value: nil, table: nil)
         case "com.lb.pro.monthly":
-            period = NSLocalizedString("month", comment: "Subscription period, as in 'the current month'")
+            period = Bundle.appPreferred.localizedString(forKey: "month", value: nil, table: nil)
         default:
-            period = NSLocalizedString("year", comment: "Subscription period, as in 'the current year'")
+            period = Bundle.appPreferred.localizedString(forKey: "year", value: nil, table: nil)
         }
         return """
         Payment will be charged to your Apple ID account at confirmation of purchase. \

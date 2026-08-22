@@ -1,5 +1,64 @@
 import SwiftUI
 
+// MARK: - App Language
+
+enum AppLanguage: String, CaseIterable {
+    case system
+    case en, ja, de, fr, zhHans, ko
+
+    /// Always rendered in that language's own script, regardless of the
+    /// app's current display language — so someone who ends up somewhere
+    /// they can't read can still recognize their own language by name, the
+    /// same convention iOS's own language picker uses. Deliberately a plain
+    /// String, not LocalizedStringKey: these must NEVER be looked up and
+    /// swapped for a translation of "English"/"German"/etc.
+    var nativeName: String {
+        switch self {
+        case .system: return "System"
+        case .en:     return "English"
+        case .ja:     return "日本語"
+        case .de:     return "Deutsch"
+        case .fr:     return "Français"
+        case .zhHans: return "简体中文"
+        case .ko:     return "한국어"
+        }
+    }
+
+    /// Nil for .system, meaning "don't override — follow the device".
+    var localeIdentifier: String? {
+        switch self {
+        case .system: return nil
+        case .en:     return "en"
+        case .ja:     return "ja"
+        case .de:     return "de"
+        case .fr:     return "fr"
+        case .zhHans: return "zh-Hans"
+        case .ko:     return "ko"
+        }
+    }
+}
+
+extension Bundle {
+    /// The bundle NSLocalizedString-style lookups should read from, honoring
+    /// the in-app language override — NSLocalizedString and Bundle.main
+    /// always follow the DEVICE's system language and have no way to see
+    /// SwiftUI's .environment(\.locale) override, which is what Text() calls
+    /// respect. Every hand-written lookup in this app (a handful of strings
+    /// that aren't literal Text() calls, like Yapping's default script and a
+    /// couple of alert messages) needs to go through this instead of the
+    /// bare NSLocalizedString(_:comment:) function, or those specific
+    /// strings would silently ignore the in-app override and only respond to
+    /// the phone's own language setting.
+    static var appPreferred: Bundle {
+        let raw = UserDefaults.standard.string(forKey: "AppLanguage") ?? AppLanguage.system.rawValue
+        guard let identifier = AppLanguage(rawValue: raw)?.localeIdentifier,
+              let path = Bundle.main.path(forResource: identifier, ofType: "lproj"),
+              let bundle = Bundle(path: path)
+        else { return .main }
+        return bundle
+    }
+}
+
 // MARK: - Display Mode
 
 enum CameraDisplayMode: String, CaseIterable {
@@ -311,6 +370,7 @@ struct SettingsView: View {
     @Environment(\.presentationMode) private var presentationMode
     @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.normal.rawValue
     @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
+    @AppStorage("AppLanguage") private var appLanguageRaw: String = AppLanguage.system.rawValue
     @AppStorage("SelectedVideoQuality") private var videoQuality: VideoQuality = .high
     @AppStorage("IsLowLight") private var isLowLight: Bool = false
     @AppStorage("SelectedPhotoQuality") private var photoQuality: PhotoQuality = .high
@@ -352,6 +412,15 @@ struct SettingsView: View {
                         VStack(spacing: 10) {
                             ForEach(AppTheme.allCases, id: \.self) { theme in
                                 themeRow(theme)
+                            }
+                        }
+                    }
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        sectionLabel("LANGUAGE")
+                        VStack(spacing: 10) {
+                            ForEach(AppLanguage.allCases, id: \.self) { language in
+                                languageRow(language)
                             }
                         }
                     }
@@ -729,6 +798,43 @@ struct SettingsView: View {
                         .font(.system(size: 10, design: .monospaced))
                         .foregroundColor(Color(white: 0.4))
                 }
+
+                Spacer()
+
+                Image(systemName: isActive ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 18))
+                    .foregroundColor(isActive ? Color(red: 1.0, green: 0.85, blue: 0.4) : Color(white: 0.3))
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(isActive ? Color(white: 0.16) : Color(white: 0.08))
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(isActive ? Color(white: 0.4) : Color(white: 0.2), lineWidth: 1)
+                }
+            )
+            .shadow(color: .black.opacity(0.4), radius: 3, x: 1, y: 2)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func languageRow(_ language: AppLanguage) -> some View {
+        let isActive = appLanguageRaw == language.rawValue
+        return Button(action: { appLanguageRaw = language.rawValue }) {
+            HStack(spacing: 14) {
+                Image(systemName: language == .system ? "iphone" : "globe")
+                    .font(.system(size: 20))
+                    .foregroundColor(isActive ? Color(red: 1.0, green: 0.85, blue: 0.4) : Color(white: 0.4))
+                    .frame(width: 26)
+
+                // nativeName is a plain String by design — it must never be
+                // looked up and swapped for a translated version of itself.
+                Text(language.nativeName)
+                    .font(.system(size: 13, weight: .bold, design: .monospaced))
+                    .tracking(1)
+                    .foregroundColor(isActive ? .white : Color(white: 0.6))
 
                 Spacer()
 

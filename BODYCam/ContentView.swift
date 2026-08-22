@@ -43,16 +43,16 @@ struct ContentView: View {
     // Default only ever shows up before someone's typed or pasted anything of
     // their own — once yappingText is written to even once, this literal
     // never appears again for that user, on this device.
-    // NSLocalizedString rather than a plain literal: this is stored data in
-    // an editable TextEditor, not a label, so there's no Text() call site to
-    // hang a LocalizedStringKey lookup off — the lookup has to happen right
-    // here, once, in whatever language the device is in when this default is
-    // first evaluated. String(localized:) would do the same thing but needs
-    // iOS 15; NSLocalizedString reads the exact same compiled String Catalog
-    // table and works back to iOS 2.
+    // This is stored data in an editable TextEditor, not a label, so there's
+    // no Text() call site to hang a LocalizedStringKey lookup off — the
+    // lookup has to happen right here, once, when this default is first
+    // evaluated. Bundle.appPreferred.localizedString rather than the bare
+    // NSLocalizedString function specifically so this respects an in-app
+    // language override too, not just the device's own system language.
     @AppStorage("YappingScriptText") private var yappingText: String =
-        NSLocalizedString("Replace this with your own text. Type or paste your script here. Press CLEAR to erase this text and start fresh.",
-                          comment: "Default Yapping mode script text, shown until the user types or pastes their own")
+        Bundle.appPreferred.localizedString(
+            forKey: "Replace this with your own text. Type or paste your script here. Press CLEAR to erase this text and start fresh.",
+            value: nil, table: nil)
     @AppStorage("YappingNarrowColumn") private var yappingNarrow: Bool = false
     @State private var yappingPipCenter: CGPoint?
     @GestureState private var yappingPipDrag: CGSize = .zero

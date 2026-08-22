@@ -30,14 +30,16 @@ struct ScheduleSheet: View {
         mode == .alarm && !MediaScheduler.supportsAlarms
     }
 
-    // Resolved through NSLocalizedString before being interpolated into the
-    // sentences below — a plain Swift String interpolated into a
-    // LocalizedStringKey is inserted verbatim as data, not translated just
-    // because it happens to hold an English word.
+    // Resolved before being interpolated into the sentences below — a plain
+    // Swift String interpolated into a LocalizedStringKey is inserted
+    // verbatim as data, not translated just because it happens to hold an
+    // English word. Bundle.appPreferred rather than the bare
+    // NSLocalizedString function so this respects an in-app language
+    // override too, not just the device's own system language.
     private var mediaTypeWord: String {
         item.isPhoto
-            ? NSLocalizedString("photo", comment: "The media type word, as in 'open this photo'")
-            : NSLocalizedString("video", comment: "The media type word, as in 'open this video'")
+            ? Bundle.appPreferred.localizedString(forKey: "photo", value: nil, table: nil)
+            : Bundle.appPreferred.localizedString(forKey: "video", value: nil, table: nil)
     }
 
     var body: some View {

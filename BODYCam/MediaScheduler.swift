@@ -143,18 +143,19 @@ final class MediaScheduler {
         case notAuthorized
         case alarmsUnavailable
 
-        // NSLocalizedString rather than a plain literal: this is consumed both
-        // as errorDescription (LocalizedError's own String? requirement, so it
-        // has to already be display ready) and directly as ScheduleSheet's
-        // plain String errorMessage — neither has a Text() call site of its
-        // own to hang a LocalizedStringKey lookup off, so the lookup has to
-        // happen here instead.
+        // This is consumed both as errorDescription (LocalizedError's own
+        // String? requirement, so it has to already be display ready) and
+        // directly as ScheduleSheet's plain String errorMessage — neither has
+        // a Text() call site of its own to hang a LocalizedStringKey lookup
+        // off, so the lookup has to happen here instead. Bundle.appPreferred
+        // rather than the bare NSLocalizedString function so this respects an
+        // in-app language override too, not just the device's own language.
         var messageKey: String {
             switch self {
             case .notAuthorized:
-                return NSLocalizedString("Permission denied. Enable it in iOS Settings.", comment: "")
+                return Bundle.appPreferred.localizedString(forKey: "Permission denied. Enable it in iOS Settings.", value: nil, table: nil)
             case .alarmsUnavailable:
-                return NSLocalizedString("Alarms need iOS 26 or later.", comment: "")
+                return Bundle.appPreferred.localizedString(forKey: "Alarms need iOS 26 or later.", value: nil, table: nil)
             }
         }
 
