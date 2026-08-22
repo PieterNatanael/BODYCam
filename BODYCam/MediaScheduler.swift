@@ -38,7 +38,10 @@ enum ScheduleMode: String, Identifiable {
 
     var id: String { rawValue }
 
-    var title: String {
+    // LocalizedStringKey rather than String: this flows into Label(_:systemImage:)
+    // and .navigationTitle(_:) at its call sites, and only that type actually
+    // triggers a Localizable.xcstrings lookup there.
+    var title: LocalizedStringKey {
         switch self {
         case .alarm:    return "Set as Alarm"
         case .reminder: return "Set as Reminder"

@@ -247,7 +247,7 @@ struct VideoPlayerView: View {
         .background(Color(white: 0.08))
     }
 
-    private func actionButton(icon: String, label: String,
+    private func actionButton(icon: String, label: LocalizedStringKey,
                                color: Color, locked: Bool,
                                action: @escaping () -> Void) -> some View {
         Button(action: action) {
@@ -302,7 +302,7 @@ struct VideoPlayerView: View {
         }
     }
 
-    private var saveLabel: String {
+    private var saveLabel: LocalizedStringKey {
         switch saveStatus {
         case .saving:  return "Saving…"
         case .success: return "Saved!"
