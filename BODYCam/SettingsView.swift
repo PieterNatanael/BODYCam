@@ -7,7 +7,11 @@ enum CameraDisplayMode: String, CaseIterable {
     case normal
     case yapping
 
-    var title: String {
+    // LocalizedStringKey rather than String: these flow straight into Text(),
+    // and only the LocalizedStringKey overload of Text's initializer actually
+    // looks a string up in Localizable.xcstrings — Text(String) just displays
+    // the raw value verbatim in every language.
+    var title: LocalizedStringKey {
         switch self {
         case .saveBattery: return "SAVE BATTERY MODE"
         case .normal:       return "NORMAL MODE"
@@ -15,7 +19,7 @@ enum CameraDisplayMode: String, CaseIterable {
         }
     }
 
-    var subtitle: String {
+    var subtitle: LocalizedStringKey {
         switch self {
         case .saveBattery: return "Compact preview, lower power use"
         case .normal:       return "Full screen preview, uses more battery"
@@ -42,7 +46,7 @@ enum AppTheme: String, CaseIterable {
     case iceCream
     case spider
 
-    var title: String {
+    var title: LocalizedStringKey {
         switch self {
         case .normal:   return "NORMAL"
         case .simple:   return "SIMPLE"
@@ -53,7 +57,7 @@ enum AppTheme: String, CaseIterable {
         }
     }
 
-    var subtitle: String {
+    var subtitle: LocalizedStringKey {
         switch self {
         case .normal:   return "Rugged textured look, current design"
         case .simple:   return "Flat Bauhaus style, bold shapes, no texture"
@@ -632,7 +636,7 @@ struct SettingsView: View {
         }
     }
 
-    private func sectionLabel(_ text: String) -> some View {
+    private func sectionLabel(_ text: LocalizedStringKey) -> some View {
         Text(text)
             .font(.system(size: 10, weight: .bold, design: .monospaced))
             .foregroundColor(Color(white: 0.4))
