@@ -76,6 +76,70 @@ func applyTapToFocus(session: AVCaptureSession?,
     }
 }
 
+/// Applies a zoom factor to the session's current video device, clamped to
+/// what that specific device actually supports. Deliberately reads the clamp
+/// from the device itself rather than a fixed range — hardware varies
+/// widely, a single lens iPhone tops out far lower than a multi lens Pro
+/// model — so the same call is correct on any of them without needing to
+/// know in advance which camera is attached.
+///
+/// `onApplied` reports back the value that actually landed, not the one
+/// requested, since a pinch gesture routinely asks for more zoom than the
+/// device can give and the caller needs the real number for its on screen
+/// readout.
+/// Picks the best available camera for a position, so pinch-zoom's range
+/// actually reflects what the hardware can do rather than being confined to
+/// whatever a single lens allows.
+///
+/// `.builtInWideAngleCamera` names ONE physical lens — its own zoom range
+/// bottoms out at 1x no matter the device, since there is no second lens to
+/// optically switch to below that, and its reported max is pure digital crop
+/// on that one sensor. A newer iPhone's 0.5x ultra-wide and its
+/// optically-assisted telephoto reach only exist behind the VIRTUAL
+/// multi-lens device types below, which is what actually reports a
+/// minAvailableVideoZoomFactor under 1 and switches lenses under the hood as
+/// videoZoomFactor crosses each one's threshold — the same device iOS's own
+/// Camera app uses for its 0.5x/1x/3x row. Tried in order from most lenses to
+/// fewest, since a Pro model supports every earlier case a non-Pro or
+/// single-lens model does, and the loop just stops at whichever this
+/// specific device actually has.
+///
+/// Front cameras never carry multiple lenses, so this always falls straight
+/// through to plain wide-angle there.
+func bestCaptureDevice(position: AVCaptureDevice.Position) -> AVCaptureDevice? {
+    if position == .back {
+        if let triple = AVCaptureDevice.default(.builtInTripleCamera, for: .video, position: .back) {
+            return triple
+        }
+        if let dualWide = AVCaptureDevice.default(.builtInDualWideCamera, for: .video, position: .back) {
+            return dualWide
+        }
+    }
+    return AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)
+}
+
+func applyZoom(_ factor: CGFloat, session: AVCaptureSession?, on queue: DispatchQueue,
+               onApplied: @escaping (CGFloat) -> Void) {
+    guard let session else { return }
+    queue.async {
+        guard let device = session.inputs
+            .compactMap({ $0 as? AVCaptureDeviceInput })
+            .first(where: { $0.device.hasMediaType(.video) })?.device
+        else { return }
+
+        let clamped = min(max(factor, device.minAvailableVideoZoomFactor),
+                          device.maxAvailableVideoZoomFactor)
+        do {
+            try device.lockForConfiguration()
+            device.videoZoomFactor = clamped
+            device.unlockForConfiguration()
+        } catch {
+            print("Zoom failed: \(error)")
+        }
+        DispatchQueue.main.async { onApplied(clamped) }
+    }
+}
+
 /// Restores continuous autofocus/exposure across the whole frame. Called after
 /// flipping cameras so the new camera doesn't inherit the old one's focus point.
 func resetFocusToContinuous(session: AVCaptureSession?, on queue: DispatchQueue) {
@@ -116,6 +180,11 @@ struct CameraPreviewView: UIViewRepresentable {
     var isPreviewActive: Bool = true
     /// Receives a normalized device point (0...1) when the user taps to focus.
     var onFocusTap: ((CGPoint) -> Void)? = nil
+    /// Receives the RAW requested zoom factor as a pinch progresses — not yet
+    /// clamped to the device's own range, since PreviewUIView has no queue to
+    /// safely read that from. The caller clamps and applies via applyZoom(),
+    /// same division of responsibility as onFocusTap.
+    var onPinchZoom: ((CGFloat) -> Void)? = nil
 
     func makeUIView(context: Context) -> PreviewUIView {
         let view = PreviewUIView()
@@ -123,12 +192,14 @@ struct CameraPreviewView: UIViewRepresentable {
         view.previewLayer.videoGravity = .resizeAspectFill
         view.applyCurrentOrientation()
         view.onFocusTap = onFocusTap
+        view.onPinchZoom = onPinchZoom
         view.setPreviewActive(isPreviewActive)
         return view
     }
 
     func updateUIView(_ uiView: PreviewUIView, context: Context) {
         uiView.onFocusTap = onFocusTap
+        uiView.onPinchZoom = onPinchZoom
         uiView.setPreviewActive(isPreviewActive)
     }
 
@@ -137,7 +208,12 @@ struct CameraPreviewView: UIViewRepresentable {
         var previewLayer: AVCaptureVideoPreviewLayer { layer as! AVCaptureVideoPreviewLayer }
 
         var onFocusTap: ((CGPoint) -> Void)?
+        var onPinchZoom: ((CGFloat) -> Void)?
         private weak var focusIndicator: UIView?
+        /// The device's own zoom factor at the moment a pinch begins, so the
+        /// gesture's scale (always relative to ITS OWN start, resetting to 1
+        /// on every new pinch) can be turned into an absolute factor.
+        private var pinchStartZoom: CGFloat = 1.0
 
         override init(frame: CGRect) {
             super.init(frame: frame)
@@ -151,6 +227,9 @@ struct CameraPreviewView: UIViewRepresentable {
             // and view coordinates do NOT map linearly onto the sensor.
             addGestureRecognizer(
                 UITapGestureRecognizer(target: self, action: #selector(handleFocusTap(_:)))
+            )
+            addGestureRecognizer(
+                UIPinchGestureRecognizer(target: self, action: #selector(handlePinchZoom(_:)))
             )
         }
 
@@ -182,6 +261,25 @@ struct CameraPreviewView: UIViewRepresentable {
             let devicePoint = previewLayer.captureDevicePointConverted(fromLayerPoint: viewPoint)
             showFocusIndicator(at: viewPoint)
             onFocusTap(devicePoint)
+        }
+
+        // UIPinchGestureRecognizer's scale is always relative to where THIS
+        // pinch started (resets to 1 on every new touch-down), not to the
+        // device's actual zoom — so the device's real current factor is
+        // captured once at .began and the running scale is applied on top of
+        // it, rather than ever reading scale as an absolute value.
+        @objc private func handlePinchZoom(_ recognizer: UIPinchGestureRecognizer) {
+            guard let onPinchZoom else { return }
+            switch recognizer.state {
+            case .began:
+                pinchStartZoom = (previewLayer.session?.inputs
+                    .compactMap { $0 as? AVCaptureDeviceInput }
+                    .first { $0.device.hasMediaType(.video) }?.device.videoZoomFactor) ?? 1.0
+            case .changed:
+                onPinchZoom(pinchStartZoom * recognizer.scale)
+            default:
+                break
+            }
         }
 
         /// Brief square at the tap point. Without visible feedback a tap that

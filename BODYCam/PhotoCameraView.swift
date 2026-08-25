@@ -106,6 +106,10 @@ struct PhotoCameraView: View {
 
     @AppStorage("SelectedPhotoQuality") private var quality: PhotoQuality = .high
     @State private var isUsingFront     = false
+    /// Mirrors the video device's own videoZoomFactor for the on screen
+    /// readout. Reset to 1 on flip, since a freshly attached device always
+    /// starts there regardless of what the previous camera was zoomed to.
+    @State private var zoomFactor: CGFloat = 1.0
     @State private var isCapturing      = false
     @State private var saveStatus: SaveStatus?
     @State private var isScreenDimmed   = false
@@ -380,12 +384,20 @@ struct PhotoCameraView: View {
                     // toggled imperatively, so every route back out of dim
                     // re-enables the preview automatically — there's no path
                     // that can leave it stuck off.
-                    CameraPreviewView(session: session,
-                                      isPreviewActive: !isScreenDimmed) { devicePoint in
-                        applyTapToFocus(session: captureSession,
-                                        devicePoint: devicePoint,
-                                        on: PhotoCameraView.sessionQueue)
-                    }
+                    CameraPreviewView(
+                        session: session,
+                        isPreviewActive: !isScreenDimmed,
+                        onFocusTap: { devicePoint in
+                            applyTapToFocus(session: captureSession,
+                                            devicePoint: devicePoint,
+                                            on: PhotoCameraView.sessionQueue)
+                        },
+                        onPinchZoom: { requested in
+                            applyZoom(requested, session: captureSession, on: PhotoCameraView.sessionQueue) { applied in
+                                zoomFactor = applied
+                            }
+                        }
+                    )
                     .frame(width: w, height: h)
                     .cornerRadius(radius)
                     .overlay(
@@ -514,9 +526,44 @@ struct PhotoCameraView: View {
                 }
                 .padding(.leading, 20)
                 Spacer()
-                settingsButton
-                    .padding(.trailing, 20)
+                HStack(spacing: 10) {
+                    zoomButton
+                    settingsButton
+                }
+                .padding(.trailing, 20)
             }
+        }
+    }
+
+    /// Tap resets to 1x — pinch does the actual zooming, this is the same
+    /// "double tap to reset" convention Photos uses, just as a persistent
+    /// button rather than a gesture, since the label doubles as a live
+    /// readout of the current factor.
+    private var zoomButton: some View {
+        Button(action: {
+            guard let session = captureSession else { return }
+            applyZoom(1.0, session: session, on: PhotoCameraView.sessionQueue) { applied in
+                zoomFactor = applied
+            }
+        }) {
+            Text(String(format: "%.1f×", zoomFactor))
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .foregroundColor(isFlatTheme ? previewAccent : Color(white: 0.75))
+                .frame(width: 44, height: 44)
+                .background(
+                    Group {
+                        if isFlatTheme {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.black)
+                                .overlay(RoundedRectangle(cornerRadius: 4).stroke(previewAccent, lineWidth: 2))
+                        } else {
+                            Circle()
+                                .fill(Color(white: 0.14))
+                                .overlay(Circle().stroke(Color(white: 0.3), lineWidth: 1))
+                                .shadow(color: .black.opacity(0.4), radius: 3, x: 1, y: 2)
+                        }
+                    }
+                )
         }
     }
 
@@ -670,8 +717,7 @@ struct PhotoCameraView: View {
             session.sessionPreset = .photo
 
             guard
-                let device = AVCaptureDevice.default(
-                    .builtInWideAngleCamera, for: .video, position: .back),
+                let device = bestCaptureDevice(position: .back),
                 let input = try? AVCaptureDeviceInput(device: device),
                 session.canAddInput(input)
             else {
@@ -784,11 +830,16 @@ struct PhotoCameraView: View {
     private func flipCamera() {
         guard let session = captureSession else { return }
         isUsingFront.toggle()
+        // The device being attached below always starts at 1x regardless of
+        // what the outgoing camera was zoomed to, so the readout follows suit
+        // immediately rather than showing a stale value from the old camera.
+        zoomFactor = 1.0
         let position: AVCaptureDevice.Position = isUsingFront ? .front : .back
 
         PhotoCameraView.sessionQueue.async {
             session.beginConfiguration()
-            for input in session.inputs { session.removeInput(input) }
+            let previousInputs = session.inputs.compactMap { $0 as? AVCaptureDeviceInput }
+            for input in previousInputs { session.removeInput(input) }
 
             // Deliberately does NOT touch photoOutput.maxPhotoDimensions here.
             // At this point every input is gone, so there is no video source
@@ -797,12 +848,22 @@ struct PhotoCameraView: View {
             // capturePhoto owns that property instead, setting it fresh from
             // whichever device is attached at the moment of capture.
             guard
-                let device = AVCaptureDevice.default(
-                    .builtInWideAngleCamera, for: .video, position: position),
+                let device = bestCaptureDevice(position: position),
                 let newInput = try? AVCaptureDeviceInput(device: device),
                 session.canAddInput(newInput)
             else {
+                // Put the previous camera back rather than committing a
+                // session with no input at all, which renders as a
+                // permanently black preview. This tab pins sessionPreset to
+                // .photo, which both cameras satisfy, so canAddInput isn't
+                // expected to fail here — but the video tab hit exactly this
+                // failure mode and a dead preview is far worse than a flip
+                // that simply doesn't happen.
+                for input in previousInputs where session.canAddInput(input) {
+                    session.addInput(input)
+                }
                 session.commitConfiguration()
+                DispatchQueue.main.async { self.isUsingFront.toggle() }
                 return
             }
             session.addInput(newInput)

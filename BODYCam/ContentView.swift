@@ -12,6 +12,10 @@ struct ContentView: View {
     @AppStorage("SelectedVideoQuality") private var selectedQuality: VideoQuality = .high
     @AppStorage("IsLowLight") private var isLowLight: Bool = false
     @State private var isUsingFront  = false
+    /// Mirrors the video device's own videoZoomFactor for the on screen
+    /// readout. Reset to 1 on flip, since a freshly attached device always
+    /// starts there regardless of what the previous camera was zoomed to.
+    @State private var zoomFactor: CGFloat = 1.0
     // LocalizedStringKey rather than String: every assignment site below is
     // a literal (with or without interpolation), which converts to this type
     // automatically, and only this type makes Text(alertTitle)/Text(alertMessage)
@@ -469,12 +473,20 @@ struct ContentView: View {
                     // (wake tap, stop recording, tab switch, backgrounding)
                     // re-enables the preview automatically — there's no path
                     // that can leave it stuck off.
-                    CameraPreviewView(session: session,
-                                      isPreviewActive: !isScreenDimmed) { devicePoint in
-                        applyTapToFocus(session: captureSession,
-                                        devicePoint: devicePoint,
-                                        on: ContentView.sessionQueue)
-                    }
+                    CameraPreviewView(
+                        session: session,
+                        isPreviewActive: !isScreenDimmed,
+                        onFocusTap: { devicePoint in
+                            applyTapToFocus(session: captureSession,
+                                            devicePoint: devicePoint,
+                                            on: ContentView.sessionQueue)
+                        },
+                        onPinchZoom: { requested in
+                            applyZoom(requested, session: captureSession, on: ContentView.sessionQueue) { applied in
+                                zoomFactor = applied
+                            }
+                        }
+                    )
                     .frame(width: w, height: h)
                     .cornerRadius(radius)
                     .overlay(
@@ -640,9 +652,44 @@ struct ContentView: View {
                 }
                 .padding(.leading, 20)
                 Spacer()
-                settingsButton
-                    .padding(.trailing, 20)
+                HStack(spacing: 10) {
+                    zoomButton
+                    settingsButton
+                }
+                .padding(.trailing, 20)
             }
+        }
+    }
+
+    /// Tap resets to 1x — pinch does the actual zooming, this is the same
+    /// "double tap to reset" convention Photos uses, just as a persistent
+    /// button rather than a gesture, since the label doubles as a live
+    /// readout of the current factor.
+    private var zoomButton: some View {
+        Button(action: {
+            guard let session = captureSession else { return }
+            applyZoom(1.0, session: session, on: ContentView.sessionQueue) { applied in
+                zoomFactor = applied
+            }
+        }) {
+            Text(String(format: "%.1f×", zoomFactor))
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .foregroundColor(isFlatTheme ? previewAccent : Color(white: 0.75))
+                .frame(width: 44, height: 44)
+                .background(
+                    Group {
+                        if isFlatTheme {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.black)
+                                .overlay(RoundedRectangle(cornerRadius: 4).stroke(previewAccent, lineWidth: 2))
+                        } else {
+                            Circle()
+                                .fill(Color(white: 0.14))
+                                .overlay(Circle().stroke(Color(white: 0.3), lineWidth: 1))
+                                .shadow(color: .black.opacity(0.4), radius: 3, x: 1, y: 2)
+                        }
+                    }
+                )
         }
     }
 
@@ -829,34 +876,80 @@ struct ContentView: View {
     private func flipCamera() {
         guard let session = captureSession, !isRecording else { return }
         isUsingFront.toggle()
+        // The device being attached below always starts at 1x regardless of
+        // what the outgoing camera was zoomed to, so the readout follows suit
+        // immediately rather than showing a stale value from the old camera.
+        zoomFactor = 1.0
         let position: AVCaptureDevice.Position = isUsingFront ? .front : .back
 
         ContentView.sessionQueue.async {
             session.beginConfiguration()
             // Remove only video inputs — keep the audio input
-            let videoInputs = session.inputs.compactMap { $0 as? AVCaptureDeviceInput }
+            let previousInputs = session.inputs.compactMap { $0 as? AVCaptureDeviceInput }
                 .filter { $0.device.hasMediaType(.video) }
-            for input in videoInputs { session.removeInput(input) }
+            for input in previousInputs { session.removeInput(input) }
+
+            // Drop to a preset both cameras support BEFORE attempting to
+            // attach the new one, because canAddInput below is evaluated
+            // against the session's CURRENT preset.
+            //
+            // This is the whole Max-only bug: Low/Medium/High resolve to
+            // presets every camera supports, but Max asks for the largest the
+            // DEVICE accepts, and the two cameras don't accept the same set —
+            // the back camera commonly does 4K while the front tops out at
+            // 1080p. With 4K still set from the back camera, adding the front
+            // camera failed canAddInput outright, and the early return then
+            // committed a session with NO video input at all. That's why the
+            // preview went fully black rather than merely looking wrong, and
+            // why switching to High first worked around it.
+            session.sessionPreset = .high
 
             guard
-                let device = AVCaptureDevice.default(
-                    .builtInWideAngleCamera, for: .video, position: position),
+                let device = bestCaptureDevice(position: position),
                 let newInput = try? AVCaptureDeviceInput(device: device),
                 session.canAddInput(newInput)
             else {
+                // Put the previous camera back, so a flip that can't happen
+                // degrades to "nothing changed" instead of a dead preview.
+                for input in previousInputs where session.canAddInput(input) {
+                    session.addInput(input)
+                }
                 session.commitConfiguration()
+                ContentView.applyQuality(self.selectedQuality, to: session)
+                // Undo the optimistic toggle, or the button would claim to be
+                // showing a camera that was never actually attached.
+                DispatchQueue.main.async { self.isUsingFront.toggle() }
                 return
             }
             session.addInput(newInput)
             session.commitConfiguration()
+
+            // Now re-evaluate the preset against the camera that's actually
+            // attached, so Max climbs back to whatever THIS one can do.
+            ContentView.applyQuality(self.selectedQuality, to: session)
+
             // Otherwise the newly selected camera inherits the previous one's
             // tap-to-focus point, which rarely makes sense for a different lens.
             resetFocusToContinuous(session: session, on: ContentView.sessionQueue)
         }
     }
 
-    private func applyLowLight(_ enabled: Bool) {
-        guard let device = AVCaptureDevice.default(for: .video) else { return }
+    // `overrideSession` exists for setupCaptureSession's own call: at that
+    // point the local `session` it just built isn't assigned to the
+    // `captureSession` @State property yet (that happens afterward, back on
+    // the main queue), so relying on self.captureSession there would read nil
+    // and silently skip applying the saved setting on every launch.
+    private func applyLowLight(_ enabled: Bool, overrideSession: AVCaptureSession? = nil) {
+        // The session's OWN current device, not the system's generic default
+        // — those silently stopped being the same object once the back
+        // camera started resolving to the virtual multi-lens device, and were
+        // never the same object at all on the front camera. Configuring the
+        // wrong AVCaptureDevice instance does nothing to the one actually
+        // attached, so this toggle would have quietly no-opped in both cases.
+        guard let device = (overrideSession ?? captureSession)?.inputs
+            .compactMap({ $0 as? AVCaptureDeviceInput })
+            .first(where: { $0.device.hasMediaType(.video) })?.device
+        else { return }
         ContentView.sessionQueue.async {
             do {
                 try device.lockForConfiguration()
@@ -903,7 +996,7 @@ struct ContentView: View {
 
             let session = AVCaptureSession()
 
-            guard let videoDevice = AVCaptureDevice.default(for: .video),
+            guard let videoDevice = bestCaptureDevice(position: .back),
                   let videoInput = try? AVCaptureDeviceInput(device: videoDevice),
                   session.canAddInput(videoInput) else {
                 print("Failed to configure video input.")
@@ -954,7 +1047,7 @@ struct ContentView: View {
             session.startRunning()
 
             // Apply saved low light setting after session starts
-            self.applyLowLight(self.isLowLight)
+            self.applyLowLight(self.isLowLight, overrideSession: session)
 
             DispatchQueue.main.async {
                 self.videoOutput = output
