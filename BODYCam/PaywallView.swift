@@ -73,7 +73,7 @@ struct PaywallView: View {
                     .foregroundColor(Color(white: 0.75))
             }
 
-            Text("LB CAMERA PRO")
+            Text(verbatim: "LBC PRO")
                 .font(.system(size: 26, weight: .black, design: .monospaced))
                 .foregroundColor(.white)
                 .tracking(4)
@@ -309,7 +309,7 @@ struct PaywallView: View {
 
     private var footerSection: some View {
         VStack(spacing: 10) {
-            Text("Bought LB Camera before April 2026? Your full access is restored automatically, no action needed.")
+            Text("Bought LBC before April 2026? Your full access is restored automatically, no action needed.")
                 .font(.system(size: 10, design: .monospaced))
                 .foregroundColor(Color(white: 0.32))
                 .multilineTextAlignment(.center)

@@ -73,7 +73,7 @@ struct ExplainView: View {
                 """)
                 .font(.title3)
                 .foregroundColor(.lightGray)
-            Text("LB Camera — Low Battery Camera is developed by Three Dollar.")
+            Text("LBC — Low Battery Camera is developed by Three Dollar.")
                 .font(.title3.bold())
                 .foregroundColor(.lightGray)
         }

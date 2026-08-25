@@ -43,7 +43,21 @@ struct RootView: View {
                 GalleryView()
                     .environmentObject(subscriptionManager)
                     .tabItem {
-                        Label("Gallery", systemImage: "film.stack")
+                        // The brand rather than the screen's function, so the
+                        // app's own name is present in the UI. Spelled out as
+                        // Label { Text(verbatim:) } rather than the shorthand
+                        // Label("LBC", systemImage:) because that shorthand
+                        // takes a LocalizedStringKey — Xcode would extract the
+                        // brand name into the string catalog as if it were
+                        // translatable prose, and a translator could
+                        // legitimately "translate" it. The screen's own header
+                        // still reads Gallery, translated, so the tab is
+                        // branding while the heading remains wayfinding.
+                        Label {
+                            Text(verbatim: "LBC")
+                        } icon: {
+                            Image(systemName: "film.stack")
+                        }
                     }
                     .tag(2)
             }

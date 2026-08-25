@@ -72,8 +72,12 @@ struct OnboardingView: View {
                 )
                 .shadow(color: .black.opacity(0.5), radius: 8, x: 0, y: 4)
 
-            // Product name, deliberately never localized.
-            Text("LBC")
+            // Text(verbatim:) rather than a plain literal: a bare Text("LBC")
+            // is a LocalizedStringKey, so Xcode extracts the product name into
+            // the string catalog as if it were translatable prose. verbatim
+            // keeps it out of the catalog entirely, which is what a brand name
+            // should be.
+            Text(verbatim: "LBC")
                 .font(.system(size: 30, weight: .heavy, design: .monospaced))
                 .foregroundColor(.lightGray)
                 .tracking(6)

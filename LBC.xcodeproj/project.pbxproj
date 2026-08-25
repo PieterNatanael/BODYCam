@@ -399,8 +399,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BODYCam/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "LB Camera needs access to your camera to record video and take photos. We do not collect any user data.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "LB Camera needs access to your microphone to record audio with your videos. We do not collect any user data.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "LBC needs access to your camera to record video and take photos. We do not collect any user data.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "LBC needs access to your microphone to record audio with your videos. We do not collect any user data.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -432,8 +432,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BODYCam/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "LB Camera needs access to your camera to record video and take photos. We do not collect any user data.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "LB Camera needs access to your microphone to record audio with your videos. We do not collect any user data.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "LBC needs access to your camera to record video and take photos. We do not collect any user data.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "LBC needs access to your microphone to record audio with your videos. We do not collect any user data.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
