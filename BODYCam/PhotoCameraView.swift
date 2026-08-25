@@ -239,6 +239,12 @@ struct PhotoCameraView: View {
             let session = captureSession
             PhotoCameraView.sessionQueue.async { session?.stopRunning() }
         }
+        // Reconfigure the moment the setting changes, while the user is still
+        // in Settings — not on the next shutter press, where the resulting
+        // session reconfiguration would race the capture itself.
+        .onChange(of: quality) { _ in
+            applyPhotoDimensions()
+        }
         // RootView → PhotoCameraView: restore brightness when user taps overlay
         .onReceive(NotificationCenter.default.publisher(for: .userRequestedWake)) { _ in
             wakeScreen()
@@ -738,6 +744,10 @@ struct PhotoCameraView: View {
             DispatchQueue.main.async {
                 self.photoOutput = output
                 self.captureSession = session
+                // Only now are photoOutput/captureSession set, which
+                // applyPhotoDimensions reads — hence here rather than beside
+                // startRunning above.
+                self.applyPhotoDimensions(overrideSession: session)
             }
         }
     }
@@ -760,18 +770,50 @@ struct PhotoCameraView: View {
             : supported.min(by: smallerByArea)
     }
 
+    /// Points the output's resolution ceiling at what the currently attached
+    /// camera supports for the selected tier.
+    ///
+    /// Call this only when a session reconfiguration is safe — after setup,
+    /// on a quality change, or after a camera flip — never immediately before
+    /// a capture, since committing a change to a running session drops the
+    /// video connection for a moment and any capture racing that will raise.
+    ///
+    /// `overrideSession` covers setupCaptureSession's own call, where the
+    /// session it just built has not been assigned to the @State property yet.
+    private func applyPhotoDimensions(overrideSession: AVCaptureSession? = nil) {
+        guard #available(iOS 16.0, *) else { return }
+        guard let session = overrideSession ?? captureSession,
+              let output = photoOutput else { return }
+        let selected = quality
+        PhotoCameraView.sessionQueue.async {
+            // Read the device INSIDE the queue: a flip may still be in flight,
+            // and a value drawn from a camera that is no longer attached is
+            // exactly what AVFoundation rejects.
+            guard let device = session.inputs
+                .compactMap({ $0 as? AVCaptureDeviceInput })
+                .first(where: { $0.device.hasMediaType(.video) })?.device,
+                  let dims = PhotoCameraView.photoDimensions(for: device, quality: selected)
+            else { return }
+
+            // Field by field: CMVideoDimensions is a plain C struct with no
+            // Equatable conformance. Skipping a no-op write matters beyond
+            // tidiness — committing an unchanged value still cycles the
+            // session's connections for nothing.
+            let current = output.maxPhotoDimensions
+            guard current.width != dims.width || current.height != dims.height else { return }
+
+            session.beginConfiguration()
+            output.maxPhotoDimensions = dims
+            session.commitConfiguration()
+        }
+    }
+
     // MARK: - Capture
 
     private func capturePhoto() {
         guard !isCapturing, let output = photoOutput else { return }
         isCapturing = true
         saveStatus  = .saving
-
-        // Always request JPEG from the sensor — avoids HEIF/HEVC format issues.
-        // Quality differences other than resolution are applied in the
-        // delegate via post-processing.
-        let settings = AVCapturePhotoSettings(
-            format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
 
         captureDelegate.quality = quality
         captureDelegate.onFinish = { success in
@@ -795,26 +837,38 @@ struct PhotoCameraView: View {
         volumeObserver.silenceForCapture()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.06) {
             PhotoCameraView.sessionQueue.async {
-                // The single place this property is ever written. Computed fresh
-                // from whichever device is attached RIGHT NOW, rather than
-                // cached at setup, on a settings change, or on a camera flip:
-                // the device can change out from under any cached value, and a
-                // maxPhotoDimensions that doesn't match the current active
-                // format's supportedMaxPhotoDimensions throws inside
-                // AVFoundation rather than failing gracefully. Applying it in
-                // the same breath as the capture call leaves no such window,
-                // and covers every tier so a value set for Max on one camera
-                // can't linger into a later shot on another.
-                if #available(iOS 16.0, *),
-                   let session = self.captureSession,
-                   let device = session.inputs
-                       .compactMap({ $0 as? AVCaptureDeviceInput })
-                       .first(where: { $0.device.hasMediaType(.video) })?.device,
-                   let dims = PhotoCameraView.photoDimensions(for: device, quality: self.quality) {
-                    session.beginConfiguration()
-                    output.maxPhotoDimensions = dims
-                    session.commitConfiguration()
-                    settings.maxPhotoDimensions = dims
+                // Deliberately does NOT reconfigure the session here.
+                //
+                // This used to wrap a maxPhotoDimensions change in
+                // beginConfiguration/commitConfiguration and then call
+                // capturePhoto immediately afterwards. Committing a change to a
+                // RUNNING session tears the video connection down and rebuilds
+                // it, so the capture landed while there was no active
+                // connection — which AVFoundation raises on rather than
+                // failing quietly.
+                //
+                // It only ever showed up right after a quality change because
+                // writing the SAME value back is a no-op that reconfigures
+                // nothing; only a genuinely different value forces the
+                // teardown. Relaunching appeared to fix it because a fresh
+                // output already defaults to what the non-Max tiers ask for, so
+                // that first capture changed nothing either.
+                //
+                // The output is now configured by applyPhotoDimensions() at the
+                // moments a reconfiguration is actually safe — after setup,
+                // when the quality setting changes, and after a camera flip —
+                // leaving this path to only READ what is already in place.
+                //
+                // JPEG is requested from the sensor to avoid HEIF/HEVC format
+                // issues; quality differences other than resolution are applied
+                // in the delegate via post-processing.
+                let settings = AVCapturePhotoSettings(
+                    format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
+                if #available(iOS 16.0, *) {
+                    let current = output.maxPhotoDimensions
+                    if current.width > 0 && current.height > 0 {
+                        settings.maxPhotoDimensions = current
+                    }
                 }
 
                 if let connection = output.connection(with: .video) {
@@ -871,6 +925,9 @@ struct PhotoCameraView: View {
             // Otherwise the newly selected camera inherits the previous one's
             // tap-to-focus point, which rarely makes sense for a different lens.
             resetFocusToContinuous(session: session, on: PhotoCameraView.sessionQueue)
+            // The incoming camera's supported sizes are its own, so the
+            // ceiling has to be recomputed against it rather than inherited.
+            DispatchQueue.main.async { self.applyPhotoDimensions() }
         }
     }
 
