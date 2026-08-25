@@ -262,7 +262,27 @@ extension AppTheme {
     }
 }
 
+/// Button fill used by the Disclaimer and Explain screens. Originally declared
+/// in CompassViews.swift alongside Color.lightGray; both moved here when that
+/// file (and the removed compass feature it belonged to) was deleted.
+var darkButtonGradient: LinearGradient {
+    LinearGradient(
+        gradient: Gradient(colors: [
+            Color(#colorLiteral(red: 0.255, green: 0.275, blue: 0.302, alpha: 1)),
+            Color(#colorLiteral(red: 0.392, green: 0.412, blue: 0.435, alpha: 1))
+        ]),
+        startPoint: .top, endPoint: .bottom
+    )
+}
+
 extension Color {
+    /// Neutral light grey used by the Normal theme's chrome across the Gallery,
+    /// both media viewers, and the disclaimer/explain screens. Originally
+    /// declared in CompassViews.swift; it moved here when that file (and the
+    /// removed compass feature it belonged to) was deleted, since this file is
+    /// already where the app's shared colour vocabulary lives.
+    static let lightGray = Color(#colorLiteral(red: 0.804, green: 0.804, blue: 0.804, alpha: 1))
+
     /// Black or white, whichever stays legible on top of this colour. Picked by
     /// Rec. 601 luma, which is plenty for a binary choice and means every theme
     /// accent (and the red delete / green save states) gets a readable glyph
@@ -434,6 +454,8 @@ struct SettingsView: View {
                     gallerySection
 
                     scheduledSection
+
+                    aboutSection
 
                     moreAppsSection
 
@@ -636,6 +658,50 @@ struct SettingsView: View {
                         .foregroundColor(Color(white: 0.5))
                 }
             }
+        }
+        .padding(16)
+        .background(cardBackground)
+    }
+
+    // MARK: - About
+
+    private var aboutSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            sectionLabel("ABOUT")
+
+            Button(action: {
+                // Cleared AND announced: RootView read this flag once when it
+                // was created, so clearing the default alone would not reopen
+                // anything until the next launch.
+                UserDefaults.standard.set(false, forKey: "hasSeenOnboarding")
+                NotificationCenter.default.post(name: .showOnboardingAgain, object: nil)
+                presentationMode.wrappedValue.dismiss()
+            }) {
+                HStack(spacing: 14) {
+                    Image(systemName: "info.circle")
+                        .font(.system(size: 18))
+                        .foregroundColor(Color(white: 0.6))
+                        .frame(width: 26)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("SHOW INTRO AGAIN")
+                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                            .tracking(1)
+                            .foregroundColor(Color(white: 0.85))
+                        Text("Permissions and safety notes")
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundColor(Color(white: 0.4))
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(Color(white: 0.35))
+                }
+                .padding(.vertical, 4)
+            }
+            .buttonStyle(.plain)
         }
         .padding(16)
         .background(cardBackground)

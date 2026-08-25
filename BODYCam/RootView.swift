@@ -14,7 +14,12 @@ struct RootView: View {
         Self.applyTabBarColors(for: AppTheme(rawValue: raw) ?? .normal)
     }
 
-    @State private var showDisclaimer = !UserDefaults.standard.bool(forKey: "hasSeenDisclaimer")
+    // Deliberately a NEW key rather than reusing "hasSeenDisclaimer": this
+    // screen now explains the app's permissions, which nobody who accepted the
+    // old warnings-only disclaimer has ever been shown. Reusing the old key
+    // would hide that from every existing user forever. The cost is one extra
+    // full screen, once, after updating — dismissed with a single tap.
+    @State private var showOnboarding = !UserDefaults.standard.bool(forKey: "hasSeenOnboarding")
     @State private var isScreenDimmed = false
     @State private var wakeHintBlink  = false
     @State private var selectedTab    = 0
@@ -103,11 +108,16 @@ struct RootView: View {
         .onChange(of: appThemeRaw) { _ in
             Self.applyTabBarColors(for: appTheme)
         }
-        .fullScreenCover(isPresented: $showDisclaimer) {
-            DisclaimerView {
-                UserDefaults.standard.set(true, forKey: "hasSeenDisclaimer")
-                showDisclaimer = false
+        .fullScreenCover(isPresented: $showOnboarding) {
+            OnboardingView {
+                UserDefaults.standard.set(true, forKey: "hasSeenOnboarding")
+                showOnboarding = false
             }
+        }
+        // Settings can clear the flag while this view is already alive, so the
+        // reset has to be observed rather than only read once at init.
+        .onReceive(NotificationCenter.default.publisher(for: .showOnboardingAgain)) { _ in
+            showOnboarding = true
         }
     }
 

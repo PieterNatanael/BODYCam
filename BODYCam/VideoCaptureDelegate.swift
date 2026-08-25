@@ -7,6 +7,10 @@ extension Notification.Name {
     static let screenDidDim      = Notification.Name("screenDidDim")
     static let screenDidWake     = Notification.Name("screenDidWake")
     static let userRequestedWake = Notification.Name("userRequestedWake")
+    /// Posted by Settings' "Show intro again" row. RootView owns the
+    /// onboarding cover, and Settings is presented as a sheet from a tab, so
+    /// there is no binding between them to write through.
+    static let showOnboardingAgain = Notification.Name("showOnboardingAgain")
 }
 
 // MARK: - Delegate
