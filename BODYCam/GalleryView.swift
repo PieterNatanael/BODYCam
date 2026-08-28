@@ -10,6 +10,14 @@ struct GalleryView: View {
     @ObservedObject private var notificationRouter = NotificationRouter.shared
     @ObservedObject private var scheduleStore = ScheduleStore.shared
     @State private var showScheduledList = false
+    /// Multi-select mode, modelled on the native gallery: entering it turns
+    /// taps into selection toggles rather than "open this item".
+    @State private var isSelecting = false
+    /// Keyed by VideoItem.id (the file URL) rather than by index, so the set
+    /// stays correct if the list is reloaded or reordered underneath it —
+    /// which happens whenever a recording is added or deleted.
+    @State private var selectedIDs: Set<URL> = []
+    @State private var showBatchDeleteAlert = false
     @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     private var isFlatTheme: Bool { appTheme.isFlat }
@@ -37,28 +45,44 @@ struct GalleryView: View {
                         LazyVGrid(columns: columns, spacing: gridSpacing) {
                             ForEach(videos) { video in
                                 VideoThumbnailCard(item: video)
-                                    .onTapGesture { selectedVideo = video }
-                                    .contextMenu {
-                                        Button("Delete") {
-                                            videoToDelete = video
-                                            showDeleteAlert = true
+                                    .overlay(selectionOverlay(for: video))
+                                    .onTapGesture {
+                                        if isSelecting {
+                                            toggleSelection(video)
+                                        } else {
+                                            selectedVideo = video
                                         }
                                     }
+                                    // Suppressed while selecting: a long press
+                                    // offering to delete ONE item contradicts a
+                                    // mode whose whole purpose is acting on a set.
+                                    .contextMenu(menuItems: {
+                                        if !isSelecting {
+                                            Button("Delete") {
+                                                videoToDelete = video
+                                                showDeleteAlert = true
+                                            }
+                                        }
+                                    })
                             }
                         }
                         .padding(gridSpacing)
                     }
                 }
 
-                // Persistent disclaimer footer
-                Text("Photos and videos may be lost due to bugs or device issues. Back up important footage.")
-                    .font(.system(size: 10))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 8)
-                    .frame(maxWidth: .infinity)
-                    .background(footerBackground)
+                if isSelecting {
+                    selectionActionBar
+                } else {
+                    // Persistent disclaimer footer
+                    Text("Photos and videos may be lost due to bugs or device issues. Back up important footage.")
+                        .font(.system(size: 10))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity)
+                        .background(footerBackground)
+                }
             }
         }
         .onAppear {
@@ -101,6 +125,7 @@ struct GalleryView: View {
         .sheet(isPresented: $showPaywall) {
             PaywallView().environmentObject(subscriptionManager)
         }
+        .modifier(TabBarHidden(hidden: isSelecting))
     }
 
     // MARK: - Sub-views
@@ -125,7 +150,17 @@ struct GalleryView: View {
 
     private var header: some View {
         HStack {
-            if isFlatTheme {
+            if isSelecting {
+                // The count replaces the title, so the thing most likely to be
+                // checked before tapping Delete is the most prominent text.
+                // One key, unlike the "%lld item/items" pair below: "Selected"
+                // reads the same for one or many, so a plural split would be
+                // two identical strings for translators to keep in sync.
+                Text("\(selectedIDs.count) Selected")
+                    .font(isFlatTheme ? .system(size: 20, weight: .heavy, design: .monospaced)
+                                      : .title2.bold())
+                    .foregroundColor(.white)
+            } else if isFlatTheme {
                 Text("GALLERY")
                     .font(.system(size: 22, weight: .heavy, design: .monospaced))
                     .tracking(3)
@@ -136,42 +171,57 @@ struct GalleryView: View {
                     .foregroundColor(.lightGray)
             }
             Spacer()
-            // Only present when something is actually waiting — a permanently
-            // visible button would be dead weight most of the time.
-            if !scheduleStore.items.isEmpty {
-                scheduledBadge
-            }
-            if !subscriptionManager.isUnlocked {
-                Button(action: { showPaywall = true }) {
-                    HStack(spacing: 5) {
-                        Image(systemName: "lock.fill")
-                            .font(.system(size: 11))
-                        Text("PREMIUM")
-                            .font(.system(size: 10, weight: .bold, design: .monospaced))
-                            .tracking(1)
-                    }
-                    .foregroundColor(isFlatTheme ? accentColor : Color(white: 0.85))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(
-                        ZStack {
-                            RoundedRectangle(cornerRadius: isFlatTheme ? 4 : 6)
-                                .fill(isFlatTheme ? Color.black : Color(white: 0.2))
-                            RoundedRectangle(cornerRadius: isFlatTheme ? 4 : 6)
-                                .stroke(isFlatTheme ? accentColor : Color(white: 0.45),
-                                        lineWidth: isFlatTheme ? 2 : 1)
-                        }
-                    )
+
+            if isSelecting {
+                headerChip(title: "Cancel") {
+                    isSelecting = false
+                    selectedIDs.removeAll()
                 }
             } else {
-                // Two full literal keys ("%lld item" / "%lld items") rather
-                // than a nested interpolation building the "s" suffix in
-                // code — the catalog can then hold a properly pluralized
-                // translation per language instead of an English-only rule
-                // baked into the source.
-                Text(videos.count == 1 ? "\(videos.count) item" : "\(videos.count) items")
-                    .font(isFlatTheme ? .system(size: 12, weight: .bold, design: .monospaced) : .subheadline)
-                    .foregroundColor(.white)
+                // Hidden with nothing to select, where it would only be a dead
+                // control — the empty state already explains the situation.
+                if !videos.isEmpty {
+                    headerChip(title: "Select") { isSelecting = true }
+                }
+                // Only present when something is actually waiting — a permanently
+                // visible button would be dead weight most of the time.
+                if !scheduleStore.items.isEmpty {
+                    scheduledBadge
+                }
+            }
+            if !isSelecting {
+                if !subscriptionManager.isUnlocked {
+                    Button(action: { showPaywall = true }) {
+                        HStack(spacing: 5) {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 11))
+                            Text("PREMIUM")
+                                .font(.system(size: 10, weight: .bold, design: .monospaced))
+                                .tracking(1)
+                        }
+                        .foregroundColor(isFlatTheme ? accentColor : Color(white: 0.85))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(
+                            ZStack {
+                                RoundedRectangle(cornerRadius: isFlatTheme ? 4 : 6)
+                                    .fill(isFlatTheme ? Color.black : Color(white: 0.2))
+                                RoundedRectangle(cornerRadius: isFlatTheme ? 4 : 6)
+                                    .stroke(isFlatTheme ? accentColor : Color(white: 0.45),
+                                            lineWidth: isFlatTheme ? 2 : 1)
+                            }
+                        )
+                    }
+                } else {
+                    // Two full literal keys ("%lld item" / "%lld items") rather
+                    // than a nested interpolation building the "s" suffix in
+                    // code — the catalog can then hold a properly pluralized
+                    // translation per language instead of an English-only rule
+                    // baked into the source.
+                    Text(videos.count == 1 ? "\(videos.count) item" : "\(videos.count) items")
+                        .font(isFlatTheme ? .system(size: 12, weight: .bold, design: .monospaced) : .subheadline)
+                        .foregroundColor(.white)
+                }
             }
         }
         .padding(.horizontal)
@@ -183,6 +233,100 @@ struct GalleryView: View {
         .sheet(isPresented: $showScheduledList) {
             ScheduledListSheet(store: scheduleStore)
         }
+    }
+
+    /// Small pill used by Select and Cancel, matching the visual weight of the
+    /// Premium and scheduled badges it sits beside.
+    private func headerChip(title: LocalizedStringKey, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .tracking(1)
+                .foregroundColor(isFlatTheme ? accentColor : Color(white: 0.85))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(
+                    ZStack {
+                        RoundedRectangle(cornerRadius: isFlatTheme ? 4 : 6)
+                            .fill(isFlatTheme ? Color.black : Color(white: 0.2))
+                        RoundedRectangle(cornerRadius: isFlatTheme ? 4 : 6)
+                            .stroke(isFlatTheme ? accentColor : Color(white: 0.45),
+                                    lineWidth: isFlatTheme ? 2 : 1)
+                    }
+                )
+        }
+        .padding(.trailing, 8)
+    }
+
+    /// Dims unselected thumbnails rather than only marking selected ones, so
+    /// what is included reads at a glance across a full grid.
+    @ViewBuilder
+    private func selectionOverlay(for item: VideoItem) -> some View {
+        if isSelecting {
+            let isOn = selectedIDs.contains(item.id)
+            ZStack(alignment: .topLeading) {
+                Rectangle()
+                    .fill(Color.black.opacity(isOn ? 0 : 0.45))
+
+                Image(systemName: isOn ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 22))
+                    .foregroundColor(isOn ? accentColor : Color.white.opacity(0.85))
+                    // Solid backing so the glyph stays legible over bright
+                    // footage, which a plain white circle does not.
+                    .background(Circle().fill(Color.black.opacity(0.5)).frame(width: 26, height: 26))
+                    .padding(8)
+            }
+            .allowsHitTesting(false)
+        }
+    }
+
+    /// Share and Delete, shown in place of the disclaimer footer while
+    /// selecting. Sits where the tab bar was, which is hidden on iOS 16+.
+    private var selectionActionBar: some View {
+        HStack(spacing: 0) {
+            selectionAction(icon: "square.and.arrow.up", title: "Share",
+                            tint: isFlatTheme ? accentColor : .lightGray) {
+                // Matches the single item viewers, where Share is premium and
+                // Delete is not — batch shouldn't be a way around that.
+                if subscriptionManager.isUnlocked { shareSelected() }
+                else { showPaywall = true }
+            }
+            selectionAction(icon: "trash", title: "Delete", tint: .red) {
+                showBatchDeleteAlert = true
+            }
+        }
+        .padding(.vertical, 10)
+        .background(Color(white: 0.08))
+        // Attached here rather than on the root ZStack, which already carries
+        // the single item delete alert — two .alert(isPresented:) on one view
+        // is where SwiftUI starts dropping one of them.
+        .alert(isPresented: $showBatchDeleteAlert) {
+            Alert(
+                title: Text(selectedIDs.count == 1 ? "Delete \(selectedIDs.count) item?"
+                                                   : "Delete \(selectedIDs.count) items?"),
+                message: Text("This cannot be undone."),
+                primaryButton: .destructive(Text("Delete")) { deleteSelected() },
+                secondaryButton: .cancel()
+            )
+        }
+    }
+
+    private func selectionAction(icon: String, title: LocalizedStringKey,
+                                 tint: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.system(size: 20, weight: .semibold))
+                Text(title)
+                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+            }
+            .foregroundColor(selectedIDs.isEmpty ? Color(white: 0.3) : tint)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 6)
+        }
+        // Nothing selected means nothing to act on; leaving these live would
+        // present a share sheet with no contents.
+        .disabled(selectedIDs.isEmpty)
     }
 
     /// Shortcut into the alarm/reminder list, with a count so it's obvious how
@@ -293,10 +437,94 @@ struct GalleryView: View {
         selectedVideo = match
     }
 
+    // MARK: - Selection
+
+    private func toggleSelection(_ item: VideoItem) {
+        if selectedIDs.contains(item.id) {
+            selectedIDs.remove(item.id)
+        } else {
+            selectedIDs.insert(item.id)
+        }
+    }
+
+    /// Selected items in the order they appear in the grid, not the arbitrary
+    /// order of a Set, so what gets shared or deleted matches what was seen.
+    private var selectedItems: [VideoItem] {
+        videos.filter { selectedIDs.contains($0.id) }
+    }
+
+    private func shareSelected() {
+        let urls = selectedItems.map { $0.url }
+        guard !urls.isEmpty else { return }
+
+        // File URLs, not loaded media — the count barely affects memory, so
+        // there is no reason to cap it. What actually limits a large share is
+        // total bytes and whatever the chosen destination will accept.
+        let activityVC = UIActivityViewController(activityItems: urls, applicationActivities: nil)
+
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let root = scene.windows.first?.rootViewController else { return }
+        var top = root
+        while let presented = top.presentedViewController { top = presented }
+
+        // Required on iPad, where a share sheet is a popover and presenting one
+        // without an anchor raises rather than falling back to a sheet. This
+        // app supports iPad orientations, so it is genuinely reachable.
+        if let popover = activityVC.popoverPresentationController {
+            popover.sourceView = top.view
+            popover.sourceRect = CGRect(x: top.view.bounds.midX,
+                                        y: top.view.bounds.maxY - 60,
+                                        width: 0, height: 0)
+            popover.permittedArrowDirections = []
+        }
+
+        activityVC.completionWithItemsHandler = { _, completed, _, _ in
+            // Only leave selection mode once something actually happened;
+            // dismissing the sheet to reconsider shouldn't discard the set.
+            if completed {
+                selectedIDs.removeAll()
+                isSelecting = false
+            }
+        }
+        top.present(activityVC, animated: true)
+    }
+
+    private func deleteSelected() {
+        // Snapshot first: delete(_:) mutates `videos`, so iterating it live
+        // would skip entries as the array shrinks underneath the loop.
+        let doomed = selectedItems
+        doomed.forEach(delete)
+        selectedIDs.removeAll()
+        isSelecting = false
+    }
+
     private func delete(_ video: VideoItem) {
         try? FileManager.default.removeItem(at: video.url)
         videos.removeAll { $0.id == video.id }
         // Any alarm/reminder pointing here would now fire and land on nothing.
         ScheduleStore.shared.removeAll(forFileName: video.url.lastPathComponent)
+    }
+}
+
+/// Hides the tab bar while multi-select is active, matching the native
+/// gallery, where the action bar takes over the bottom of the screen.
+///
+/// The API for this is iOS 16 and up; this app deploys to 14. Below that
+/// there is no supported way for a view inside a TabView to hide its bar, so
+/// it stays put and the action bar sits above it — visually less clean, but
+/// fully functional, and no user is blocked from anything.
+///
+/// The availability check reads as two branches, which normally risks
+/// changing view identity — harmless here because the OS version cannot
+/// change while the app is running, so a given install only ever takes one.
+private struct TabBarHidden: ViewModifier {
+    let hidden: Bool
+
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, *) {
+            content.toolbar(hidden ? .hidden : .visible, for: .tabBar)
+        } else {
+            content
+        }
     }
 }

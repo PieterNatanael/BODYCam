@@ -301,6 +301,17 @@ struct PhotoDetailView: View {
               let root = scene.windows.first?.rootViewController else { return }
         var top = root
         while let presented = top.presentedViewController { top = presented }
+
+        // Required on iPad, where a share sheet is a popover: presenting one
+        // with no anchor raises rather than falling back to a sheet. This app
+        // declares iPad orientations, so it is genuinely reachable there.
+        if let popover = activityVC.popoverPresentationController {
+            popover.sourceView = top.view
+            popover.sourceRect = CGRect(x: top.view.bounds.midX,
+                                        y: top.view.bounds.maxY - 60,
+                                        width: 0, height: 0)
+            popover.permittedArrowDirections = []
+        }
         top.present(activityVC, animated: true)
     }
 }

@@ -724,6 +724,40 @@
         }
       }
     },
+    "Bought LBC before April 2026? Your full access is restored automatically, no action needed.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hast du LBC vor April 2026 gekauft? Dein voller Zugriff wird automatisch wiederhergestellt, keine Aktion nötig."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous avez acheté LBC avant avril 2026 ? Votre accès complet est restauré automatiquement, aucune action nécessaire."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2026年4月より前にLBCを購入済みですか？特別な操作なしで、フルアクセスが自動的に復元されます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2026년 4월 이전에 LBC를 구매하셨나요? 별도 조치 없이 전체 기능이 자동으로 복원됩니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在2026年4月之前购买过 LBC？你的完整权限将自动恢复，无需任何操作。"
+          }
+        }
+      }
+    },
     "CAMERA": {
       "localizations": {
         "de": {
@@ -1712,7 +1746,7 @@
         }
       }
     },
-    "LB CAMERA PRO": {},
+    "LBC — Low Battery Camera is developed by Three Dollar.": {},
     "Low": {},
     "LOW LIGHT BOOST": {},
     "MATCHA": {
@@ -5035,36 +5069,138 @@
         }
       }
     },
-    "Bought LBC before April 2026? Your full access is restored automatically, no action needed.": {
+    "Select": {
       "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選択"
+          }
+        },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hast du LBC vor April 2026 gekauft? Dein voller Zugriff wird automatisch wiederhergestellt, keine Aktion nötig."
+            "value": "Auswählen"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vous avez acheté LBC avant avril 2026 ? Votre accès complet est restauré automatiquement, aucune action nécessaire."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "2026年4月より前にLBCを購入済みですか？特別な操作なしで、フルアクセスが自動的に復元されます。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "2026년 4월 이전에 LBC를 구매하셨나요? 별도 조치 없이 전체 기능이 자동으로 복원됩니다."
+            "value": "Sélect."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在2026年4月之前购买过 LBC？你的完整权限将自动恢复，无需任何操作。"
+            "value": "选择"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선택"
+          }
+        }
+      }
+    },
+    "%lld Selected": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld件を選択中"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ausgewählt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld sélectionné(s)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已选择 %lld 项"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 선택됨"
+          }
+        }
+      }
+    },
+    "Delete %lld item?": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld件を削除しますか？"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Element löschen?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer %lld élément ?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除 %lld 项？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 항목을 삭제할까요?"
+          }
+        }
+      }
+    },
+    "Delete %lld items?": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld件を削除しますか？"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Elemente löschen?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer %lld éléments ?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除 %lld 项？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 항목을 삭제할까요?"
           }
         }
       }
