@@ -116,6 +116,12 @@ struct PhotoCameraView: View {
     /// previous camera was set to.
     @State private var exposureBias: Float = 0
     @State private var isAutoLocked = false
+    /// The slider's actual bounds, read from whatever camera is currently
+    /// attached rather than a fixed guess — real hardware commonly supports
+    /// something like ±8, far past what a "typical scene" default would
+    /// suggest. -2...2 is a starting placeholder only, replaced the moment a
+    /// device is available; a taming-the-moon shot needs the true range.
+    @State private var exposureBiasRange: ClosedRange<Float> = -2...2
     @State private var isCapturing      = false
     @State private var saveStatus: SaveStatus?
     @State private var isScreenDimmed   = false
@@ -526,6 +532,20 @@ struct PhotoCameraView: View {
         }
     }
 
+    /// Re-reads the attached camera's true exposure bias range. Called after
+    /// initial setup and after every flip, since the front and back cameras
+    /// commonly report DIFFERENT ranges from each other.
+    private func refreshExposureBiasRange(session: AVCaptureSession?) {
+        currentExposureBiasRange(session: session, on: PhotoCameraView.sessionQueue) { range in
+            exposureBiasRange = range
+            // A range change can leave the current bias outside the new
+            // bounds (most concretely right after a flip, where the other
+            // camera's range may be narrower) — Slider requires its value stay
+            // within `in:`, so this pulls it back in rather than crashing.
+            exposureBias = min(max(exposureBias, range.lowerBound), range.upperBound)
+        }
+    }
+
     // MARK: - Pro mode
     //
     // Same compact preview card as Save Battery — this only adds a small
@@ -546,7 +566,7 @@ struct PhotoCameraView: View {
                             exposureBias = applied
                         }
                     }
-                ), in: -2...2)
+                ), in: exposureBiasRange)
                 Text(String(format: "%+.1f", exposureBias))
                     .font(.system(size: 11, weight: .bold, design: .monospaced))
                     .foregroundColor(Color(white: 0.7))
@@ -809,6 +829,7 @@ struct PhotoCameraView: View {
                 // applyPhotoDimensions reads — hence here rather than beside
                 // startRunning above.
                 self.applyPhotoDimensions(overrideSession: session)
+                self.refreshExposureBiasRange(session: session)
             }
         }
     }
@@ -990,7 +1011,14 @@ struct PhotoCameraView: View {
             resetFocusToContinuous(session: session, on: PhotoCameraView.sessionQueue)
             // The incoming camera's supported sizes are its own, so the
             // ceiling has to be recomputed against it rather than inherited.
-            DispatchQueue.main.async { self.applyPhotoDimensions() }
+            DispatchQueue.main.async {
+                self.applyPhotoDimensions()
+                // The front and back cameras commonly report DIFFERENT
+                // exposure bias ranges, so this can't just be reset to a
+                // fixed default — it has to be re-read from whichever camera
+                // is now attached.
+                self.refreshExposureBiasRange(session: session)
+            }
         }
     }
 

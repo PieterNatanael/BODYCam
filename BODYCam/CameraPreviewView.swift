@@ -166,6 +166,25 @@ func applyExposureBias(_ bias: Float, session: AVCaptureSession?, on queue: Disp
     }
 }
 
+/// Reads the CURRENT device's actual exposure bias range, so Pro mode's
+/// slider reflects real hardware limits rather than a fixed guess baked into
+/// the UI. Most iPhones report something on the order of ±8, far wider than a
+/// "comfortable everyday range" UI default — which matters for something
+/// like a bright moon against a dark sky, where taming the highlight needs
+/// far more negative compensation than an ordinary backlit-face shot would.
+func currentExposureBiasRange(session: AVCaptureSession?, on queue: DispatchQueue,
+                              onFetched: @escaping (ClosedRange<Float>) -> Void) {
+    guard let session else { return }
+    queue.async {
+        guard let device = session.inputs
+            .compactMap({ $0 as? AVCaptureDeviceInput })
+            .first(where: { $0.device.hasMediaType(.video) })?.device
+        else { return }
+        let range = device.minExposureTargetBias...device.maxExposureTargetBias
+        DispatchQueue.main.async { onFetched(range) }
+    }
+}
+
 /// Freezes (or restores) focus and exposure at whatever they currently are —
 /// Pro mode's AE/AF lock. A body cam moves and things constantly cross the
 /// frame, and continuous auto focus/exposure re-hunts every time something
