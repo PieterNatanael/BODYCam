@@ -253,6 +253,26 @@ struct ContentView: View {
             // can claim the hardware. iOS cannot run two sessions at once.
             let session = captureSession
             ContentView.sessionQueue.async { session?.stopRunning() }
+
+            // AVCaptureDevice.default(...) does not hand back a fresh object
+            // per session — it returns the SAME physical camera every time,
+            // and zoom/exposure bias/focus-exposure mode all live ON that
+            // device, not on the session or input. Stopping the session above
+            // does nothing to any of that, so without this, a manual
+            // adjustment made here would still be sitting on the hardware the
+            // next time the Photo tab claims it — even though ITS OWN zoom
+            // readout, EV slider, and lock button all show neutral, because
+            // each tab's @State only knows what IT set, never what the other
+            // tab left behind.
+            resetManualCameraAdjustments(session: session, on: ContentView.sessionQueue)
+            // The readouts themselves also need to go back to neutral here,
+            // not just the device — this tab's own @State persists across a
+            // tab switch (SwiftUI keeps every tab's view alive), so without
+            // this, returning later would show a stale "3.0x"/"-1.5" that no
+            // longer matches the hardware this just put back to neutral.
+            zoomFactor = 1.0
+            exposureBias = 0
+            isAutoLocked = false
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
             stopRecording()

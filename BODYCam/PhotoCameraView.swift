@@ -255,6 +255,17 @@ struct PhotoCameraView: View {
             // Release the camera so the Video tab can reclaim it
             let session = captureSession
             PhotoCameraView.sessionQueue.async { session?.stopRunning() }
+            // See ContentView's identical call for why this is needed beyond
+            // stopRunning: zoom/exposure bias/focus mode live on the shared
+            // physical device object, not on this (stopped) session.
+            resetManualCameraAdjustments(session: session, on: PhotoCameraView.sessionQueue)
+            // The readouts also need to go back to neutral here, not just the
+            // device — this tab's own @State persists across a tab switch, so
+            // without this, returning later would show a stale value that no
+            // longer matches the hardware this just put back to neutral.
+            zoomFactor = 1.0
+            exposureBias = 0
+            isAutoLocked = false
         }
         // Reconfigure the moment the setting changes, while the user is still
         // in Settings — not on the next shutter press, where the resulting

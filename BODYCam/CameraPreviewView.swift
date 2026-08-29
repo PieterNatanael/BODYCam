@@ -245,6 +245,44 @@ func resetFocusToContinuous(session: AVCaptureSession?, on queue: DispatchQueue)
     }
 }
 
+/// Puts zoom, exposure bias, and focus/exposure mode back to neutral on
+/// whatever device is currently attached.
+///
+/// Call this whenever a tab lets go of the camera (both ContentView and
+/// PhotoCameraView do, in onDisappear), not just on flip. AVCaptureDevice.default(...)
+/// does not hand back a fresh object per session — repeated calls return the
+/// SAME physical camera every time, and videoZoomFactor/exposureTargetBias/
+/// focusMode/exposureMode all live ON that device, not on the session or
+/// input. Stopping a session does nothing to any of that, so a manual
+/// adjustment made in one tab would otherwise still be sitting on the
+/// hardware the next time the other tab claims it — while that tab's OWN
+/// zoom readout, EV slider, and lock button all show neutral, since each
+/// tab's @State only knows what IT set, never what was left behind.
+func resetManualCameraAdjustments(session: AVCaptureSession?, on queue: DispatchQueue) {
+    guard let session else { return }
+    queue.async {
+        guard let device = session.inputs
+            .compactMap({ $0 as? AVCaptureDeviceInput })
+            .first(where: { $0.device.hasMediaType(.video) })?.device
+        else { return }
+
+        do {
+            try device.lockForConfiguration()
+            device.videoZoomFactor = 1.0
+            device.setExposureTargetBias(0, completionHandler: nil)
+            if device.isFocusModeSupported(.continuousAutoFocus) {
+                device.focusMode = .continuousAutoFocus
+            }
+            if device.isExposureModeSupported(.continuousAutoExposure) {
+                device.exposureMode = .continuousAutoExposure
+            }
+            device.unlockForConfiguration()
+        } catch {
+            print("Resetting manual camera adjustments failed: \(error)")
+        }
+    }
+}
+
 struct CameraPreviewView: UIViewRepresentable {
     let session: AVCaptureSession
     /// When false, the preview connection is switched off so no frames are
