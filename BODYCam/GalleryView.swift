@@ -4,8 +4,15 @@ struct GalleryView: View {
     @EnvironmentObject var subscriptionManager: SubscriptionManager
     @State private var videos: [VideoItem] = []
     @State private var selectedVideo: VideoItem?
-    @State private var videoToDelete: VideoItem?
-    @State private var showDeleteAlert = false
+    /// Both delete confirmations run through ONE alert.
+    ///
+    /// Two separate .alert(isPresented:) modifiers in the same hierarchy do
+    /// not both work: when an ancestor already has one, a descendant's is
+    /// silently ignored — the button visibly reacts and then nothing appears.
+    /// The sheets in this file dodge that by living on different subviews,
+    /// but alerts don't tolerate the same trick, so single and batch share a
+    /// single .alert(item:) on the root instead.
+    @State private var pendingDelete: PendingDelete?
     @State private var showPaywall = false
     @ObservedObject private var notificationRouter = NotificationRouter.shared
     @ObservedObject private var scheduleStore = ScheduleStore.shared
@@ -17,7 +24,6 @@ struct GalleryView: View {
     /// stays correct if the list is reloaded or reordered underneath it —
     /// which happens whenever a recording is added or deleted.
     @State private var selectedIDs: Set<URL> = []
-    @State private var showBatchDeleteAlert = false
     @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     private var isFlatTheme: Bool { appTheme.isFlat }
@@ -59,8 +65,7 @@ struct GalleryView: View {
                                     .contextMenu(menuItems: {
                                         if !isSelecting {
                                             Button("Delete") {
-                                                videoToDelete = video
-                                                showDeleteAlert = true
+                                                pendingDelete = .single(video)
                                             }
                                         }
                                     })
@@ -112,12 +117,22 @@ struct GalleryView: View {
             // was viewed last instead of the one just tapped.
             .id(item.id)
         }
-        .alert(isPresented: $showDeleteAlert) {
+        .alert(item: $pendingDelete) { pending in
             Alert(
-                title: Text("Delete video?"),
+                title: Text(pending.title),
                 message: Text("This cannot be undone."),
                 primaryButton: .destructive(Text("Delete")) {
-                    if let v = videoToDelete { delete(v) }
+                    switch pending {
+                    case .single(let video):
+                        delete(video)
+                    case .batch(let items):
+                        // Captured when the alert was raised, not re-read from
+                        // selection now: the set could in principle have moved
+                        // on, and the confirmation named a specific count.
+                        items.forEach(delete)
+                        selectedIDs.removeAll()
+                        isSelecting = false
+                    }
                 },
                 secondaryButton: .cancel()
             )
@@ -292,23 +307,14 @@ struct GalleryView: View {
                 else { showPaywall = true }
             }
             selectionAction(icon: "trash", title: "Delete", tint: .red) {
-                showBatchDeleteAlert = true
+                // Snapshot the selection into the alert itself. The alert is
+                // owned by the root view (see pendingDelete), so nothing here
+                // needs its own presentation modifier.
+                pendingDelete = .batch(selectedItems)
             }
         }
         .padding(.vertical, 10)
         .background(Color(white: 0.08))
-        // Attached here rather than on the root ZStack, which already carries
-        // the single item delete alert — two .alert(isPresented:) on one view
-        // is where SwiftUI starts dropping one of them.
-        .alert(isPresented: $showBatchDeleteAlert) {
-            Alert(
-                title: Text(selectedIDs.count == 1 ? "Delete \(selectedIDs.count) item?"
-                                                   : "Delete \(selectedIDs.count) items?"),
-                message: Text("This cannot be undone."),
-                primaryButton: .destructive(Text("Delete")) { deleteSelected() },
-                secondaryButton: .cancel()
-            )
-        }
     }
 
     private func selectionAction(icon: String, title: LocalizedStringKey,
@@ -489,15 +495,6 @@ struct GalleryView: View {
         top.present(activityVC, animated: true)
     }
 
-    private func deleteSelected() {
-        // Snapshot first: delete(_:) mutates `videos`, so iterating it live
-        // would skip entries as the array shrinks underneath the loop.
-        let doomed = selectedItems
-        doomed.forEach(delete)
-        selectedIDs.removeAll()
-        isSelecting = false
-    }
-
     private func delete(_ video: VideoItem) {
         try? FileManager.default.removeItem(at: video.url)
         videos.removeAll { $0.id == video.id }
@@ -525,6 +522,39 @@ private struct TabBarHidden: ViewModifier {
             content.toolbar(hidden ? .hidden : .visible, for: .tabBar)
         } else {
             content
+        }
+    }
+}
+
+/// What a pending delete confirmation refers to.
+///
+/// Carries the items themselves rather than just a count, so the alert acts
+/// on exactly the set that was on screen when it was raised, and so a single
+/// `.alert(item:)` on the root can serve both the long-press delete and the
+/// multi-select one. Two `.alert(isPresented:)` modifiers in one hierarchy do
+/// not both work — the descendant's is silently ignored.
+private enum PendingDelete: Identifiable {
+    case single(VideoItem)
+    case batch([VideoItem])
+
+    /// Distinct per presentation: SwiftUI only re-presents when the id
+    /// changes, so batches of the same size must not collide.
+    var id: String {
+        switch self {
+        case .single(let item):
+            return "single-\(item.id.absoluteString)"
+        case .batch(let items):
+            return "batch-" + items.map { $0.id.absoluteString }.joined(separator: "|")
+        }
+    }
+
+    var title: LocalizedStringKey {
+        switch self {
+        case .single:
+            return "Delete video?"
+        case .batch(let items):
+            return items.count == 1 ? "Delete \(items.count) item?"
+                                    : "Delete \(items.count) items?"
         }
     }
 }
