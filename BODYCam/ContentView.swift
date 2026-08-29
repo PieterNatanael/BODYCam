@@ -120,11 +120,40 @@ struct ContentView: View {
     // Clamped against screen height so it can't overflow on the smallest devices
     // (CameraPreviewView uses .resizeAspectFill, so a shorter frame just crops
     // the feed slightly rather than breaking layout).
-    private var previewCardWidth: CGFloat { UIScreen.main.bounds.width - 48 }
+    // UIScreen.main.bounds always reports the device's native PORTRAIT
+    // dimensions and never rotates with the interface — using it directly
+    // left the card sized as if the phone were always upright, so turning
+    // the phone sideways made it small and portrait-shaped inside a now-wide
+    // landscape screen. isLandscapeInterface + effectiveScreenSize correct
+    // for that; Normal mode never had this problem because it already sizes
+    // itself from GeometryReader's measured space instead of UIScreen.
+    private var isLandscapeInterface: Bool {
+        (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
+            .interfaceOrientation.isLandscape ?? false
+    }
+    private var effectiveScreenSize: CGSize {
+        let native = UIScreen.main.bounds.size
+        return isLandscapeInterface ? CGSize(width: native.height, height: native.width) : native
+    }
+
+    private var previewCardWidth: CGFloat {
+        // In landscape the card's width is DERIVED from its height (below)
+        // rather than the other way around, since landscape's binding
+        // constraint is vertical space, not horizontal.
+        isLandscapeInterface ? previewCardHeight * 4 / 3 : effectiveScreenSize.width - 48
+    }
     private var previewCardHeight: CGFloat {
-        let natural: CGFloat = previewCardWidth * 4 / 3
+        if isLandscapeInterface {
+            // Landscape has far less vertical room to begin with, and almost
+            // none of it goes to chrome — just the thin top strip and the
+            // record row itself — so the reserve here is much smaller than
+            // portrait's.
+            let reserved: CGFloat = isCompact ? 90 : 110
+            return effectiveScreenSize.height - reserved
+        }
+        let natural: CGFloat = (effectiveScreenSize.width - 48) * 4 / 3
         let reserved: CGFloat = isCompact ? 260 : 300
-        return min(natural, UIScreen.main.bounds.height - reserved)
+        return min(natural, effectiveScreenSize.height - reserved)
     }
 
     /// Reaches the screen's corners, the farthest a centered gradient ever has
