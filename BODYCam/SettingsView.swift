@@ -387,6 +387,30 @@ struct CornerBrackets: Shape {
     }
 }
 
+// MARK: - Rule of Thirds Grid
+//
+// Pro mode's composition aid: two evenly spaced vertical and horizontal
+// lines, dividing the preview into a 3x3 grid. Purely a Shape like the frame
+// decorations above — no relation to a theme, just overlaid on the preview
+// directly wherever it's toggled on.
+struct RuleOfThirdsGrid: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+
+        let x1 = rect.minX + rect.width / 3
+        let x2 = rect.minX + rect.width * 2 / 3
+        let y1 = rect.minY + rect.height / 3
+        let y2 = rect.minY + rect.height * 2 / 3
+
+        p.move(to: CGPoint(x: x1, y: rect.minY)); p.addLine(to: CGPoint(x: x1, y: rect.maxY))
+        p.move(to: CGPoint(x: x2, y: rect.minY)); p.addLine(to: CGPoint(x: x2, y: rect.maxY))
+        p.move(to: CGPoint(x: rect.minX, y: y1)); p.addLine(to: CGPoint(x: rect.maxX, y: y1))
+        p.move(to: CGPoint(x: rect.minX, y: y2)); p.addLine(to: CGPoint(x: rect.maxX, y: y2))
+
+        return p
+    }
+}
+
 // MARK: - SettingsView
 
 struct SettingsView: View {

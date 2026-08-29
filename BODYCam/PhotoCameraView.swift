@@ -105,6 +105,10 @@ struct PhotoCameraView: View {
     // MARK: - UI State
 
     @AppStorage("SelectedPhotoQuality") private var quality: PhotoQuality = .high
+    /// Pro mode's rule-of-thirds composition grid. Shared across tabs via
+    /// AppStorage — a preference about how you like to frame shots, not
+    /// something tied to one tab's own state the way zoom/exposure are.
+    @AppStorage("ShowGridLines") private var showGridLines: Bool = false
     @State private var isUsingFront     = false
     /// Mirrors the video device's own videoZoomFactor for the on screen
     /// readout. Reset to 1 on flip, since a freshly attached device always
@@ -198,6 +202,15 @@ struct PhotoCameraView: View {
             SpiderWebCorners(radius: 64).stroke(color, lineWidth: width)
         case .border:
             RoundedRectangle(cornerRadius: radius).stroke(color, lineWidth: width)
+        }
+    }
+
+    @ViewBuilder
+    private var gridLinesOverlay: some View {
+        if showGridLines {
+            RuleOfThirdsGrid()
+                .stroke(Color.white.opacity(0.6), lineWidth: 1)
+                .allowsHitTesting(false)
         }
     }
 
@@ -335,6 +348,15 @@ struct PhotoCameraView: View {
 
     private var toolbar: some View {
         HStack {
+            // The one spot in the top strip with genuinely free space:
+            // Normal and Yapping-equivalent modes fill or share this area,
+            // and Save Battery has nothing of its own to put here — Pro
+            // mode does.
+            if displayMode == .pro {
+                gridToggleButton
+                    .padding(.leading)
+            }
+
             Spacer()
             if !subscriptionManager.isUnlocked {
                 goProBadge
@@ -343,6 +365,23 @@ struct PhotoCameraView: View {
         }
         .padding(.vertical, 8)
         .frame(height: isCompact ? 34 : 42)
+    }
+
+    /// Lives in the top strip rather than the bottom panel with exposure/lock
+    /// — that panel is about the moment right before or during a capture,
+    /// while grid lines are a standing composition preference someone sets
+    /// once and leaves alone, closer in spirit to the top strip's other
+    /// persistent chrome.
+    private var gridToggleButton: some View {
+        Button(action: { showGridLines.toggle() }) {
+            Image(systemName: "grid")
+                .font(.system(size: 15, weight: .bold))
+                .foregroundColor(showGridLines ? Color(red: 1.0, green: 0.85, blue: 0.4) : Color(white: 0.6))
+                .frame(width: 30, height: 30)
+                .background(
+                    Circle().fill(Color.black.opacity(0.35))
+                )
+        }
     }
 
     private var goProBadge: some View {
@@ -438,6 +477,7 @@ struct PhotoCameraView: View {
                         previewBorderOverlay(radius: radius, color: borderColor,
                                               width: borderWidth, decoration: decoration)
                     )
+                    .overlay(gridLinesOverlay)
                     .offset(y: verticalOffset)
                     .ignoresSafeArea(.all, edges: isNormal ? .all : [])
                 }

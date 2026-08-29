@@ -11,6 +11,10 @@ struct ContentView: View {
     @State private var videoURL: URL?
     @AppStorage("SelectedVideoQuality") private var selectedQuality: VideoQuality = .high
     @AppStorage("IsLowLight") private var isLowLight: Bool = false
+    /// Pro mode's rule-of-thirds composition grid. Shared across tabs via
+    /// AppStorage — a preference about how you like to frame shots, not
+    /// something tied to one tab's own state the way zoom/exposure are.
+    @AppStorage("ShowGridLines") private var showGridLines: Bool = false
     @State private var isUsingFront  = false
     /// Mirrors the video device's own videoZoomFactor for the on screen
     /// readout. Reset to 1 on flip, since a freshly attached device always
@@ -150,6 +154,15 @@ struct ContentView: View {
             SpiderWebCorners(radius: 64).stroke(color, lineWidth: width)
         case .border:
             RoundedRectangle(cornerRadius: radius).stroke(color, lineWidth: width)
+        }
+    }
+
+    @ViewBuilder
+    private var gridLinesOverlay: some View {
+        if showGridLines {
+            RuleOfThirdsGrid()
+                .stroke(Color.white.opacity(0.6), lineWidth: 1)
+                .allowsHitTesting(false)
         }
     }
 
@@ -369,6 +382,14 @@ struct ContentView: View {
 
     private var toolbar: some View {
         HStack {
+            // The one spot in the top strip with genuinely free space:
+            // Normal and Yapping fill or share this area, and Save Battery
+            // has nothing of its own to put here — Pro mode does.
+            if displayMode == .pro {
+                gridToggleButton
+                    .padding(.leading)
+            }
+
             Spacer()
 
             // Go Pro button — hidden once subscribed
@@ -529,6 +550,12 @@ struct ContentView: View {
                         previewBorderOverlay(radius: radius, color: borderColor,
                                               width: borderWidth, decoration: decoration)
                     )
+                    // Always attached, content only varies with showGridLines
+                    // — same reasoning as previewBorderOverlay just above:
+                    // keeping the modifier itself unconditional is what keeps
+                    // CameraPreviewView's identity (and the fast mode
+                    // switching that depends on it) stable.
+                    .overlay(gridLinesOverlay)
                     .shadow(color: isYapping ? .black.opacity(0.5) : .clear, radius: isYapping ? 6 : 0, x: 0, y: 3)
                     .offset(offset)
                     .ignoresSafeArea(.all, edges: isNormal ? .all : [])
@@ -602,6 +629,23 @@ struct ContentView: View {
     // control strip above the record row, so the two panel exposure and
     // lock controls at the moments they're actually useful: before or during
     // a recording, without needing to leave the camera screen.
+
+    /// Lives in the top strip rather than the bottom panel with exposure/lock
+    /// — that panel is about the moment right before or during recording,
+    /// while grid lines are a standing composition preference someone sets
+    /// once and leaves alone, closer in spirit to the top strip's other
+    /// persistent chrome.
+    private var gridToggleButton: some View {
+        Button(action: { showGridLines.toggle() }) {
+            Image(systemName: "grid")
+                .font(.system(size: 15, weight: .bold))
+                .foregroundColor(showGridLines ? Color(red: 1.0, green: 0.85, blue: 0.4) : Color(white: 0.6))
+                .frame(width: 30, height: 30)
+                .background(
+                    Circle().fill(Color.black.opacity(0.35))
+                )
+        }
+    }
 
     private var proControlsPanel: some View {
         VStack(spacing: 10) {
