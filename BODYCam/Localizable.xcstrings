@@ -5204,6 +5204,142 @@
           }
         }
       }
+    },
+    "PRO MODE": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プロモード"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PRO-MODUS"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODE PRO"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "专业模式"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프로 모드"
+          }
+        }
+      }
+    },
+    "Compact preview, with manual exposure and focus lock": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コンパクトなプレビュー、露出とフォーカスを手動調整"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompakte Vorschau, mit manueller Belichtung und Fokussperre"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aperçu compact, avec exposition manuelle et verrouillage de la mise au point"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预览窗口更小，可手动调整曝光并锁定对焦"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "작은 미리보기, 수동 노출 및 초점 고정 지원"
+          }
+        }
+      }
+    },
+    "AE / AF LOCKED": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AE／AFロック中"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AE/AF GESPERRT"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AE/AF VERROUILLÉ"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AE/AF 已锁定"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AE/AF 잠금됨"
+          }
+        }
+      }
+    },
+    "LOCK AE / AF": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AE／AFをロック"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AE/AF SPERREN"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VERROUILLER AE/AF"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "锁定 AE/AF"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AE/AF 잠금"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

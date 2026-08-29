@@ -16,6 +16,12 @@ struct ContentView: View {
     /// readout. Reset to 1 on flip, since a freshly attached device always
     /// starts there regardless of what the previous camera was zoomed to.
     @State private var zoomFactor: CGFloat = 1.0
+    /// Pro mode's exposure compensation and AE/AF lock state. Both reset on
+    /// flip for the same reason zoomFactor does: a freshly attached device
+    /// always starts at 0 bias / continuous auto, regardless of what the
+    /// previous camera was set to.
+    @State private var exposureBias: Float = 0
+    @State private var isAutoLocked = false
     // LocalizedStringKey rather than String: every assignment site below is
     // a literal (with or without interpolation), which converts to this type
     // automatically, and only this type makes Text(alertTitle)/Text(alertMessage)
@@ -180,6 +186,11 @@ struct ContentView: View {
                     .padding(.leading, 20)
                     .padding(.bottom, 10)
                 }
+                if displayMode == .pro {
+                    proControlsPanel
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 10)
+                }
                 recordRow
                     .padding(.bottom, bottomPad)
             }
@@ -286,12 +297,11 @@ struct ContentView: View {
     @ViewBuilder
     private var background: some View {
         if isFlatTheme {
-            if let glow = appTheme.cameraBackgroundGlow, displayMode == .saveBattery {
-                // Only relevant in Save Battery: that's the one mode where the
-                // preview is a centered card rather than filling the screen
-                // (Normal) or sharing it with script text (Yapping), so this
-                // is the only mode where a background glow is ever actually
-                // visible around it.
+            if let glow = appTheme.cameraBackgroundGlow, displayMode == .saveBattery || displayMode == .pro {
+                // Relevant in Save Battery and Pro: both use the same centered
+                // card, unlike Normal (fills the screen) or Yapping (shares it
+                // with script text), so those two are the only modes where a
+                // background glow is ever actually visible around it.
                 // startRadius reaches roughly the card's own edge — the card
                 // covers the true center, so a small startRadius meant the
                 // gradient had already faded well past full strength by the
@@ -544,6 +554,60 @@ struct ContentView: View {
             }
             .frame(width: geo.size.width, height: geo.size.height)
         }
+    }
+
+    // MARK: - Pro mode
+    //
+    // Same compact preview card as Save Battery — this only adds a small
+    // control strip above the record row, so the two panel exposure and
+    // lock controls at the moments they're actually useful: before or during
+    // a recording, without needing to leave the camera screen.
+
+    private var proControlsPanel: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 10) {
+                Image(systemName: "sun.max.fill")
+                    .font(.system(size: 12))
+                    .foregroundColor(Color(white: 0.6))
+                Slider(value: Binding(
+                    get: { exposureBias },
+                    set: { newValue in
+                        exposureBias = newValue
+                        applyExposureBias(newValue, session: captureSession, on: ContentView.sessionQueue) { applied in
+                            exposureBias = applied
+                        }
+                    }
+                ), in: -2...2)
+                Text(String(format: "%+.1f", exposureBias))
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundColor(Color(white: 0.7))
+                    .frame(width: 40, alignment: .trailing)
+            }
+
+            Button(action: {
+                isAutoLocked.toggle()
+                setAutoLock(isAutoLocked, session: captureSession, on: ContentView.sessionQueue)
+            }) {
+                HStack(spacing: 6) {
+                    Image(systemName: isAutoLocked ? "lock.fill" : "lock.open.fill")
+                    // .tracking() applied here, not on the enclosing HStack:
+                    // Text has its own dedicated tracking modifier available
+                    // back to this app's iOS 14 floor, while the generic
+                    // View.tracking(_:) that an HStack would resolve to needs
+                    // iOS 16.
+                    Text(isAutoLocked ? "AE / AF LOCKED" : "LOCK AE / AF")
+                        .tracking(0.5)
+                }
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .foregroundColor(isAutoLocked ? .black : Color(white: 0.8))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .background(isAutoLocked ? Color(red: 1.0, green: 0.85, blue: 0.4) : Color(white: 0.15))
+                .cornerRadius(6)
+            }
+        }
+        .padding(12)
+        .background(RoundedRectangle(cornerRadius: 10).fill(Color.black.opacity(0.55)))
     }
 
     // MARK: - Yapping mode
@@ -880,6 +944,8 @@ struct ContentView: View {
         // what the outgoing camera was zoomed to, so the readout follows suit
         // immediately rather than showing a stale value from the old camera.
         zoomFactor = 1.0
+        exposureBias = 0
+        isAutoLocked = false
         let position: AVCaptureDevice.Position = isUsingFront ? .front : .back
 
         ContentView.sessionQueue.async {

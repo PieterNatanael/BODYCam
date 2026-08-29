@@ -140,6 +140,60 @@ func applyZoom(_ factor: CGFloat, session: AVCaptureSession?, on queue: Dispatch
     }
 }
 
+/// Applies exposure compensation (EV), clamped to the device's own supported
+/// range — Pro mode's brightness slider. Lets someone correct for a backlit
+/// or high-contrast scene before recording starts, rather than fighting
+/// whatever auto-exposure decides.
+func applyExposureBias(_ bias: Float, session: AVCaptureSession?, on queue: DispatchQueue,
+                       onApplied: @escaping (Float) -> Void) {
+    guard let session else { return }
+    queue.async {
+        guard let device = session.inputs
+            .compactMap({ $0 as? AVCaptureDeviceInput })
+            .first(where: { $0.device.hasMediaType(.video) })?.device
+        else { return }
+
+        let clamped = min(max(bias, device.minExposureTargetBias),
+                          device.maxExposureTargetBias)
+        do {
+            try device.lockForConfiguration()
+            device.setExposureTargetBias(clamped, completionHandler: nil)
+            device.unlockForConfiguration()
+        } catch {
+            print("Exposure bias failed: \(error)")
+        }
+        DispatchQueue.main.async { onApplied(clamped) }
+    }
+}
+
+/// Freezes (or restores) focus and exposure at whatever they currently are —
+/// Pro mode's AE/AF lock. A body cam moves and things constantly cross the
+/// frame, and continuous auto focus/exposure re-hunts every time something
+/// does; locking stops that mid-recording instability at the cost of no
+/// longer adapting if the actual lighting changes.
+func setAutoLock(_ locked: Bool, session: AVCaptureSession?, on queue: DispatchQueue) {
+    guard let session else { return }
+    queue.async {
+        guard let device = session.inputs
+            .compactMap({ $0 as? AVCaptureDeviceInput })
+            .first(where: { $0.device.hasMediaType(.video) })?.device
+        else { return }
+        do {
+            try device.lockForConfiguration()
+            if locked {
+                if device.isFocusModeSupported(.locked) { device.focusMode = .locked }
+                if device.isExposureModeSupported(.locked) { device.exposureMode = .locked }
+            } else {
+                if device.isFocusModeSupported(.continuousAutoFocus) { device.focusMode = .continuousAutoFocus }
+                if device.isExposureModeSupported(.continuousAutoExposure) { device.exposureMode = .continuousAutoExposure }
+            }
+            device.unlockForConfiguration()
+        } catch {
+            print("Auto lock toggle failed: \(error)")
+        }
+    }
+}
+
 /// Restores continuous autofocus/exposure across the whole frame. Called after
 /// flipping cameras so the new camera doesn't inherit the old one's focus point.
 func resetFocusToContinuous(session: AVCaptureSession?, on queue: DispatchQueue) {

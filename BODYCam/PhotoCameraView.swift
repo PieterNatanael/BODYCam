@@ -110,6 +110,12 @@ struct PhotoCameraView: View {
     /// readout. Reset to 1 on flip, since a freshly attached device always
     /// starts there regardless of what the previous camera was zoomed to.
     @State private var zoomFactor: CGFloat = 1.0
+    /// Pro mode's exposure compensation and AE/AF lock state. Both reset on
+    /// flip for the same reason zoomFactor does: a freshly attached device
+    /// always starts at 0 bias / continuous auto, regardless of what the
+    /// previous camera was set to.
+    @State private var exposureBias: Float = 0
+    @State private var isAutoLocked = false
     @State private var isCapturing      = false
     @State private var saveStatus: SaveStatus?
     @State private var isScreenDimmed   = false
@@ -206,6 +212,11 @@ struct PhotoCameraView: View {
                 Spacer()
                 statusLabel
                 Spacer().frame(height: isCompact ? 6 : 10)
+                if displayMode == .pro {
+                    proControlsPanel
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 10)
+                }
                 shutterRow
                     .padding(.bottom, bottomPad)
             }
@@ -513,6 +524,56 @@ struct PhotoCameraView: View {
             Text(" ")
                 .font(.system(size: 11, design: .monospaced))
         }
+    }
+
+    // MARK: - Pro mode
+    //
+    // Same compact preview card as Save Battery — this only adds a small
+    // control strip above the shutter row: exposure compensation and an
+    // AE/AF lock, mirroring the video tab's Pro mode controls.
+
+    private var proControlsPanel: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 10) {
+                Image(systemName: "sun.max.fill")
+                    .font(.system(size: 12))
+                    .foregroundColor(Color(white: 0.6))
+                Slider(value: Binding(
+                    get: { exposureBias },
+                    set: { newValue in
+                        exposureBias = newValue
+                        applyExposureBias(newValue, session: captureSession, on: PhotoCameraView.sessionQueue) { applied in
+                            exposureBias = applied
+                        }
+                    }
+                ), in: -2...2)
+                Text(String(format: "%+.1f", exposureBias))
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundColor(Color(white: 0.7))
+                    .frame(width: 40, alignment: .trailing)
+            }
+
+            Button(action: {
+                isAutoLocked.toggle()
+                setAutoLock(isAutoLocked, session: captureSession, on: PhotoCameraView.sessionQueue)
+            }) {
+                HStack(spacing: 6) {
+                    Image(systemName: isAutoLocked ? "lock.fill" : "lock.open.fill")
+                    // See ContentView's identical panel for why .tracking()
+                    // sits on the Text rather than the enclosing HStack.
+                    Text(isAutoLocked ? "AE / AF LOCKED" : "LOCK AE / AF")
+                        .tracking(0.5)
+                }
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .foregroundColor(isAutoLocked ? .black : Color(white: 0.8))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .background(isAutoLocked ? Color(red: 1.0, green: 0.85, blue: 0.4) : Color(white: 0.15))
+                .cornerRadius(6)
+            }
+        }
+        .padding(12)
+        .background(RoundedRectangle(cornerRadius: 10).fill(Color.black.opacity(0.55)))
     }
 
     // MARK: - Shutter button
@@ -888,6 +949,8 @@ struct PhotoCameraView: View {
         // what the outgoing camera was zoomed to, so the readout follows suit
         // immediately rather than showing a stale value from the old camera.
         zoomFactor = 1.0
+        exposureBias = 0
+        isAutoLocked = false
         let position: AVCaptureDevice.Position = isUsingFront ? .front : .back
 
         PhotoCameraView.sessionQueue.async {

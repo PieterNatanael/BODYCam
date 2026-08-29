@@ -65,6 +65,7 @@ enum CameraDisplayMode: String, CaseIterable {
     case saveBattery
     case normal
     case yapping
+    case pro
 
     // LocalizedStringKey rather than String: these flow straight into Text(),
     // and only the LocalizedStringKey overload of Text's initializer actually
@@ -75,6 +76,7 @@ enum CameraDisplayMode: String, CaseIterable {
         case .saveBattery: return "SAVE BATTERY MODE"
         case .normal:       return "NORMAL MODE"
         case .yapping:      return "YAPPING MODE"
+        case .pro:          return "PRO MODE"
         }
     }
 
@@ -83,6 +85,7 @@ enum CameraDisplayMode: String, CaseIterable {
         case .saveBattery: return "Compact preview, lower power use"
         case .normal:       return "Full screen preview, uses more battery"
         case .yapping:      return "Script on screen, preview shrinks to a movable corner"
+        case .pro:          return "Compact preview, with manual exposure and focus lock"
         }
     }
 
@@ -91,6 +94,7 @@ enum CameraDisplayMode: String, CaseIterable {
         case .saveBattery: return "battery.75"
         case .normal:       return "rectangle.fill"
         case .yapping:      return "text.alignleft"
+        case .pro:          return "slider.horizontal.3"
         }
     }
 }
