@@ -17,36 +17,124 @@
 
 import SwiftUI
 
+/// Carries the bottom marker's position, in points below the visible
+/// scroll viewport's own bottom edge, up to the view that decides whether
+/// to show the scroll hint. Negative once the marker has scrolled up past
+/// that edge and into view.
+private struct ScrollMarkerOffsetKey: PreferenceKey {
+    static var defaultValue: CGFloat = .infinity
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 struct OnboardingView: View {
     var onAccept: () -> Void
+
+    // The accept button lives outside the ScrollView (see body) so it is
+    // always on screen regardless of how long the copy above it is. This
+    // hint only covers the separate problem of someone not realizing there
+    // is more to read before it — true once, until the invisible marker at
+    // the bottom of the scrollable copy comes into view.
+    @State private var showsScrollHint = true
+    @State private var chevronBounce = false
 
     var body: some View {
         ZStack {
             background
 
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    Spacer().frame(height: 50)
+            VStack(spacing: 0) {
+                GeometryReader { viewportGeo in
+                    ZStack(alignment: .bottom) {
+                        ScrollView(showsIndicators: false) {
+                            VStack(spacing: 0) {
+                                Spacer().frame(height: 50)
 
-                    header
+                                header
 
-                    Spacer().frame(height: 34)
+                                Spacer().frame(height: 34)
 
-                    permissionsSection
+                                permissionsSection
 
-                    Spacer().frame(height: 22)
+                                Spacer().frame(height: 22)
 
-                    privacyNote
+                                privacyNote
 
-                    Spacer().frame(height: 30)
+                                Spacer().frame(height: 30)
 
-                    warningsSection
+                                warningsSection
 
-                    Spacer().frame(height: 34)
+                                Spacer().frame(height: 24)
 
-                    acceptButton
+                                // Invisible — its only job is to report, via
+                                // GeometryReader, how far it still is below the
+                                // bottom of the visible scroll viewport. A plain
+                                // VStack isn't lazy, so onAppear/onDisappear here
+                                // would fire the moment the view is built, not
+                                // when it actually scrolls into sight — this is
+                                // the real way to detect that in a ScrollView.
+                                GeometryReader { markerGeo in
+                                    Color.clear.preference(
+                                        key: ScrollMarkerOffsetKey.self,
+                                        value: markerGeo.frame(in: .named("onboardingScroll")).minY
+                                            - viewportGeo.size.height)
+                                }
+                                .frame(height: 1)
 
-                    Spacer().frame(height: 40)
+                                Spacer().frame(height: 20)
+                            }
+                        }
+                        .coordinateSpace(name: "onboardingScroll")
+
+                        if showsScrollHint {
+                            scrollHint
+                                .transition(.opacity)
+                        }
+                    }
+                }
+                .onPreferenceChange(ScrollMarkerOffsetKey.self) { offset in
+                    // Small negative margin so the hint clears just before the
+                    // marker's exact pixel becomes visible, not right at it.
+                    showsScrollHint = offset > -12
+                }
+
+                acceptButton
+                    .padding(.top, 14)
+                    .padding(.bottom, 10)
+                    .overlay(
+                        Rectangle().fill(Color(white: 0.25)).frame(height: 1),
+                        alignment: .top
+                    )
+            }
+            .animation(.easeInOut(duration: 0.25), value: showsScrollHint)
+        }
+    }
+
+    // MARK: - Scroll hint
+
+    private var scrollHint: some View {
+        ZStack(alignment: .bottom) {
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.65)],
+                startPoint: .top, endPoint: .bottom
+            )
+            .frame(height: 60)
+            .allowsHitTesting(false)
+
+            VStack(spacing: 2) {
+                Text("SCROLL FOR MORE")
+                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    .tracking(2)
+                    .foregroundColor(Color(white: 0.8))
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(Color(white: 0.8))
+                    .offset(y: chevronBounce ? 3 : -3)
+            }
+            .padding(.bottom, 8)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
+                    chevronBounce = true
                 }
             }
         }
