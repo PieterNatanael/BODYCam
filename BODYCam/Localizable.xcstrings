@@ -3,8 +3,191 @@
   "strings": {
     "": {},
     " ": {},
-    "·": {},
-    "·  T A P  T O  W A K E  ·": {},
+    "%lld": {},
+    "%lld Selected": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ausgewählt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld sélectionné(s)"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Dipilih"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld件を選択中"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 선택됨"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已选择 %lld 项"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已選擇 %lld 項"
+          }
+        }
+      }
+    },
+    "%lld item": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Element"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld élément"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld item"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld件"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 항목"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld项"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld項"
+          }
+        }
+      }
+    },
+    "%lld items": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Elemente"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld éléments"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld item"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld件"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 항목"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld项"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld項"
+          }
+        }
+      }
+    },
+    "%lld waiting": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld wartend"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld en attente"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld menunggu"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld件待機中"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 대기 중"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld项等待中"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld項等待中"
+          }
+        }
+      }
+    },
     "/ month": {
       "localizations": {
         "de": {
@@ -17,6 +200,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "/ mois"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ bulan"
           }
         },
         "ja": {
@@ -32,6 +221,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ 月"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "/ 月"
@@ -53,6 +248,12 @@
             "value": "/ semaine"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ minggu"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -70,6 +271,12 @@
             "state": "translated",
             "value": "/ 周"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ 週"
+          }
         }
       }
     },
@@ -85,6 +292,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "/ an"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ tahun"
           }
         },
         "ja": {
@@ -104,113 +317,15 @@
             "state": "translated",
             "value": "/ 年"
           }
-        }
-      }
-    },
-    "%lld": {},
-    "%lld item": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld Element"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld élément"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld件"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld개 항목"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld项"
+            "value": "/ 年"
           }
         }
       }
     },
-    "%lld items": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld Elemente"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld éléments"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld件"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld개 항목"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld项"
-          }
-        }
-      }
-    },
-    "%lld waiting": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld wartend"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld en attente"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld件待機中"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld개 대기 중"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld项等待中"
-          }
-        }
-      }
-    },
-    "• Press start to begin recording video.\n• Press stop to stop recording.\n• Press export to export the file.\n• The app overwrites previous data when the start button is pressed again.\n• The app cannot run in the background; auto-lock should be set to 'Never'.\n• Video quality should not be changed during recording.": {},
     "ABOUT": {
       "localizations": {
         "de": {
@@ -223,6 +338,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "À PROPOS"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TENTANG"
           }
         },
         "ja": {
@@ -242,73 +363,57 @@
             "state": "translated",
             "value": "关于"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "關於"
+          }
         }
       }
     },
-    "Alarm": {
+    "AE / AF LOCKED": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alarm"
+            "value": "AE/AF GESPERRT"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alarme"
+            "value": "AE/AF VERROUILLÉ"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AE / AF TERKUNCI"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "アラーム"
+            "value": "AE／AFロック中"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "알람"
+            "value": "AE/AF 잠금됨"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "闹钟"
-          }
-        }
-      }
-    },
-    "Alarms & Reminders": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alarme & Erinnerungen"
+            "value": "AE/AF 已锁定"
           }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alarmes et rappels"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "アラームとリマインダー"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "알람 및 리마인더"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "闹钟与提醒"
+            "value": "AE/AF 已鎖定"
           }
         }
       }
@@ -327,6 +432,12 @@
             "value": "ALARMES ET RAPPELS"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ALARM DAN PENGINGAT"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -344,74 +455,11 @@
             "state": "translated",
             "value": "闹钟与提醒"
           }
-        }
-      }
-    },
-    "Alarms need iOS 26 or later.": {
-      "extractionState": "stale",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alarme benötigen iOS 26 oder neuer."
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les alarmes nécessitent iOS 26 ou version ultérieure."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "アラームにはiOS 26以降が必要です。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "알람 기능은 iOS 26 이상이 필요합니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "闹钟功能需要 iOS 26 或更高版本。"
-          }
-        }
-      }
-    },
-    "Alarms need iOS 26 or later. Use Set as Reminder instead, it still opens this item when you tap it.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alarme benötigen iOS 26 oder neuer. Verwende stattdessen „Als Erinnerung festlegen“ — auch damit öffnet ein Tipp dieses Element."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les alarmes nécessitent iOS 26 ou version ultérieure. Utilisez plutôt « Définir comme rappel », cela ouvre aussi cet élément lorsque vous appuyez dessus."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "アラームにはiOS 26以降が必要です。代わりに「リマインダーとして設定」を使用してください。タップすればこの項目を開けます。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "알람 기능은 iOS 26 이상이 필요합니다. 대신 \"리마인더로 설정\"을 사용하세요. 탭하면 이 항목이 열립니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "闹钟功能需要 iOS 26 或更高版本。请改用「设为提醒」，点击后同样可以打开此项目。"
+            "value": "鬧鐘與提醒"
           }
         }
       }
@@ -428,6 +476,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "AUTRES APPLICATIONS"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "APLIKASI LAIN DARI KAMI"
           }
         },
         "ja": {
@@ -447,75 +501,11 @@
             "state": "translated",
             "value": "更多应用"
           }
-        }
-      }
-    },
-    "Always back up important footage to a safe location immediately after recording.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sichere wichtiges Filmmaterial direkt nach der Aufnahme an einem sicheren Ort."
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sauvegardez toujours les enregistrements importants dans un endroit sûr immédiatement après l'enregistrement."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重要な映像は、録画後すぐに安全な場所へバックアップしてください。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "중요한 영상은 녹화 직후 반드시 안전한 위치에 백업하세요."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "请务必在录制后立即将重要素材备份到安全的位置。"
-          }
-        }
-      }
-    },
-    "App for you": {},
-    "App Functionality": {},
-    "App updates may cause unexpected behaviour that could affect recording reliability.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "App-Updates können unerwartetes Verhalten verursachen, das die Zuverlässigkeit der Aufnahme beeinträchtigt."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les mises à jour de l'application peuvent provoquer un comportement inattendu affectant la fiabilité de l'enregistrement."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "アプリのアップデートにより、録画の信頼性に影響する予期せぬ動作が生じる場合があります。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "앱 업데이트로 인해 녹화 안정성에 영향을 주는 예기치 않은 동작이 발생할 수 있습니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "应用更新可能导致意外行为，影响录制的可靠性。"
+            "value": "更多應用程式"
           }
         }
       }
@@ -532,6 +522,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "APPARENCE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TAMPILAN"
           }
         },
         "ja": {
@@ -551,6 +547,291 @@
             "state": "translated",
             "value": "外观"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外觀"
+          }
+        }
+      }
+    },
+    "Alarm": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarm"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarme"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarm"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アラーム"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알람"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "闹钟"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鬧鐘"
+          }
+        }
+      }
+    },
+    "Alarms & Reminders": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarme & Erinnerungen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarmes et rappels"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarm & Pengingat"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アラームとリマインダー"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알람 및 리마인더"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "闹钟与提醒"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鬧鐘與提醒"
+          }
+        }
+      }
+    },
+    "Alarms need iOS 26 or later.": {
+      "extractionState": "stale",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarme benötigen iOS 26 oder neuer."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les alarmes nécessitent iOS 26 ou version ultérieure."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarm memerlukan iOS 26 atau lebih baru."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アラームにはiOS 26以降が必要です。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알람 기능은 iOS 26 이상이 필요합니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "闹钟功能需要 iOS 26 或更高版本。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鬧鐘功能需要 iOS 26 或更高版本。"
+          }
+        }
+      }
+    },
+    "Alarms need iOS 26 or later. Use Set as Reminder instead, it still opens this item when you tap it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarme benötigen iOS 26 oder neuer. Verwende stattdessen „Als Erinnerung festlegen“ — auch damit öffnet ein Tipp dieses Element."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les alarmes nécessitent iOS 26 ou version ultérieure. Utilisez plutôt « Définir comme rappel », cela ouvre aussi cet élément lorsque vous appuyez dessus."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarm memerlukan iOS 26 atau lebih baru. Gunakan Jadikan Pengingat sebagai gantinya, item ini tetap akan terbuka saat diketuk."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アラームにはiOS 26以降が必要です。代わりに「リマインダーとして設定」を使用してください。タップすればこの項目を開けます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알람 기능은 iOS 26 이상이 필요합니다. 대신 \"리마인더로 설정\"을 사용하세요. 탭하면 이 항목이 열립니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "闹钟功能需要 iOS 26 或更高版本。请改用「设为提醒」，点击后同样可以打开此项目。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鬧鐘功能需要 iOS 26 或更高版本。請改用「設為提醒」，點擊後同樣可以開啟此項目。"
+          }
+        }
+      }
+    },
+    "Always back up important footage to a safe location immediately after recording.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichere wichtiges Filmmaterial direkt nach der Aufnahme an einem sicheren Ort."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sauvegardez toujours les enregistrements importants dans un endroit sûr immédiatement après l'enregistrement."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selalu cadangkan rekaman penting ke lokasi yang aman segera setelah merekam."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重要な映像は、録画後すぐに安全な場所へバックアップしてください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "중요한 영상은 녹화 직후 반드시 안전한 위치에 백업하세요."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请务必在录制后立即将重要素材备份到安全的位置。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請務必在錄製後立即將重要素材備份到安全的位置。"
+          }
+        }
+      }
+    },
+    "App Functionality": {},
+    "App for you": {},
+    "App updates may cause unexpected behaviour that could affect recording reliability.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App-Updates können unerwartetes Verhalten verursachen, das die Zuverlässigkeit der Aufnahme beeinträchtigt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les mises à jour de l'application peuvent provoquer un comportement inattendu affectant la fiabilité de l'enregistrement."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pembaruan aplikasi dapat menyebabkan perilaku tak terduga yang memengaruhi keandalan perekaman."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリのアップデートにより、録画の信頼性に影響する予期せぬ動作が生じる場合があります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 업데이트로 인해 녹화 안정성에 영향을 주는 예기치 않은 동작이 발생할 수 있습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "应用更新可能导致意外行为，影响录制的可靠性。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "應用程式更新可能導致意外行為，影響錄製的可靠性。"
+          }
         }
       }
     },
@@ -566,6 +847,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "AVANT DE COMMENCER"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SEBELUM MEMULAI"
           }
         },
         "ja": {
@@ -585,6 +872,12 @@
             "state": "translated",
             "value": "开始之前"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開始之前"
+          }
         }
       }
     },
@@ -600,6 +893,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "MEILLEURE OFFRE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PALING HEMAT"
           }
         },
         "ja": {
@@ -619,107 +918,11 @@
             "state": "translated",
             "value": "最划算"
           }
-        }
-      }
-    },
-    "billed every 7 days · auto-renews": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "alle 7 Tage abgerechnet · verlängert sich automatisch"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "facturé tous les 7 jours · renouvellement automatique"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "7日ごとに請求・自動更新"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "7일마다 청구 · 자동 갱신"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "每7天扣费 · 自动续订"
-          }
-        }
-      }
-    },
-    "billed every 30 days · auto-renews": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "alle 30 Tage abgerechnet · verlängert sich automatisch"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "facturé tous les 30 jours · renouvellement automatique"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "30日ごとに請求・自動更新"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "30일마다 청구 · 자동 갱신"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "每30天扣费 · 自动续订"
-          }
-        }
-      }
-    },
-    "billed every 365 days · auto-renews": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "alle 365 Tage abgerechnet · verlängert sich automatisch"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "facturé tous les 365 jours · renouvellement automatique"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "365日ごとに請求・自動更新"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "365일마다 청구 · 자동 갱신"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "每365天扣费 · 自动续订"
+            "value": "最划算"
           }
         }
       }
@@ -736,6 +939,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vous avez acheté LBC avant avril 2026 ? Votre accès complet est restauré automatiquement, aucune action nécessaire."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Membeli LBC sebelum April 2026? Akses penuh Anda dipulihkan secara otomatis, tidak perlu tindakan apa pun."
           }
         },
         "ja": {
@@ -755,6 +964,58 @@
             "state": "translated",
             "value": "在2026年4月之前购买过 LBC？你的完整权限将自动恢复，无需任何操作。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在2026年4月之前購買過 LBC？你的完整權限將自動恢復，無需任何操作。"
+          }
+        }
+      }
+    },
+    "Burns the date, time, and LBC onto the photo or video itself. Cannot be removed afterward.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brennt Datum, Uhrzeit und LBC direkt in das Foto oder Video ein. Kann danach nicht mehr entfernt werden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incruste la date, l'heure et LBC directement dans la photo ou la vidéo. Ne peut pas être retiré ensuite."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mencetak tanggal, waktu, dan LBC langsung ke foto atau video. Tidak dapat dihapus setelahnya."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日付、時刻、LBCを写真や動画自体に焼き込みます。後から削除することはできません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "날짜, 시간, LBC를 사진이나 동영상에 직접 새깁니다. 이후에는 제거할 수 없습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将日期、时间和 LBC 直接印在照片或视频上，事后无法移除。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將日期、時間和 LBC 直接印在照片或影片上，事後無法移除。"
+          }
         }
       }
     },
@@ -770,6 +1031,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "APPAREIL PHOTO"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KAMERA"
           }
         },
         "ja": {
@@ -789,39 +1056,11 @@
             "state": "translated",
             "value": "相机"
           }
-        }
-      }
-    },
-    "Cancel": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abbrechen"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Annuler"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "キャンセル"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "취소"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "取消"
+            "value": "相機"
           }
         }
       }
@@ -838,6 +1077,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "EFFACER"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HAPUS"
           }
         },
         "ja": {
@@ -857,6 +1102,58 @@
             "state": "translated",
             "value": "清空"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清空"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbrechen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batal"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "キャンセル"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "취소"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
         }
       }
     },
@@ -873,6 +1170,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aperçu compact, consommation réduite"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pratinjau ringkas, hemat daya"
           }
         },
         "ja": {
@@ -892,6 +1195,196 @@
             "state": "translated",
             "value": "预览窗口更小，更省电"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "預覽視窗更小，更省電"
+          }
+        }
+      }
+    },
+    "Compact preview, with manual exposure and focus lock": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompakte Vorschau, mit manueller Belichtung und Fokussperre"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aperçu compact, avec exposition manuelle et verrouillage de la mise au point"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pratinjau ringkas, dengan eksposur manual dan kunci fokus"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コンパクトなプレビュー、露出とフォーカスを手動調整"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "작은 미리보기, 수동 노출 및 초점 고정 지원"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预览窗口更小，可手动调整曝光并锁定对焦"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "預覽視窗更小，可手動調整曝光並鎖定對焦"
+          }
+        }
+      }
+    },
+    "DATE STAMP ON PHOTOS AND VIDEOS": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DATUMSSTEMPEL AUF FOTOS UND VIDEOS"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HORODATAGE SUR PHOTOS ET VIDÉOS"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STEMPEL TANGGAL PADA FOTO DAN VIDEO"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真と動画への日付スタンプ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "사진 및 동영상 날짜 스탬프"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "照片与视频日期戳"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "照片與影片日期戳"
+          }
+        }
+      }
+    },
+    "DISPLAY MODE": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ANZEIGEMODUS"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODE D'AFFICHAGE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODE TAMPILAN"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表示モード"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "화면 모드"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示模式"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "顯示模式"
+          }
+        }
+      }
+    },
+    "DONE": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FERTIG"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TERMINÉ"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SELESAI"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完了"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "완료"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完成"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完成"
+          }
         }
       }
     },
@@ -909,6 +1402,12 @@
             "value": "Quotidien"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Harian"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -922,6 +1421,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每天"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "每天"
@@ -943,6 +1448,12 @@
             "value": "Supprimer"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hapus"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -960,6 +1471,104 @@
             "state": "translated",
             "value": "删除"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除"
+          }
+        }
+      }
+    },
+    "Delete %lld item?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Element löschen?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer %lld élément ?"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hapus %lld item?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld件を削除しますか？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 항목을 삭제할까요?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除 %lld 项？"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除 %lld 項？"
+          }
+        }
+      }
+    },
+    "Delete %lld items?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Elemente löschen?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer %lld éléments ?"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hapus %lld item?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld件を削除しますか？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 항목을 삭제할까요?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除 %lld 项？"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除 %lld 項？"
+          }
         }
       }
     },
@@ -975,6 +1584,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Supprimer la photo ?"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hapus foto?"
           }
         },
         "ja": {
@@ -994,6 +1609,12 @@
             "state": "translated",
             "value": "删除照片？"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除照片？"
+          }
         }
       }
     },
@@ -1009,6 +1630,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Supprimer la vidéo ?"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hapus video?"
           }
         },
         "ja": {
@@ -1028,39 +1655,11 @@
             "state": "translated",
             "value": "删除视频？"
           }
-        }
-      }
-    },
-    "DISPLAY MODE": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ANZEIGEMODUS"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "MODE D'AFFICHAGE"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "表示モード"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "화면 모드"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "显示模式"
+            "value": "刪除影片？"
           }
         }
       }
@@ -1077,6 +1676,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Terminé"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selesai"
           }
         },
         "ja": {
@@ -1096,36 +1701,8 @@
             "state": "translated",
             "value": "完成"
           }
-        }
-      }
-    },
-    "DONE": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FERTIG"
-          }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TERMINÉ"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "完了"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "완료"
-          }
-        },
-        "zh-Hans": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "完成"
@@ -1147,6 +1724,12 @@
             "value": "Tout ce que vous enregistrez reste sur votre appareil. Nous ne le collectons pas, ne le téléversons pas et ne le partageons avec personne."
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Semua yang Anda rekam tetap berada di perangkat Anda. Kami tidak mengumpulkan, mengunggah, atau membagikannya kepada siapa pun."
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -1164,6 +1747,12 @@
             "state": "translated",
             "value": "你录制的所有内容都保存在你的设备上。我们不会收集、上传或与任何人分享。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你錄製的所有內容都保存在你的裝置上。我們不會收集、上傳或與任何人分享。"
+          }
         }
       }
     },
@@ -1179,6 +1768,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Échec"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gagal"
           }
         },
         "ja": {
@@ -1198,6 +1793,12 @@
             "state": "translated",
             "value": "失败"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "失敗"
+          }
         }
       }
     },
@@ -1213,6 +1814,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Limite de taille de fichier atteinte"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batas Ukuran File Tercapai"
           }
         },
         "ja": {
@@ -1232,6 +1839,12 @@
             "state": "translated",
             "value": "已达到文件大小上限"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已達到檔案大小上限"
+          }
         }
       }
     },
@@ -1247,6 +1860,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Se déclenche à cette heure chaque jour jusqu'à ce que vous l'annuliez."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Berbunyi pada waktu ini setiap hari sampai Anda membatalkannya."
           }
         },
         "ja": {
@@ -1266,6 +1885,12 @@
             "state": "translated",
             "value": "每天在此时间触发，直到你取消为止。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每天在此時間觸發，直到你取消為止。"
+          }
         }
       }
     },
@@ -1281,6 +1906,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Se déclenche une seule fois, la prochaine fois que cette heure arrive."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Berbunyi satu kali, pada waktu berikutnya yang sesuai."
           }
         },
         "ja": {
@@ -1300,73 +1931,11 @@
             "state": "translated",
             "value": "仅在下一次到达该时间时触发一次。"
           }
-        }
-      }
-    },
-    "Flat and calm, soft green accents": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Flach und ruhig, sanfte grüne Akzente"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Plat et apaisant, accents vert doux"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "フラットで落ち着いた、柔らかなグリーンのアクセント"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "플랫하고 차분한, 부드러운 녹색 포인트"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "扁平沉静风格，柔和的绿色点缀"
-          }
-        }
-      }
-    },
-    "Flat and playful, pastel accents": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Flach und verspielt, Pastellakzente"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plat et ludique, accents pastel"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "フラットでポップな、パステルカラーのアクセント"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "플랫하고 발랄한, 파스텔 포인트"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "扁平俏皮风格，粉彩色点缀"
+            "value": "僅在下一次到達該時間時觸發一次。"
           }
         }
       }
@@ -1383,6 +1952,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Style Bauhaus plat, formes audacieuses, sans texture"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gaya Bauhaus flat, bentuk tegas, tanpa tekstur"
           }
         },
         "ja": {
@@ -1402,6 +1977,104 @@
             "state": "translated",
             "value": "包豪斯风格扁平化设计，形状大胆，无纹理"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "包浩斯風格扁平化設計，形狀大膽，無紋理"
+          }
+        }
+      }
+    },
+    "Flat and calm, soft green accents": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flach und ruhig, sanfte grüne Akzente"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plat et apaisant, accents vert doux"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flat dan tenang, aksen hijau lembut"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "フラットで落ち着いた、柔らかなグリーンのアクセント"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "플랫하고 차분한, 부드러운 녹색 포인트"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扁平沉静风格，柔和的绿色点缀"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扁平沉靜風格，柔和的綠色點綴"
+          }
+        }
+      }
+    },
+    "Flat and playful, pastel accents": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flach und verspielt, Pastellakzente"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plat et ludique, accents pastel"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flat dan playful, aksen warna pastel"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "フラットでポップな、パステルカラーのアクセント"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "플랫하고 발랄한, 파스텔 포인트"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扁平俏皮风格，粉彩色点缀"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扁平俏皮風格，粉彩色點綴"
+          }
         }
       }
     },
@@ -1417,6 +2090,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Respecte votre commutateur silencieux et vos réglages Focus."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mengikuti pengaturan tombol senyap dan mode Fokus Anda."
           }
         },
         "ja": {
@@ -1436,6 +2115,12 @@
             "state": "translated",
             "value": "遵循静音开关和专注模式设置。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遵循靜音開關和專注模式設定。"
+          }
         }
       }
     },
@@ -1451,6 +2136,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aperçu plein écran, consomme plus de batterie"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pratinjau layar penuh, lebih boros baterai"
           }
         },
         "ja": {
@@ -1470,39 +2161,11 @@
             "state": "translated",
             "value": "全屏预览，更耗电"
           }
-        }
-      }
-    },
-    "Gallery": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Galerie"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Galerie"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ギャラリー"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "갤러리"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "相册"
+            "value": "全螢幕預覽，更耗電"
           }
         }
       }
@@ -1521,6 +2184,12 @@
             "value": "GALERIE"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GALERI"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -1538,6 +2207,58 @@
             "state": "translated",
             "value": "相册"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "相簿"
+          }
+        }
+      }
+    },
+    "Gallery": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Galerie"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Galerie"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Galeri"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ギャラリー"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "갤러리"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "相册"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "相簿"
+          }
         }
       }
     },
@@ -1553,6 +2274,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Voici ce dont l'application a besoin, et pourquoi."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Berikut ini yang dibutuhkan aplikasi, dan alasannya."
           }
         },
         "ja": {
@@ -1572,6 +2299,12 @@
             "state": "translated",
             "value": "以下是本应用需要的权限及原因。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以下是本應用程式需要的權限及原因。"
+          }
         }
       }
     },
@@ -1588,6 +2321,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Comment ça marche"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cara kerjanya"
           }
         },
         "ja": {
@@ -1607,6 +2346,12 @@
             "state": "translated",
             "value": "工作原理"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "運作原理"
+          }
         }
       }
     },
@@ -1624,6 +2369,12 @@
             "value": "J'ai compris"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saya Mengerti"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -1637,6 +2388,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已了解"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "我已了解"
@@ -1658,6 +2415,12 @@
             "value": "GLACE"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ES KRIM"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -1671,6 +2434,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冰淇淋"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "冰淇淋"
@@ -1692,6 +2461,12 @@
             "value": "Les enregistrements interrompus (batterie faible, fermeture forcée, appels) peuvent entraîner des fichiers corrompus ou manquants."
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rekaman yang terganggu (baterai lemah, aplikasi dipaksa berhenti, panggilan masuk) dapat menyebabkan file rusak atau hilang."
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -1709,6 +2484,12 @@
             "state": "translated",
             "value": "录制中断（电量不足、强制退出、来电）可能导致文件损坏或丢失。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "錄製中斷（電量不足、強制退出、來電）可能導致檔案損毀或遺失。"
+          }
         }
       }
     },
@@ -1724,6 +2505,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "LANGUE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BAHASA"
           }
         },
         "ja": {
@@ -1743,12 +2530,64 @@
             "state": "translated",
             "value": "语言"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "語言"
+          }
         }
       }
     },
     "LBC — Low Battery Camera is developed by Three Dollar.": {},
-    "Low": {},
+    "LOCK AE / AF": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AE/AF SPERREN"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VERROUILLER AE/AF"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KUNCI AE / AF"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AE／AFをロック"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AE/AF 잠금"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "锁定 AE/AF"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鎖定 AE/AF"
+          }
+        }
+      }
+    },
     "LOW LIGHT BOOST": {},
+    "Low": {},
     "MATCHA": {
       "localizations": {
         "de": {
@@ -1758,6 +2597,12 @@
           }
         },
         "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MATCHA"
+          }
+        },
+        "id": {
           "stringUnit": {
             "state": "translated",
             "value": "MATCHA"
@@ -1780,11 +2625,15 @@
             "state": "translated",
             "value": "抹茶"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抹茶"
+          }
         }
       }
     },
-    "Media": {},
-    "Medium": {},
     "MICROPHONE": {
       "localizations": {
         "de": {
@@ -1797,6 +2646,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "MICROPHONE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MIKROFON"
           }
         },
         "ja": {
@@ -1816,45 +2671,17 @@
             "state": "translated",
             "value": "麦克风"
           }
-        }
-      }
-    },
-    "month": {
-      "comment": "Subscription period, as in 'the current month'",
-      "extractionState": "stale",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Monat"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "mois"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "月"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "월"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "月"
+            "value": "麥克風"
           }
         }
       }
     },
+    "Media": {},
+    "Medium": {},
     "Monthly": {
       "localizations": {
         "de": {
@@ -1867,6 +2694,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mensuel"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bulanan"
           }
         },
         "ja": {
@@ -1882,6 +2715,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每月"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "每月"
@@ -1903,6 +2742,12 @@
             "value": "ÉTROIT"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SEMPIT"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -1920,73 +2765,11 @@
             "state": "translated",
             "value": "窄"
           }
-        }
-      }
-    },
-    "Night vision HUD, monochrome green": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nachtsicht-HUD, einfarbig Grün"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "HUD vision nocturne, vert monochrome"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ナイトビジョンHUD、モノクロームグリーン"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "나이트비전 HUD, 단색 녹색"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "夜视 HUD 界面，单色绿"
-          }
-        }
-      }
-    },
-    "No photos or videos yet": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Noch keine Fotos oder Videos"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aucune photo ou vidéo pour le moment"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "写真や動画はまだありません"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "아직 사진이나 동영상이 없습니다"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暂无照片或视频"
+            "value": "窄"
           }
         }
       }
@@ -2000,6 +2783,12 @@
           }
         },
         "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NORMAL"
+          }
+        },
+        "id": {
           "stringUnit": {
             "state": "translated",
             "value": "NORMAL"
@@ -2022,6 +2811,12 @@
             "state": "translated",
             "value": "普通"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "普通"
+          }
         }
       }
     },
@@ -2034,6 +2829,12 @@
           }
         },
         "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODE NORMAL"
+          }
+        },
+        "id": {
           "stringUnit": {
             "state": "translated",
             "value": "MODE NORMAL"
@@ -2056,73 +2857,11 @@
             "state": "translated",
             "value": "普通模式"
           }
-        }
-      }
-    },
-    "Not Enough Storage": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicht genügend Speicherplatz"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Espace de stockage insuffisant"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ストレージ容量不足"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "저장공간 부족"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "存储空间不足"
-          }
-        }
-      }
-    },
-    "Nothing scheduled": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nichts geplant"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rien de programmé"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "予約はありません"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "예약된 항목 없음"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暂无安排"
+            "value": "普通模式"
           }
         }
       }
@@ -2139,6 +2878,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "NOTIFICATIONS"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOTIFIKASI"
           }
         },
         "ja": {
@@ -2158,6 +2903,196 @@
             "state": "translated",
             "value": "通知"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通知"
+          }
+        }
+      }
+    },
+    "Night vision HUD, monochrome green": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nachtsicht-HUD, einfarbig Grün"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HUD vision nocturne, vert monochrome"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HUD night vision, hijau monokrom"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ナイトビジョンHUD、モノクロームグリーン"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "나이트비전 HUD, 단색 녹색"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "夜视 HUD 界面，单色绿"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "夜視 HUD 介面，單色綠"
+          }
+        }
+      }
+    },
+    "No photos or videos yet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Fotos oder Videos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune photo ou vidéo pour le moment"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Belum ada foto atau video"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真や動画はまだありません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 사진이나 동영상이 없습니다"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂无照片或视频"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尚無照片或影片"
+          }
+        }
+      }
+    },
+    "Not Enough Storage": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht genügend Speicherplatz"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Espace de stockage insuffisant"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Penyimpanan Tidak Cukup"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ストレージ容量不足"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "저장공간 부족"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "存储空间不足"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存空間不足"
+          }
+        }
+      }
+    },
+    "Nothing scheduled": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nichts geplant"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien de programmé"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Belum ada jadwal"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "予約はありません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예약된 항목 없음"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂无安排"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暫無安排"
+          }
         }
       }
     },
@@ -2173,6 +3108,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "DÉSACTIVÉ"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MATI"
           }
         },
         "ja": {
@@ -2192,6 +3133,12 @@
             "state": "translated",
             "value": "关闭"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "關閉"
+          }
         }
       }
     },
@@ -2207,6 +3154,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "DÉSACTIVÉ (mode normal)"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MATI (mode normal)"
           }
         },
         "ja": {
@@ -2226,6 +3179,12 @@
             "state": "translated",
             "value": "关闭（普通模式）"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "關閉（普通模式）"
+          }
         }
       }
     },
@@ -2238,6 +3197,12 @@
           }
         },
         "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "id": {
           "stringUnit": {
             "state": "translated",
             "value": "OK"
@@ -2260,6 +3225,12 @@
             "state": "translated",
             "value": "好"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好"
+          }
         }
       }
     },
@@ -2275,6 +3246,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "ACTIVÉ"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HIDUP"
           }
         },
         "ja": {
@@ -2294,6 +3271,12 @@
             "state": "translated",
             "value": "开启"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開啟"
+          }
         }
       }
     },
@@ -2309,6 +3292,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "ACTIVÉ (boost 30 ips)"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HIDUP (peningkatan 30fps)"
           }
         },
         "ja": {
@@ -2328,6 +3317,12 @@
             "state": "translated",
             "value": "开启（30fps 增强）"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開啟（30fps 增強）"
+          }
         }
       }
     },
@@ -2345,6 +3340,12 @@
             "value": "Une fois"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sekali"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -2358,6 +3359,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一次"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "一次"
@@ -2379,6 +3386,12 @@
             "value": "Il ne reste que %lld Mo. La qualité %@ nécessite au moins %lld Mo libres. Libérez de l'espace ou réduisez la qualité avant d'enregistrer."
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hanya tersisa %lld MB. Kualitas %@ memerlukan setidaknya %lld MB ruang kosong. Kosongkan ruang penyimpanan atau turunkan kualitas sebelum merekam."
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -2396,6 +3409,12 @@
             "state": "translated",
             "value": "仅剩 %lld MB。%@ 画质至少需要 %lld MB 可用空间。请在录制前清理存储空间或降低画质。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "僅剩 %lld MB。%@ 畫質至少需要 %lld MB 可用空間。請在錄製前清理儲存空間或降低畫質。"
+          }
         }
       }
     },
@@ -2411,6 +3430,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Utilisé uniquement si vous définissez une alarme ou un rappel pour un élément enregistré."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hanya digunakan jika Anda mengatur alarm atau pengingat untuk sesuatu yang Anda simpan."
           }
         },
         "ja": {
@@ -2430,6 +3455,12 @@
             "state": "translated",
             "value": "仅在你为已保存的内容设置闹钟或提醒时使用。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "僅在你為已儲存的內容設定鬧鐘或提醒時使用。"
+          }
         }
       }
     },
@@ -2445,6 +3476,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Utilisé uniquement lorsque vous choisissez d'enregistrer une photo ou vidéo dans votre photothèque."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hanya digunakan saat Anda memilih menyimpan foto atau video ke perpustakaan Anda."
           }
         },
         "ja": {
@@ -2464,149 +3501,15 @@
             "state": "translated",
             "value": "仅在你选择将照片或视频保存到图库时使用。"
           }
-        }
-      }
-    },
-    "Payment will be charged to your Apple ID account at confirmation of purchase. Your subscription automatically renews for the same price and duration unless cancelled at least 24 hours before the end of the current %@. Your account will be charged for renewal within 24 hours prior to the end of the current %@. To manage or cancel your subscription, go to Settings → [Your Name] → Subscriptions. Cancellation takes effect at the end of the current billing period.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die Zahlung wird bei Bestätigung des Kaufs deinem Apple ID Konto belastet. Dein Abo verlängert sich automatisch zum gleichen Preis und für die gleiche Laufzeit, sofern es nicht mindestens 24 Stunden vor Ende des aktuellen %@ gekündigt wird. Dein Konto wird innerhalb von 24 Stunden vor Ende des aktuellen %@ für die Verlängerung belastet. Um dein Abo zu verwalten oder zu kündigen, gehe zu Einstellungen → [Dein Name] → Abonnements. Die Kündigung wird zum Ende des aktuellen Abrechnungszeitraums wirksam."
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le paiement sera prélevé sur votre compte Apple ID à la confirmation de l'achat. Votre abonnement se renouvelle automatiquement au même prix et pour la même durée, sauf annulation au moins 24 heures avant la fin du %@ en cours. Votre compte sera débité pour le renouvellement dans les 24 heures précédant la fin du %@ en cours. Pour gérer ou annuler votre abonnement, allez dans Réglages → [Votre nom] → Abonnements. L'annulation prend effet à la fin de la période de facturation en cours."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "お支払いは購入確定時にApple IDアカウントに請求されます。サブスクリプションは、現在の%@終了の少なくとも24時間前にキャンセルしない限り、同じ価格と期間で自動的に更新されます。現在の%@終了の24時間前までに更新分が請求されます。サブスクリプションの管理またはキャンセルは、設定→[ユーザー名]→サブスクリプションから行えます。キャンセルは現在の請求期間の終了時に有効になります。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "결제는 구매 확인 시 Apple ID 계정으로 청구됩니다. 현재 %@ 종료 최소 24시간 전에 취소하지 않으면 구독은 동일한 가격과 기간으로 자동 갱신됩니다. 현재 %@ 종료 24시간 이내에 갱신 요금이 청구됩니다. 구독을 관리하거나 취소하려면 설정 → [내 이름] → 구독으로 이동하세요. 취소는 현재 결제 주기가 끝날 때 적용됩니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "付款将在购买确认时从您的 Apple ID 账户扣除。除非在当前%@结束前至少24小时取消，否则订阅将以相同价格和时长自动续订。系统将在当前%@结束前24小时内扣除续订费用。如需管理或取消订阅，请前往「设置」→［你的姓名］→「订阅」。取消将在当前计费周期结束时生效。"
+            "value": "僅在你選擇將照片或影片儲存到圖庫時使用。"
           }
         }
       }
     },
-    "Permission denied. Enable it in iOS Settings.": {
-      "extractionState": "stale",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Berechtigung verweigert. Aktiviere sie in den iOS-Einstellungen."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Autorisation refusée. Activez-la dans les réglages iOS."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "権限が拒否されました。iOSの設定で有効にしてください。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "권한이 거부되었습니다. iOS 설정에서 활성화하세요."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "权限被拒绝。请在 iOS 设置中启用。"
-          }
-        }
-      }
-    },
-    "Permissions and safety notes": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Berechtigungen und Sicherheitshinweise"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Autorisations et consignes de sécurité"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "権限と安全に関する注意事項"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "권한 및 안전 안내"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "权限与安全提示"
-          }
-        }
-      }
-    },
-    "photo": {
-      "comment": "The media type word, as in 'open this photo'",
-      "extractionState": "stale",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Foto"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "photo"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "写真"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "사진"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "照片"
-          }
-        }
-      }
-    },
-    "Photo": {},
     "PHOTO CAPTURE": {
       "localizations": {
         "de": {
@@ -2619,6 +3522,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "PRISE DE PHOTO"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PENGAMBILAN FOTO"
           }
         },
         "ja": {
@@ -2638,6 +3547,12 @@
             "state": "translated",
             "value": "照片拍摄"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "照片拍攝"
+          }
         }
       }
     },
@@ -2653,6 +3568,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "PHOTOS"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FOTO"
           }
         },
         "ja": {
@@ -2672,39 +3593,11 @@
             "state": "translated",
             "value": "照片"
           }
-        }
-      }
-    },
-    "Photos and videos may be lost due to bugs or device issues. Back up important footage.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fotos und Videos können durch Fehler oder Gerätestörungen verloren gehen. Sichere wichtiges Filmmaterial."
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les photos et vidéos peuvent être perdues en cas de bug ou de problème avec l'appareil. Sauvegardez vos enregistrements importants."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "バグや端末の不具合により、写真や動画が失われる可能性があります。重要な映像はバックアップしてください。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "버그나 기기 문제로 사진과 동영상이 손실될 수 있습니다. 중요한 영상은 백업하세요."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "由于程序错误或设备问题，照片和视频可能会丢失。请备份重要素材。"
+            "value": "照片"
           }
         }
       }
@@ -2718,6 +3611,12 @@
           }
         },
         "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PREMIUM"
+          }
+        },
+        "id": {
           "stringUnit": {
             "state": "translated",
             "value": "PREMIUM"
@@ -2740,6 +3639,12 @@
             "state": "translated",
             "value": "高级版"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "高級版"
+          }
         }
       }
     },
@@ -2755,6 +3660,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "APERÇU"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PRATINJAU"
           }
         },
         "ja": {
@@ -2774,6 +3685,244 @@
             "state": "translated",
             "value": "预览"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "預覽"
+          }
+        }
+      }
+    },
+    "PRO MODE": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PRO-MODUS"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODE PRO"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODE PRO"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プロモード"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프로 모드"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "专业模式"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "專業模式"
+          }
+        }
+      }
+    },
+    "Payment will be charged to your Apple ID account at confirmation of purchase. Your subscription automatically renews for the same price and duration unless cancelled at least 24 hours before the end of the current %@. Your account will be charged for renewal within 24 hours prior to the end of the current %@. To manage or cancel your subscription, go to Settings → [Your Name] → Subscriptions. Cancellation takes effect at the end of the current billing period.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Zahlung wird bei Bestätigung des Kaufs deinem Apple ID Konto belastet. Dein Abo verlängert sich automatisch zum gleichen Preis und für die gleiche Laufzeit, sofern es nicht mindestens 24 Stunden vor Ende des aktuellen %@ gekündigt wird. Dein Konto wird innerhalb von 24 Stunden vor Ende des aktuellen %@ für die Verlängerung belastet. Um dein Abo zu verwalten oder zu kündigen, gehe zu Einstellungen → [Dein Name] → Abonnements. Die Kündigung wird zum Ende des aktuellen Abrechnungszeitraums wirksam."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le paiement sera prélevé sur votre compte Apple ID à la confirmation de l'achat. Votre abonnement se renouvelle automatiquement au même prix et pour la même durée, sauf annulation au moins 24 heures avant la fin du %@ en cours. Votre compte sera débité pour le renouvellement dans les 24 heures précédant la fin du %@ en cours. Pour gérer ou annuler votre abonnement, allez dans Réglages → [Votre nom] → Abonnements. L'annulation prend effet à la fin de la période de facturation en cours."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pembayaran akan dikenakan ke akun Apple ID Anda saat pembelian dikonfirmasi. Langganan Anda akan diperpanjang otomatis dengan harga dan durasi yang sama kecuali dibatalkan setidaknya 24 jam sebelum akhir %@ saat ini. Akun Anda akan dikenakan biaya perpanjangan dalam 24 jam sebelum akhir %@ saat ini. Untuk mengelola atau membatalkan langganan, buka Pengaturan → [Nama Anda] → Langganan. Pembatalan berlaku efektif pada akhir periode penagihan saat ini."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お支払いは購入確定時にApple IDアカウントに請求されます。サブスクリプションは、現在の%@終了の少なくとも24時間前にキャンセルしない限り、同じ価格と期間で自動的に更新されます。現在の%@終了の24時間前までに更新分が請求されます。サブスクリプションの管理またはキャンセルは、設定→[ユーザー名]→サブスクリプションから行えます。キャンセルは現在の請求期間の終了時に有効になります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "결제는 구매 확인 시 Apple ID 계정으로 청구됩니다. 현재 %@ 종료 최소 24시간 전에 취소하지 않으면 구독은 동일한 가격과 기간으로 자동 갱신됩니다. 현재 %@ 종료 24시간 이내에 갱신 요금이 청구됩니다. 구독을 관리하거나 취소하려면 설정 → [내 이름] → 구독으로 이동하세요. 취소는 현재 결제 주기가 끝날 때 적용됩니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "付款将在购买确认时从您的 Apple ID 账户扣除。除非在当前%@结束前至少24小时取消，否则订阅将以相同价格和时长自动续订。系统将在当前%@结束前24小时内扣除续订费用。如需管理或取消订阅，请前往「设置」→［你的姓名］→「订阅」。取消将在当前计费周期结束时生效。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "付款將在購買確認時從您的 Apple ID 帳戶扣除。除非在當前%@結束前至少24小時取消，否則訂閱將以相同價格和時長自動續訂。系統將在當前%@結束前24小時內扣除續訂費用。如需管理或取消訂閱，請前往「設定」→［你的姓名］→「訂閱」。取消將在當前計費週期結束時生效。"
+          }
+        }
+      }
+    },
+    "Permission denied. Enable it in iOS Settings.": {
+      "extractionState": "stale",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Berechtigung verweigert. Aktiviere sie in den iOS-Einstellungen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autorisation refusée. Activez-la dans les réglages iOS."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Izin ditolak. Aktifkan di Pengaturan iOS."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "権限が拒否されました。iOSの設定で有効にしてください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "권한이 거부되었습니다. iOS 설정에서 활성화하세요."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "权限被拒绝。请在 iOS 设置中启用。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "權限被拒絕。請在 iOS 設定中啟用。"
+          }
+        }
+      }
+    },
+    "Permissions and safety notes": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Berechtigungen und Sicherheitshinweise"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autorisations et consignes de sécurité"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Izin dan catatan keamanan"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "権限と安全に関する注意事項"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "권한 및 안전 안내"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "权限与安全提示"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "權限與安全提示"
+          }
+        }
+      }
+    },
+    "Photo": {},
+    "Photos and videos may be lost due to bugs or device issues. Back up important footage.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotos und Videos können durch Fehler oder Gerätestörungen verloren gehen. Sichere wichtiges Filmmaterial."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les photos et vidéos peuvent être perdues en cas de bug ou de problème avec l'appareil. Sauvegardez vos enregistrements importants."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto dan video dapat hilang akibat bug atau masalah perangkat. Cadangkan rekaman penting."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "バグや端末の不具合により、写真や動画が失われる可能性があります。重要な映像はバックアップしてください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "버그나 기기 문제로 사진과 동영상이 손실될 수 있습니다. 중요한 영상은 백업하세요."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "由于程序错误或设备问题，照片和视频可能会丢失。请备份重要素材。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "由於程式錯誤或裝置問題，照片和影片可能會遺失。請備份重要素材。"
+          }
         }
       }
     },
@@ -2789,6 +3938,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Politique de confidentialité"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kebijakan Privasi"
           }
         },
         "ja": {
@@ -2808,6 +3963,12 @@
             "state": "translated",
             "value": "隐私政策"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隱私政策"
+          }
         }
       }
     },
@@ -2823,6 +3984,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Erreur d'achat"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kesalahan Pembelian"
           }
         },
         "ja": {
@@ -2842,6 +4009,12 @@
             "state": "translated",
             "value": "购买错误"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "購買錯誤"
+          }
         }
       }
     },
@@ -2857,6 +4030,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "QUALITÉ"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KUALITAS"
           }
         },
         "ja": {
@@ -2876,6 +4055,12 @@
             "state": "translated",
             "value": "画质"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "畫質"
+          }
         }
       }
     },
@@ -2891,6 +4076,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Limite d'enregistrement atteinte"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batas Rekaman Tercapai"
           }
         },
         "ja": {
@@ -2910,6 +4101,12 @@
             "state": "translated",
             "value": "已达到录制时长上限"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已達到錄製時長上限"
+          }
         }
       }
     },
@@ -2925,6 +4122,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Enregistrement arrêté"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perekaman Dihentikan"
           }
         },
         "ja": {
@@ -2944,6 +4147,12 @@
             "state": "translated",
             "value": "录制已停止"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "錄製已停止"
+          }
         }
       }
     },
@@ -2959,6 +4168,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "L'enregistrement s'est arrêté car le fichier a atteint sa taille maximale. Votre vidéo a été enregistrée jusqu'à ce point."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perekaman dihentikan karena file mencapai ukuran maksimum. Rekaman Anda telah disimpan hingga titik ini."
           }
         },
         "ja": {
@@ -2978,6 +4193,12 @@
             "state": "translated",
             "value": "文件已达到最大容量，录制已停止。已保存至此刻的素材。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "檔案已達到最大容量，錄製已停止。已儲存至此刻的素材。"
+          }
         }
       }
     },
@@ -2993,6 +4214,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "L'enregistrement s'est arrêté car la durée maximale a été atteinte. Votre vidéo a été enregistrée jusqu'à ce point."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perekaman dihentikan karena durasi maksimum tercapai. Rekaman Anda telah disimpan hingga titik ini."
           }
         },
         "ja": {
@@ -3012,6 +4239,12 @@
             "state": "translated",
             "value": "已达到最长录制时长，录制已停止。已保存至此刻的素材。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已達到最長錄製時長，錄製已停止。已儲存至此刻的素材。"
+          }
         }
       }
     },
@@ -3027,6 +4260,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "L'enregistrement s'est arrêté car votre appareil n'a plus d'espace de stockage. La vidéo enregistrée peut être incomplète ou illisible. Libérez de l'espace avant de recommencer."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perekaman dihentikan karena penyimpanan perangkat Anda habis. Rekaman yang tersimpan mungkin tidak lengkap atau tidak dapat diputar. Kosongkan ruang sebelum merekam lagi."
           }
         },
         "ja": {
@@ -3046,6 +4285,12 @@
             "state": "translated",
             "value": "由于设备存储空间不足，录制已停止。已保存的素材可能不完整或无法播放。请在再次录制前清理存储空间。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "由於裝置儲存空間不足，錄製已停止。已儲存的素材可能不完整或無法播放。請在再次錄製前清理儲存空間。"
+          }
         }
       }
     },
@@ -3061,6 +4306,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "L'enregistrement s'est arrêté de manière inattendue. La vidéo enregistrée peut être incomplète."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perekaman berhenti secara tak terduga. Rekaman yang tersimpan mungkin tidak lengkap."
           }
         },
         "ja": {
@@ -3080,6 +4331,12 @@
             "state": "translated",
             "value": "录制意外停止。已保存的素材可能不完整。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "錄製意外停止。已儲存的素材可能不完整。"
+          }
         }
       }
     },
@@ -3095,6 +4352,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "L'enregistrement s'est arrêté de manière inattendue. La vidéo enregistrée peut être incomplète. Erreur : %@"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perekaman berhenti secara tak terduga. Rekaman yang tersimpan mungkin tidak lengkap. Error: %@"
           }
         },
         "ja": {
@@ -3114,6 +4377,12 @@
             "state": "translated",
             "value": "录制意外停止。已保存的素材可能不完整。错误：%@"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "錄製意外停止。已儲存的素材可能不完整。錯誤：%@"
+          }
         }
       }
     },
@@ -3129,6 +4398,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rouge et bleu, coins toilés"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merah dan biru, sudut jaring laba-laba"
           }
         },
         "ja": {
@@ -3148,6 +4423,12 @@
             "state": "translated",
             "value": "红蓝配色，蛛网边角"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紅藍配色，蛛網邊角"
+          }
         }
       }
     },
@@ -3165,6 +4446,12 @@
             "value": "Rappel"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengingat"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -3178,6 +4465,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提醒"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "提醒"
@@ -3199,6 +4492,12 @@
             "value": "Répéter chaque jour"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ulangi setiap hari"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -3215,6 +4514,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "每日重复"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每日重複"
           }
         }
       }
@@ -3235,6 +4540,12 @@
             "value": "Remplacez ceci par votre propre texte. Tapez ou collez votre script ici. Appuyez sur CLEAR pour effacer ce texte et repartir de zéro."
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ganti ini dengan teks Anda sendiri. Ketik atau tempel naskah Anda di sini. Tekan CLEAR untuk menghapus teks ini dan mulai dari awal."
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -3252,6 +4563,12 @@
             "state": "translated",
             "value": "请将此处替换为你自己的文本。可在此处输入或粘贴文稿。点击 CLEAR 可清除此文本并重新开始。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請將此處替換為你自己的文字。可在此輸入或貼上文稿。點擊 CLEAR 可清除此文字並重新開始。"
+          }
         }
       }
     },
@@ -3267,6 +4584,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Restaurer les achats"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pulihkan Pembelian"
           }
         },
         "ja": {
@@ -3286,6 +4609,12 @@
             "state": "translated",
             "value": "恢复购买"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢復購買"
+          }
         }
       }
     },
@@ -3301,6 +4630,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sonne avec la sonnerie d'alarme iOS, en passant outre le mode silencieux et Focus."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Berdering dengan suara alarm iOS, menembus mode senyap dan Fokus."
           }
         },
         "ja": {
@@ -3320,6 +4655,12 @@
             "state": "translated",
             "value": "使用 iOS 闹钟铃声响铃，可穿透静音模式和专注模式。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用 iOS 鬧鐘鈴聲響鈴，可穿透靜音模式和專注模式。"
+          }
         }
       }
     },
@@ -3335,6 +4676,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Look texturé robuste, design actuel"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tampilan tekstur kasar, desain saat ini"
           }
         },
         "ja": {
@@ -3354,39 +4701,11 @@
             "state": "translated",
             "value": "粗犷质感，当前默认设计"
           }
-        }
-      }
-    },
-    "Save": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Speichern"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enregistrer"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "保存"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "저장"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "保存"
+            "value": "粗獷質感，目前預設設計"
           }
         }
       }
@@ -3403,6 +4722,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "MODE ÉCONOMIE DE BATTERIE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODE HEMAT BATERAI"
           }
         },
         "ja": {
@@ -3422,6 +4747,12 @@
             "state": "translated",
             "value": "省电模式"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "省電模式"
+          }
         }
       }
     },
@@ -3437,6 +4768,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "ÉCHEC DE L'ENREGISTREMENT"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PENYIMPANAN GAGAL"
           }
         },
         "ja": {
@@ -3456,39 +4793,11 @@
             "state": "translated",
             "value": "保存失败"
           }
-        }
-      }
-    },
-    "Save photos and videos to your library": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fotos und Videos in deiner Mediathek speichern"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enregistrer les photos et vidéos dans votre photothèque"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "写真や動画をライブラリに保存"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "사진과 동영상을 라이브러리에 저장"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "将照片和视频保存到你的图库"
+            "value": "儲存失敗"
           }
         }
       }
@@ -3505,6 +4814,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "ENREGISTRÉ DANS LA GALERIE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TERSIMPAN KE GALERI"
           }
         },
         "ja": {
@@ -3524,73 +4839,11 @@
             "state": "translated",
             "value": "已保存到相册"
           }
-        }
-      }
-    },
-    "Saved!": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gespeichert!"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enregistré !"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "保存しました！"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "저장됨!"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已保存！"
-          }
-        }
-      }
-    },
-    "Saving…": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Speichern…"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enregistrement…"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "保存中…"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "저장 중…"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "保存中…"
+            "value": "已儲存到相簿"
           }
         }
       }
@@ -3609,6 +4862,12 @@
             "value": "ENREGISTREMENT…"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MENYIMPAN…"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -3626,73 +4885,11 @@
             "state": "translated",
             "value": "保存中…"
           }
-        }
-      }
-    },
-    "Schedule": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Planen"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Programmer"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "予約する"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "예약"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "安排"
-          }
-        }
-      }
-    },
-    "Scheduled": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Geplant"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Programmé"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "予約しました"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "예약됨"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已安排"
+            "value": "儲存中…"
           }
         }
       }
@@ -3709,6 +4906,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "PROGRAMMÉ"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TERJADWAL"
           }
         },
         "ja": {
@@ -3728,141 +4931,11 @@
             "state": "translated",
             "value": "已安排"
           }
-        }
-      }
-    },
-    "Script on screen, preview shrinks to a movable corner": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Skript auf dem Bildschirm, Vorschau schrumpft zu einem verschiebbaren Fenster"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Script à l'écran, l'aperçu se réduit dans un coin déplaçable"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "画面に台本を表示、プレビューは移動可能な小窓に縮小"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "화면에 대본 표시, 미리보기는 이동 가능한 작은 창으로 축소"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "屏幕显示文稿，预览缩小为可拖动的小窗口"
-          }
-        }
-      }
-    },
-    "Set as Alarm": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Als Alarm festlegen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Définir comme alarme"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "アラームとして設定"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "알람으로 설정"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设为闹钟"
-          }
-        }
-      }
-    },
-    "Set as Reminder": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Als Erinnerung festlegen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Définir comme rappel"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "リマインダーとして設定"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "리마인더로 설정"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设为提醒"
-          }
-        }
-      }
-    },
-    "Set one from the ⋯ menu when viewing a photo or video in the Gallery.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lege eines über das ⋯-Menü fest, wenn du ein Foto oder Video in der Galerie ansiehst."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Définissez-en un depuis le menu ⋯ lors de l'affichage d'une photo ou vidéo dans la Galerie."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ギャラリーで写真や動画を表示中に、⋯メニューから設定できます。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "갤러리에서 사진이나 동영상을 볼 때 ⋯ 메뉴에서 설정하세요."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在相册中查看照片或视频时，可通过⋯菜单进行设置。"
+            "value": "已安排"
           }
         }
       }
@@ -3879,6 +4952,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "RÉGLAGES"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PENGATURAN"
           }
         },
         "ja": {
@@ -3898,73 +4977,11 @@
             "state": "translated",
             "value": "设置"
           }
-        }
-      }
-    },
-    "Share": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Teilen"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Partager"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "共有"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "공유"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "分享"
-          }
-        }
-      }
-    },
-    "Share photos and videos": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fotos und Videos teilen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Partager des photos et vidéos"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "写真や動画を共有"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "사진과 동영상 공유"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "分享照片和视频"
+            "value": "設定"
           }
         }
       }
@@ -3981,6 +4998,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "REVOIR L'INTRODUCTION"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TAMPILKAN INTRO LAGI"
           }
         },
         "ja": {
@@ -4000,6 +5023,12 @@
             "state": "translated",
             "value": "再次显示介绍"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再次顯示介紹"
+          }
         }
       }
     },
@@ -4015,6 +5044,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "SIMPLE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SEDERHANA"
           }
         },
         "ja": {
@@ -4034,6 +5069,12 @@
             "state": "translated",
             "value": "简约"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "簡約"
+          }
         }
       }
     },
@@ -4051,6 +5092,12 @@
             "value": "ARAIGNÉE"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SPIDER"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -4064,6 +5111,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "蜘蛛"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "蜘蛛"
@@ -4085,6 +5138,12 @@
             "value": "DÉMARRAGE DE LA CAMÉRA"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MEMULAI KAMERA"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -4102,40 +5161,11 @@
             "state": "translated",
             "value": "正在启动相机"
           }
-        }
-      }
-    },
-    "Stop": {},
-    "Storage Full": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Speicher voll"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Stockage plein"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ストレージ容量がいっぱいです"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "저장공간 가득 참"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "存储空间已满"
+            "value": "正在啟動相機"
           }
         }
       }
@@ -4152,6 +5182,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "S'ABONNER"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BERLANGGANAN"
           }
         },
         "ja": {
@@ -4171,6 +5207,657 @@
             "state": "translated",
             "value": "订阅"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "訂閱"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichern"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simpan"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "저장"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存"
+          }
+        }
+      }
+    },
+    "Save photos and videos to your library": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotos und Videos in deiner Mediathek speichern"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer les photos et vidéos dans votre photothèque"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simpan foto dan video ke perpustakaan Anda"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真や動画をライブラリに保存"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "사진과 동영상을 라이브러리에 저장"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将照片和视频保存到你的图库"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將照片和影片儲存到你的圖庫"
+          }
+        }
+      }
+    },
+    "Saved!": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespeichert!"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistré !"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tersimpan!"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存しました！"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "저장됨!"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已保存！"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已儲存！"
+          }
+        }
+      }
+    },
+    "Saving…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichern…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrement…"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menyimpan…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存中…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "저장 중…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存中…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存中…"
+          }
+        }
+      }
+    },
+    "Schedule": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Planen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Programmer"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jadwalkan"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "予約する"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예약"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安排"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安排"
+          }
+        }
+      }
+    },
+    "Scheduled": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geplant"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Programmé"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terjadwal"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "予約しました"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예약됨"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已安排"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已安排"
+          }
+        }
+      }
+    },
+    "Script on screen, preview shrinks to a movable corner": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skript auf dem Bildschirm, Vorschau schrumpft zu einem verschiebbaren Fenster"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Script à l'écran, l'aperçu se réduit dans un coin déplaçable"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naskah di layar, pratinjau mengecil ke sudut yang dapat dipindahkan"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画面に台本を表示、プレビューは移動可能な小窓に縮小"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "화면에 대본 표시, 미리보기는 이동 가능한 작은 창으로 축소"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "屏幕显示文稿，预览缩小为可拖动的小窗口"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "螢幕顯示文稿，預覽縮小為可拖動的小視窗"
+          }
+        }
+      }
+    },
+    "Select": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswählen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélect."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pilih"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選択"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선택"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選擇"
+          }
+        }
+      }
+    },
+    "Set as Alarm": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als Alarm festlegen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Définir comme alarme"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jadikan Alarm"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アラームとして設定"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알람으로 설정"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设为闹钟"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設為鬧鐘"
+          }
+        }
+      }
+    },
+    "Set as Reminder": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als Erinnerung festlegen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Définir comme rappel"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jadikan Pengingat"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "リマインダーとして設定"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "리마인더로 설정"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设为提醒"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設為提醒"
+          }
+        }
+      }
+    },
+    "Set one from the ⋯ menu when viewing a photo or video in the Gallery.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lege eines über das ⋯-Menü fest, wenn du ein Foto oder Video in der Galerie ansiehst."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Définissez-en un depuis le menu ⋯ lors de l'affichage d'une photo ou vidéo dans la Galerie."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atur dari menu ⋯ saat melihat foto atau video di Galeri."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ギャラリーで写真や動画を表示中に、⋯メニューから設定できます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "갤러리에서 사진이나 동영상을 볼 때 ⋯ 메뉴에서 설정하세요."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在相册中查看照片或视频时，可通过⋯菜单进行设置。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在相簿中查看照片或影片時，可透過⋯選單進行設定。"
+          }
+        }
+      }
+    },
+    "Share": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partager"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bagikan"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "共有"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "공유"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分享"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分享"
+          }
+        }
+      }
+    },
+    "Share photos and videos": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotos und Videos teilen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partager des photos et vidéos"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bagikan foto dan video"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真や動画を共有"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "사진과 동영상 공유"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分享照片和视频"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分享照片和影片"
+          }
+        }
+      }
+    },
+    "Stop": {},
+    "Storage Full": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speicher voll"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stockage plein"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Penyimpanan Penuh"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ストレージ容量がいっぱいです"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "저장공간 가득 참"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "存储空间已满"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存空間已滿"
+          }
         }
       }
     },
@@ -4186,6 +5873,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Soutenir le développement continu de l'application"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dukung pengembangan aplikasi yang berkelanjutan"
           }
         },
         "ja": {
@@ -4205,6 +5898,12 @@
             "state": "translated",
             "value": "支持应用的持续开发"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支持應用程式的持續開發"
+          }
         }
       }
     },
@@ -4220,6 +5919,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "TACTIQUE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TAKTIS"
           }
         },
         "ja": {
@@ -4239,209 +5944,11 @@
             "state": "translated",
             "value": "战术"
           }
-        }
-      }
-    },
-    "Tap the camera preview to focus on whatever you tapped, like the built in Camera app. To save battery during long recordings, use the moon button to dim the screen.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tippe auf die Kameravorschau, um dorthin zu fokussieren, ähnlich wie in der integrierten Kamera-App. Um bei langen Aufnahmen Akku zu sparen, dimme den Bildschirm mit der Mondtaste."
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Touchez l'aperçu de la caméra pour faire la mise au point à cet endroit, comme dans l'application Appareil photo native. Pour économiser la batterie lors d'enregistrements longs, utilisez le bouton lune pour assombrir l'écran."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "内蔵のカメラアプリと同じように、プレビューをタップした場所にフォーカスを合わせられます。長時間の録画でバッテリーを節約するには、月のボタンで画面を暗くしてください。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기본 카메라 앱처럼 미리보기를 탭하면 탭한 위치에 초점을 맞춥니다. 장시간 녹화 시 배터리를 절약하려면 달 모양 버튼으로 화면을 어둡게 하세요."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "点击相机预览可对点击处进行对焦，与系统自带相机应用相同。长时间录制时，可点击月亮按钮调暗屏幕以节省电量。"
-          }
-        }
-      }
-    },
-    "Tap the notification to open this %@.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tippe auf die Benachrichtigung, um dieses %@ zu öffnen."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appuyez sur la notification pour ouvrir cette %@."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "通知をタップして、この%@を開きます。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "알림을 탭하여 이 %@을 엽니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "点按通知以打开此%@。"
-          }
-        }
-      }
-    },
-    "Tap View on the alarm to open this %@.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tippe bei dem Alarm auf „Ansehen“, um dieses %@ zu öffnen."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appuyez sur Afficher sur l'alarme pour ouvrir cette %@."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "アラームの「表示」をタップして、この%@を開きます。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "알람의 \"보기\"를 탭하여 이 %@을 엽니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "点按闹钟上的\"查看\"以打开此%@。"
-          }
-        }
-      }
-    },
-    "Terms of Use": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nutzungsbedingungen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Conditions d'utilisation"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "利用規約"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이용약관"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "使用条款"
-          }
-        }
-      }
-    },
-    "This app is provided as-is. We are not liable for any data loss or corruption.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Diese App wird ohne Gewähr bereitgestellt. Wir haften nicht für Datenverlust oder Datenbeschädigung."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cette application est fournie en l'état. Nous ne sommes pas responsables de toute perte ou corruption de données."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "本アプリは現状のまま提供されます。データの損失や破損について当方は責任を負いません。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이 앱은 있는 그대로 제공됩니다. 데이터 손실이나 손상에 대해 책임지지 않습니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "本应用按现状提供。我们不对任何数据丢失或损坏承担责任。"
-          }
-        }
-      }
-    },
-    "This cannot be undone.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dies kann nicht rückgängig gemacht werden."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cette action est irréversible."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "この操作は元に戻せません。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이 작업은 되돌릴 수 없습니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "此操作无法撤销。"
+            "value": "戰術"
           }
         }
       }
@@ -4458,6 +5965,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "DATE ET HEURE SUR LA VIGNETTE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TANGGAL DAN WAKTU THUMBNAIL"
           }
         },
         "ja": {
@@ -4477,6 +5990,288 @@
             "state": "translated",
             "value": "缩略图日期和时间"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "縮圖日期和時間"
+          }
+        }
+      }
+    },
+    "Tap View on the alarm to open this %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippe bei dem Alarm auf „Ansehen“, um dieses %@ zu öffnen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appuyez sur Afficher sur l'alarme pour ouvrir cette %@."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ketuk Lihat pada alarm untuk membuka %@ ini."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アラームの「表示」をタップして、この%@を開きます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알람의 \"보기\"를 탭하여 이 %@을 엽니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点按闹钟上的\"查看\"以打开此%@。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點按鬧鐘上的「檢視」以開啟此%@。"
+          }
+        }
+      }
+    },
+    "Tap the camera preview to focus on whatever you tapped, like the built in Camera app. To save battery during long recordings, use the moon button to dim the screen.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippe auf die Kameravorschau, um dorthin zu fokussieren, ähnlich wie in der integrierten Kamera-App. Um bei langen Aufnahmen Akku zu sparen, dimme den Bildschirm mit der Mondtaste."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touchez l'aperçu de la caméra pour faire la mise au point à cet endroit, comme dans l'application Appareil photo native. Pour économiser la batterie lors d'enregistrements longs, utilisez le bouton lune pour assombrir l'écran."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ketuk pratinjau kamera untuk fokus pada titik yang Anda ketuk, seperti aplikasi Kamera bawaan. Untuk menghemat baterai selama perekaman panjang, gunakan tombol bulan untuk meredupkan layar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "内蔵のカメラアプリと同じように、プレビューをタップした場所にフォーカスを合わせられます。長時間の録画でバッテリーを節約するには、月のボタンで画面を暗くしてください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기본 카메라 앱처럼 미리보기를 탭하면 탭한 위치에 초점을 맞춥니다. 장시간 녹화 시 배터리를 절약하려면 달 모양 버튼으로 화면을 어둡게 하세요."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击相机预览可对点击处进行对焦，与系统自带相机应用相同。长时间录制时，可点击月亮按钮调暗屏幕以节省电量。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點擊相機預覽可對點擊處進行對焦，與系統內建相機應用程式相同。長時間錄製時，可點擊月亮按鈕調暗螢幕以節省電量。"
+          }
+        }
+      }
+    },
+    "Tap the notification to open this %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippe auf die Benachrichtigung, um dieses %@ zu öffnen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appuyez sur la notification pour ouvrir cette %@."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ketuk notifikasi untuk membuka %@ ini."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通知をタップして、この%@を開きます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알림을 탭하여 이 %@을 엽니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点按通知以打开此%@。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點按通知以開啟此%@。"
+          }
+        }
+      }
+    },
+    "Terms of Use": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nutzungsbedingungen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conditions d'utilisation"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ketentuan Penggunaan"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "利用規約"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이용약관"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用条款"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用條款"
+          }
+        }
+      }
+    },
+    "This app is provided as-is. We are not liable for any data loss or corruption.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese App wird ohne Gewähr bereitgestellt. Wir haften nicht für Datenverlust oder Datenbeschädigung."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette application est fournie en l'état. Nous ne sommes pas responsables de toute perte ou corruption de données."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aplikasi ini disediakan apa adanya. Kami tidak bertanggung jawab atas kehilangan atau kerusakan data apa pun."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本アプリは現状のまま提供されます。データの損失や破損について当方は責任を負いません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 앱은 있는 그대로 제공됩니다. 데이터 손실이나 손상에 대해 책임지지 않습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本应用按现状提供。我们不对任何数据丢失或损坏承担责任。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本應用程式按現狀提供。我們不對任何資料遺失或損毀承擔責任。"
+          }
+        }
+      }
+    },
+    "This cannot be undone.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dies kann nicht rückgängig gemacht werden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette action est irréversible."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tindakan ini tidak dapat dibatalkan."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この操作は元に戻せません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 작업은 되돌릴 수 없습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此操作无法撤销。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此操作無法復原。"
+          }
         }
       }
     },
@@ -4492,6 +6287,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Heure"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waktu"
           }
         },
         "ja": {
@@ -4511,6 +6312,12 @@
             "state": "translated",
             "value": "时间"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "時間"
+          }
         }
       }
     },
@@ -4526,6 +6333,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pour enregistrer le son avec vos vidéos."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Untuk merekam suara bersama video Anda."
           }
         },
         "ja": {
@@ -4545,6 +6358,12 @@
             "state": "translated",
             "value": "用于在录制视频时同时录音。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用於在錄製影片時同時錄音。"
+          }
         }
       }
     },
@@ -4560,6 +6379,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pour enregistrer des vidéos et prendre des photos. L'application ne peut pas fonctionner sans cela."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Untuk merekam video dan mengambil foto. Aplikasi tidak dapat berfungsi tanpa ini."
           }
         },
         "ja": {
@@ -4579,78 +6404,16 @@
             "state": "translated",
             "value": "用于录制视频和拍摄照片。没有此权限应用无法运行。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用於錄製影片和拍攝照片。沒有此權限應用程式無法運作。"
+          }
         }
       }
     },
     "Try": {},
-    "Unable to determine available storage. Free up space and try again.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Der verfügbare Speicherplatz konnte nicht ermittelt werden. Gib Speicherplatz frei und versuche es erneut."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Impossible de déterminer l'espace de stockage disponible. Libérez de l'espace et réessayez."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "利用可能なストレージ容量を確認できませんでした。空き容量を確保してから再度お試しください。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "사용 가능한 저장공간을 확인할 수 없습니다. 공간을 확보한 후 다시 시도하세요."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "无法确定可用存储空间。请清理空间后重试。"
-          }
-        }
-      }
-    },
-    "Unlock the full app": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die vollständige App freischalten"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Débloquer l'application complète"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "フルバージョンを解除"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "전체 앱 잠금 해제"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "解锁完整版应用"
-          }
-        }
-      }
-    },
     "USES SIGNIFICANTLY MORE STORAGE": {
       "localizations": {
         "de": {
@@ -4663,6 +6426,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "UTILISE BEAUCOUP PLUS DE STOCKAGE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MENGGUNAKAN PENYIMPANAN JAUH LEBIH BANYAK"
           }
         },
         "ja": {
@@ -4682,6 +6451,12 @@
             "state": "translated",
             "value": "将显著增加存储消耗"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將顯著增加儲存消耗"
+          }
         }
       }
     },
@@ -4697,6 +6472,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "UTILISE BEAUCOUP PLUS DE STOCKAGE ET DE BATTERIE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MENGGUNAKAN PENYIMPANAN DAN BATERAI JAUH LEBIH BANYAK"
           }
         },
         "ja": {
@@ -4715,6 +6496,664 @@
           "stringUnit": {
             "state": "translated",
             "value": "将显著增加存储和电量消耗"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將顯著增加儲存和電量消耗"
+          }
+        }
+      }
+    },
+    "Unable to determine available storage. Free up space and try again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der verfügbare Speicherplatz konnte nicht ermittelt werden. Gib Speicherplatz frei und versuche es erneut."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de déterminer l'espace de stockage disponible. Libérez de l'espace et réessayez."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tidak dapat menentukan penyimpanan yang tersedia. Kosongkan ruang dan coba lagi."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "利用可能なストレージ容量を確認できませんでした。空き容量を確保してから再度お試しください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "사용 가능한 저장공간을 확인할 수 없습니다. 공간을 확보한 후 다시 시도하세요."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法确定可用存储空间。请清理空间后重试。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法確定可用儲存空間。請清理空間後重試。"
+          }
+        }
+      }
+    },
+    "Unlock the full app": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die vollständige App freischalten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Débloquer l'application complète"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buka aplikasi lengkap"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "フルバージョンを解除"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "전체 앱 잠금 해제"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "解锁完整版应用"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "解鎖完整版應用程式"
+          }
+        }
+      }
+    },
+    "VIDEO RECORD": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VIDEOAUFNAHME"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ENREGISTREMENT VIDÉO"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "REKAM VIDEO"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ビデオ録画"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "동영상 녹화"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "视频录制"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影片錄製"
+          }
+        }
+      }
+    },
+    "Video": {},
+    "Video Quality": {},
+    "View": {},
+    "View Media": {},
+    "WELCOME": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WILLKOMMEN"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BIENVENUE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SELAMAT DATANG"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ようこそ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "환영합니다"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "欢迎"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "歡迎"
+          }
+        }
+      }
+    },
+    "WIDE": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BREIT"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LARGE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LEBAR"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ワイド"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "넓게"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "宽"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "寬"
+          }
+        }
+      }
+    },
+    "We do not guarantee recordings will be saved. Data loss can occur due to bugs, crashes, or device issues.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wir garantieren nicht, dass Aufnahmen gespeichert werden. Durch Fehler, Abstürze oder Geräteprobleme kann es zu Datenverlust kommen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nous ne garantissons pas que les enregistrements seront sauvegardés. Une perte de données peut survenir en cas de bug, de plantage ou de problème avec l'appareil."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kami tidak menjamin rekaman akan tersimpan. Kehilangan data dapat terjadi akibat bug, crash, atau masalah perangkat."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "録画データの保存は保証されません。バグ、クラッシュ、端末の問題によりデータが失われる可能性があります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "녹화 내용의 저장을 보장하지 않습니다. 버그, 앱 충돌, 기기 문제로 데이터가 손실될 수 있습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我们不保证录制内容一定会被保存。程序错误、崩溃或设备问题都可能导致数据丢失。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我們不保證錄製內容一定會被儲存。程式錯誤、當機或裝置問題都可能導致資料遺失。"
+          }
+        }
+      }
+    },
+    "Weekly": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wöchentlich"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hebdomadaire"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mingguan"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "週間"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "주간"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每周"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每週"
+          }
+        }
+      }
+    },
+    "YAPPING MODE": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SPRECHMODUS"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODE BAVARDAGE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODE NASKAH"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "おしゃべりモード"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "수다 모드"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "念稿模式"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "念稿模式"
+          }
+        }
+      }
+    },
+    "Yearly": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jährlich"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuel"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tahunan"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "年間"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "연간"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每年"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每年"
+          }
+        }
+      }
+    },
+    "billed every 30 days · auto-renews": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "alle 30 Tage abgerechnet · verlängert sich automatisch"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "facturé tous les 30 jours · renouvellement automatique"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ditagih setiap 30 hari · perpanjangan otomatis"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30日ごとに請求・自動更新"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30일마다 청구 · 자동 갱신"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每30天扣费 · 自动续订"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每30天扣款 · 自動續訂"
+          }
+        }
+      }
+    },
+    "billed every 365 days · auto-renews": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "alle 365 Tage abgerechnet · verlängert sich automatisch"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "facturé tous les 365 jours · renouvellement automatique"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ditagih setiap 365 hari · perpanjangan otomatis"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "365日ごとに請求・自動更新"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "365일마다 청구 · 자동 갱신"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每365天扣费 · 自动续订"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每365天扣款 · 自動續訂"
+          }
+        }
+      }
+    },
+    "billed every 7 days · auto-renews": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "alle 7 Tage abgerechnet · verlängert sich automatisch"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "facturé tous les 7 jours · renouvellement automatique"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ditagih setiap 7 hari · perpanjangan otomatis"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7日ごとに請求・自動更新"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7일마다 청구 · 자동 갱신"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每7天扣费 · 自动续订"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每7天扣款 · 自動續訂"
+          }
+        }
+      }
+    },
+    "month": {
+      "comment": "Subscription period, as in 'the current month'",
+      "extractionState": "stale",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monat"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mois"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bulan"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "월"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月"
+          }
+        }
+      }
+    },
+    "photo": {
+      "comment": "The media type word, as in 'open this photo'",
+      "extractionState": "stale",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "photo"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "foto"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "사진"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "照片"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "照片"
           }
         }
       }
@@ -4735,6 +7174,12 @@
             "value": "vidéo"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "video"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -4752,77 +7197,11 @@
             "state": "translated",
             "value": "视频"
           }
-        }
-      }
-    },
-    "Video": {},
-    "Video Quality": {},
-    "VIDEO RECORD": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "VIDEOAUFNAHME"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "ENREGISTREMENT VIDÉO"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ビデオ録画"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "동영상 녹화"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "视频录制"
-          }
-        }
-      }
-    },
-    "View": {},
-    "View Media": {},
-    "We do not guarantee recordings will be saved. Data loss can occur due to bugs, crashes, or device issues.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wir garantieren nicht, dass Aufnahmen gespeichert werden. Durch Fehler, Abstürze oder Geräteprobleme kann es zu Datenverlust kommen."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nous ne garantissons pas que les enregistrements seront sauvegardés. Une perte de données peut survenir en cas de bug, de plantage ou de problème avec l'appareil."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "録画データの保存は保証されません。バグ、クラッシュ、端末の問題によりデータが失われる可能性があります。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "녹화 내용의 저장을 보장하지 않습니다. 버그, 앱 충돌, 기기 문제로 데이터가 손실될 수 있습니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "我们不保证录制内容一定会被保存。程序错误、崩溃或设备问题都可能导致数据丢失。"
+            "value": "影片"
           }
         }
       }
@@ -4843,6 +7222,12 @@
             "value": "semaine"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "minggu"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -4860,141 +7245,11 @@
             "state": "translated",
             "value": "周"
           }
-        }
-      }
-    },
-    "Weekly": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wöchentlich"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hebdomadaire"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "週間"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "주간"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "每周"
-          }
-        }
-      }
-    },
-    "WELCOME": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WILLKOMMEN"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "BIENVENUE"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ようこそ"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "환영합니다"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "欢迎"
-          }
-        }
-      }
-    },
-    "WIDE": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "BREIT"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "LARGE"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ワイド"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "넓게"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "宽"
-          }
-        }
-      }
-    },
-    "YAPPING MODE": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SPRECHMODUS"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MODE BAVARDAGE"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "おしゃべりモード"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "수다 모드"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "念稿模式"
+            "value": "週"
           }
         }
       }
@@ -5015,6 +7270,12 @@
             "value": "an"
           }
         },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tahun"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -5032,383 +7293,18 @@
             "state": "translated",
             "value": "年"
           }
-        }
-      }
-    },
-    "Yearly": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jährlich"
-          }
         },
-        "fr": {
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Annuel"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "年間"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "연간"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "每年"
+            "value": "年"
           }
         }
       }
     },
-    "Select": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "選択"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auswählen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sélect."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选择"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "선택"
-          }
-        }
-      }
-    },
-    "%lld Selected": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld件を選択中"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld ausgewählt"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld sélectionné(s)"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已选择 %lld 项"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld개 선택됨"
-          }
-        }
-      }
-    },
-    "Delete %lld item?": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld件を削除しますか？"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld Element löschen?"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Supprimer %lld élément ?"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "删除 %lld 项？"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld개 항목을 삭제할까요?"
-          }
-        }
-      }
-    },
-    "Delete %lld items?": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld件を削除しますか？"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld Elemente löschen?"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Supprimer %lld éléments ?"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "删除 %lld 项？"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld개 항목을 삭제할까요?"
-          }
-        }
-      }
-    },
-    "PRO MODE": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "プロモード"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PRO-MODUS"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MODE PRO"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "专业模式"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "프로 모드"
-          }
-        }
-      }
-    },
-    "Compact preview, with manual exposure and focus lock": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "コンパクトなプレビュー、露出とフォーカスを手動調整"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kompakte Vorschau, mit manueller Belichtung und Fokussperre"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aperçu compact, avec exposition manuelle et verrouillage de la mise au point"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "预览窗口更小，可手动调整曝光并锁定对焦"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "작은 미리보기, 수동 노출 및 초점 고정 지원"
-          }
-        }
-      }
-    },
-    "AE / AF LOCKED": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AE／AFロック中"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AE/AF GESPERRT"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AE/AF VERROUILLÉ"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AE/AF 已锁定"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AE/AF 잠금됨"
-          }
-        }
-      }
-    },
-    "LOCK AE / AF": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AE／AFをロック"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AE/AF SPERREN"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "VERROUILLER AE/AF"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "锁定 AE/AF"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AE/AF 잠금"
-          }
-        }
-      }
-    },
-    "DATE STAMP ON PHOTOS AND VIDEOS": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "写真と動画への日付スタンプ"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DATUMSSTEMPEL AUF FOTOS UND VIDEOS"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HORODATAGE SUR PHOTOS ET VIDÉOS"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "照片与视频日期戳"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "사진 및 동영상 날짜 스탬프"
-          }
-        }
-      }
-    },
-    "Burns the date, time, and LBC onto the photo or video itself. Cannot be removed afterward.": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "日付、時刻、LBCを写真や動画自体に焼き込みます。後から削除することはできません。"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Brennt Datum, Uhrzeit und LBC direkt in das Foto oder Video ein. Kann danach nicht mehr entfernt werden."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Incruste la date, l'heure et LBC directement dans la photo ou la vidéo. Ne peut pas être retiré ensuite."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "将日期、时间和 LBC 直接印在照片或视频上，事后无法移除。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "날짜, 시간, LBC를 사진이나 동영상에 직접 새깁니다. 이후에는 제거할 수 없습니다."
-          }
-        }
-      }
-    }
+    "·": {},
+    "·  T A P  T O  W A K E  ·": {},
+    "• Press start to begin recording video.\n• Press stop to stop recording.\n• Press export to export the file.\n• The app overwrites previous data when the start button is pressed again.\n• The app cannot run in the background; auto-lock should be set to 'Never'.\n• Video quality should not be changed during recording.": {}
   },
   "version": "1.0"
 }

@@ -4,7 +4,7 @@ import SwiftUI
 
 enum AppLanguage: String, CaseIterable {
     case system
-    case en, ja, de, fr, zhHans, ko
+    case en, ja, de, fr, zhHans, ko, zhHant, id
 
     /// Always rendered in that language's own script, regardless of the
     /// app's current display language — so someone who ends up somewhere
@@ -21,6 +21,8 @@ enum AppLanguage: String, CaseIterable {
         case .fr:     return "Français"
         case .zhHans: return "简体中文"
         case .ko:     return "한국어"
+        case .zhHant: return "繁體中文"
+        case .id:     return "Bahasa Indonesia"
         }
     }
 
@@ -34,6 +36,8 @@ enum AppLanguage: String, CaseIterable {
         case .fr:     return "fr"
         case .zhHans: return "zh-Hans"
         case .ko:     return "ko"
+        case .zhHant: return "zh-Hant"
+        case .id:     return "id"
         }
     }
 }
