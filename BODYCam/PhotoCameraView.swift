@@ -54,7 +54,7 @@ final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, Obser
 
         // 1. Scale down if needed (LOW = 50 % linear → 25 % of pixels)
         let scale = quality.spatialScale
-        let processed: UIImage
+        var processed: UIImage
         if scale < 1.0 {
             let targetSize = CGSize(width:  rawImage.size.width  * scale,
                                     height: rawImage.size.height * scale)
@@ -64,6 +64,13 @@ final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, Obser
             }
         } else {
             processed = rawImage
+        }
+
+        // 1.5. Burn a visible date stamp in, if the user opted in. Off by
+        // default and read straight from UserDefaults rather than an
+        // @AppStorage — this class isn't a View and can't hold one.
+        if UserDefaults.standard.bool(forKey: "ShowDateStamp") {
+            processed = PhotoCaptureDelegate.applyDateStamp(to: processed)
         }
 
         // 2. Re-encode as JPEG with the tier's compression factor
@@ -83,6 +90,45 @@ final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, Obser
             DispatchQueue.main.async { self.onFinish?(true) }
         } catch {
             DispatchQueue.main.async { self.onFinish?(false) }
+        }
+    }
+
+    /// Draws the capture date/time and "LBC" into the bottom-right corner,
+    /// directly onto the pixels — permanent, unlike EXIF metadata, which is
+    /// invisible unless someone opens the file's info panel. That's the whole
+    /// point of this feature over what the file already carries for free.
+    static func applyDateStamp(to image: UIImage) -> UIImage {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        // Deliberately never localized: a stamp meant to travel with the file
+        // anywhere it's shared should read the same regardless of whoever
+        // eventually views it, the same reasoning as the app's own name
+        // staying fixed elsewhere.
+        let text = "\(formatter.string(from: Date())) · LBC"
+
+        let renderer = UIGraphicsImageRenderer(size: image.size)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: image.size))
+
+            let fontSize = max(14, image.size.height * 0.022)
+            let paragraph = NSMutableParagraphStyle()
+            paragraph.alignment = .right
+            let shadow = NSShadow()
+            shadow.shadowColor = UIColor.black.withAlphaComponent(0.9)
+            shadow.shadowBlurRadius = 3
+            shadow.shadowOffset = .zero
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.monospacedSystemFont(ofSize: fontSize, weight: .bold),
+                .foregroundColor: UIColor.white,
+                .paragraphStyle: paragraph,
+                .shadow: shadow
+            ]
+
+            let margin = image.size.width * 0.025
+            let lineHeight = fontSize * 1.4
+            let textRect = CGRect(x: margin, y: image.size.height - margin - lineHeight,
+                                  width: image.size.width - margin * 2, height: lineHeight)
+            (text as NSString).draw(in: textRect, withAttributes: attributes)
         }
     }
 }

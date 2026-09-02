@@ -5340,6 +5340,74 @@
           }
         }
       }
+    },
+    "DATE STAMP ON PHOTOS AND VIDEOS": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真と動画への日付スタンプ"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DATUMSSTEMPEL AUF FOTOS UND VIDEOS"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HORODATAGE SUR PHOTOS ET VIDÉOS"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "照片与视频日期戳"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "사진 및 동영상 날짜 스탬프"
+          }
+        }
+      }
+    },
+    "Burns the date, time, and LBC onto the photo or video itself. Cannot be removed afterward.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日付、時刻、LBCを写真や動画自体に焼き込みます。後から削除することはできません。"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brennt Datum, Uhrzeit und LBC direkt in das Foto oder Video ein. Kann danach nicht mehr entfernt werden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incruste la date, l'heure et LBC directement dans la photo ou la vidéo. Ne peut pas être retiré ensuite."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将日期、时间和 LBC 直接印在照片或视频上，事后无法移除。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "날짜, 시간, LBC를 사진이나 동영상에 직접 새깁니다. 이후에는 제거할 수 없습니다."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

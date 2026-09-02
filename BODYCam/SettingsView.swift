@@ -423,6 +423,12 @@ struct SettingsView: View {
     @AppStorage("IsLowLight") private var isLowLight: Bool = false
     @AppStorage("SelectedPhotoQuality") private var photoQuality: PhotoQuality = .high
     @AppStorage("ShowThumbnailMetadata") private var showThumbnailMetadata: Bool = false
+    // Off by default: unlike the thumbnail toggle above, this one is
+    // permanent per file the moment something is captured with it on — read
+    // directly from UserDefaults (not through this @AppStorage) by
+    // PhotoCaptureDelegate and VideoCaptureDelegate, neither of which is a
+    // View and so can't hold an @AppStorage of its own.
+    @AppStorage("ShowDateStamp") private var showDateStamp: Bool = false
     @ObservedObject private var scheduleStore = ScheduleStore.shared
     @State private var showScheduledList = false
 
@@ -763,6 +769,38 @@ struct SettingsView: View {
                         }
                     )
                 }
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+                sectionLabel("DATE STAMP ON PHOTOS AND VIDEOS")
+                Button(action: { showDateStamp.toggle() }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: showDateStamp ? "calendar.circle.fill" : "calendar")
+                            .font(.system(size: 14))
+                        Text(showDateStamp ? "ON" : "OFF")
+                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                            .tracking(1)
+                    }
+                    .foregroundColor(showDateStamp ? Color(white: 0.85) : Color(white: 0.4))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(showDateStamp ? Color(white: 0.25) : Color(white: 0.1))
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(showDateStamp ? Color(white: 0.45) : Color(white: 0.2), lineWidth: 1)
+                        }
+                    )
+                }
+                // Off by default and said plainly here: unlike the thumbnail
+                // toggle above, this one is permanent per file the moment a
+                // photo or video is captured with it on — there's no editing
+                // it back out afterward.
+                Text("Burns the date, time, and LBC onto the photo or video itself. Cannot be removed afterward.")
+                    .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                    .foregroundColor(Color(white: 0.5))
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .padding(16)
