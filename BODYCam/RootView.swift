@@ -56,7 +56,12 @@ struct RootView: View {
                         Label {
                             Text(verbatim: "LBC")
                         } icon: {
-                            Image(systemName: "film.stack")
+                            // square.stack.3d.up.fill, not film.stack: film.stack
+                            // was only added in iOS 16 (SF Symbols 4), so on this
+                            // app's iOS 14 minimum — e.g. a real iPhone 6S, capped
+                            // at iOS 15 — the name doesn't exist yet and the icon
+                            // silently renders as nothing.
+                            Image(systemName: "square.stack.3d.up.fill")
                         }
                     }
                     .tag(2)
