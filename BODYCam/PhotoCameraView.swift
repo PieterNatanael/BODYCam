@@ -58,7 +58,15 @@ final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, Obser
         if scale < 1.0 {
             let targetSize = CGSize(width:  rawImage.size.width  * scale,
                                     height: rawImage.size.height * scale)
-            let renderer = UIGraphicsImageRenderer(size: targetSize)
+            // scale = 1 for the same reason as applyDateStamp below, and here
+            // it also fixes the result: the renderer's default scale of 3 was
+            // making LOW render at 3x the target, i.e. 1.5x the ORIGINAL
+            // linear size — the opposite of the "50% linear, 25% of the
+            // pixels" this block says it does, and a bigger file than High.
+            let format = UIGraphicsImageRendererFormat.default()
+            format.scale = 1
+            format.opaque = true
+            let renderer = UIGraphicsImageRenderer(size: targetSize, format: format)
             processed = renderer.image { _ in
                 rawImage.draw(in: CGRect(origin: .zero, size: targetSize))
             }
@@ -106,11 +114,29 @@ final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, Obser
         // staying fixed elsewhere.
         let text = "\(formatter.string(from: Date())) · LBC"
 
-        let renderer = UIGraphicsImageRenderer(size: image.size)
+        // scale = 1 is essential, not a detail. UIGraphicsImageRenderer
+        // defaults its format scale to UIScreen.main.scale (3 on modern
+        // iPhones), so rendering a 3024x4032 photo would allocate a
+        // 9072x12096 bitmap — around 110 megapixels and hundreds of MB — to
+        // stamp a line of text. That is what made stamped photos take
+        // seconds to save, and the memory spike is the likeliest reason the
+        // stamp silently failed to appear on the larger portrait renders.
+        // The photo's pixels are already the output; nothing here needs
+        // rasterizing at display density.
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        format.opaque = true
+
+        let renderer = UIGraphicsImageRenderer(size: image.size, format: format)
         return renderer.image { _ in
             image.draw(in: CGRect(origin: .zero, size: image.size))
 
-            let fontSize = max(14, image.size.height * 0.022)
+            // Same sizing rule as the video stamp, shared rather than
+            // duplicated so the two can't drift into looking like different
+            // features. Photos are high resolution enough that the width term
+            // rarely binds here, but keeping one rule means a future change
+            // lands on both.
+            let fontSize = VideoCaptureDelegate.stampFontSize(for: image.size)
             let paragraph = NSMutableParagraphStyle()
             paragraph.alignment = .right
             let shadow = NSShadow()

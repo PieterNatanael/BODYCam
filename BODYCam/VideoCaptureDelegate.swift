@@ -200,6 +200,27 @@ class VideoCaptureDelegate: NSObject, AVCaptureFileOutputRecordingDelegate, Obse
         }
     }
 
+    /// Font size for the stamp, sized against BOTH dimensions of the frame.
+    ///
+    /// Height alone isn't enough: the stamp is a single wide line, so what
+    /// actually decides whether it looks proportionate is how much of the
+    /// WIDTH it crosses. Sizing purely by height with a fixed minimum made
+    /// Low quality video (around 192x144) render the line at almost the full
+    /// frame width, since the floor dominated at that resolution while the
+    /// frame stayed tiny.
+    ///
+    /// The width term keeps the line to roughly half the frame: the text is
+    /// about 22 monospaced characters, each around 0.6 em wide, so
+    /// `width * 0.042` lands near 55% of the width whatever the resolution.
+    /// The remaining floor only guards against sub-pixel mush; at Low's
+    /// resolution a stamp genuinely cannot be both readable and unobtrusive.
+    ///
+    /// Shared shape with the photo stamp deliberately, so the two can't drift
+    /// apart into looking like different features.
+    static func stampFontSize(for size: CGSize) -> CGFloat {
+        max(8, min(size.height * 0.022, size.width * 0.042))
+    }
+
     private static func dateStampTextLayer(displaySize: CGSize) -> CATextLayer {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm"
@@ -208,7 +229,7 @@ class VideoCaptureDelegate: NSObject, AVCaptureFileOutputRecordingDelegate, Obse
         // eventually views it, same reasoning as the photo stamp.
         let text = "\(formatter.string(from: Date())) · LBC"
 
-        let fontSize = max(14, displaySize.height * 0.022)
+        let fontSize = VideoCaptureDelegate.stampFontSize(for: displaySize)
         let margin = displaySize.width * 0.025
         let lineHeight = fontSize * 1.4
 
@@ -218,12 +239,23 @@ class VideoCaptureDelegate: NSObject, AVCaptureFileOutputRecordingDelegate, Obse
         textLayer.fontSize = fontSize
         textLayer.foregroundColor = UIColor.white.cgColor
         textLayer.alignmentMode = .right
-        textLayer.contentsScale = UIScreen.main.scale
+        // 1, not UIScreen.main.scale. A layer tree rendered offscreen by
+        // AVVideoCompositionCoreAnimationTool has no screen behind it — its
+        // geometry is already in video pixels. Using the display scale
+        // rasterized the text about 3x oversized, which is why it ran nearly
+        // edge to edge across the frame.
+        textLayer.contentsScale = 1
         textLayer.shadowColor = UIColor.black.cgColor
         textLayer.shadowOpacity = 0.9
         textLayer.shadowRadius = 3
         textLayer.shadowOffset = .zero
-        textLayer.frame = CGRect(x: margin, y: displaySize.height - margin - lineHeight,
+        // y = margin puts this at the BOTTOM here, not the top. A standalone
+        // CALayer outside a UIView hierarchy uses Core Animation's native
+        // bottom-left origin with y increasing upward — UIKit's top-left
+        // origin is something UIView imposes on its own backing layer.
+        // Measuring down from the height, as the photo stamp correctly does
+        // in UIKit coordinates, put this at the top of the video instead.
+        textLayer.frame = CGRect(x: margin, y: margin,
                                  width: displaySize.width - margin * 2, height: lineHeight)
         return textLayer
     }

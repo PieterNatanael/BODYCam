@@ -156,7 +156,17 @@ final class VolumeButtonObserver: NSObject, ObservableObject {
         slider.value = value
         slider.sendActions(for: .valueChanged)   // commits the change to iOS
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+        // 0.6s rather than 0.2s. The suppression window has to outlast the
+        // delay before our OWN volume change comes back as a KVO event, and
+        // that delay stretches under load: a heavy capture (a large photo
+        // being re-encoded, say) can push the restore's event past a 200 ms
+        // window, at which point the observer no longer recognizes the event
+        // as self-inflicted and fires `action` — taking a second photo the
+        // user never asked for. The cost of the longer window is that a real
+        // button press within 0.6s of a capture is ignored, which is
+        // consistent with the 0.3s debounce already applied to genuine
+        // presses.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
             guard let self else { return }
             self.suppressionCount = max(0, self.suppressionCount - 1)
         }
