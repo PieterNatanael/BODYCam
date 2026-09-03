@@ -34,6 +34,41 @@ enum PhotoQuality: String, CaseIterable {
     }
 }
 
+// MARK: - Shutter tick
+
+/// The soft tick played in place of the system shutter, which is suppressed
+/// in PhotoCaptureDelegate.willCapturePhotoFor.
+///
+/// Bundled as a file rather than borrowing one of iOS's built in system sound
+/// ids: AudioServicesPlaySystemSound returns nothing and does nothing at all
+/// when handed an id the OS doesn't have, so there is no way to detect a
+/// missing sound and fall back to another one. A file that ships inside the
+/// app cannot go missing, and sounds identical on every iOS version.
+///
+/// Played through system sound services, the same channel the shutter itself
+/// uses. That matters: it means the volume drop around each capture, which
+/// only moves the MEDIA level, cannot mute this either. It follows the ring
+/// volume and the silent switch, so a phone set to silent stays silent.
+enum ShutterTick {
+    /// Registered once and reused. Re-creating the sound id per capture would
+    /// leak a system sound object on every shot.
+    private static let soundID: SystemSoundID? = {
+        guard let url = Bundle.main.url(forResource: "ShutterTick", withExtension: "caf") else {
+            return nil
+        }
+        var id: SystemSoundID = 0
+        guard AudioServicesCreateSystemSoundID(url as CFURL, &id) == kAudioServicesNoError else {
+            return nil
+        }
+        return id
+    }()
+
+    static func play() {
+        guard let soundID = soundID else { return }
+        AudioServicesPlaySystemSound(soundID)
+    }
+}
+
 // MARK: - Photo Capture Delegate
 
 final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, ObservableObject {
@@ -1100,11 +1135,13 @@ struct PhotoCameraView: View {
         // immediate. The save result is reported separately, and only when it
         // fails.
         flashShutter()
-        // Silent by design, which is the point — this app deliberately drops
-        // system volume around every capture (see below) so nothing is audible
-        // to bystanders. A haptic gives the user their confirmation without
-        // giving that away. Does nothing on hardware without a Taptic Engine,
-        // which is a no-op rather than an error.
+        // A soft tick in place of the system shutter, which is suppressed in
+        // the delegate. Follows the silent switch, so a muted phone still
+        // captures silently.
+        ShutterTick.play()
+        // Also tapped, so the confirmation still lands when the phone is on
+        // silent. Does nothing on hardware without a Taptic Engine, which is a
+        // no-op rather than an error.
         hapticGenerator.impactOccurred()
         // Re-arm for the next shot; a generator goes back to idle after firing.
         hapticGenerator.prepare()

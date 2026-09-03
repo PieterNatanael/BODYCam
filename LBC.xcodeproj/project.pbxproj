@@ -21,6 +21,7 @@
 		4F94059B97C44539B613DC90 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E144EF1EEE404093AC6D81 /* OnboardingView.swift */; };
 		55BFEFB65428456DB73411B5 /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15807B7856B3496BB23F2576 /* CameraPreviewView.swift */; };
 		74A870A93E9346BEA3046FF4 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 0A5035B31E2C4EF39D30355E /* Localizable.xcstrings */; };
+		AB1C2D3E4F5A67890B1C2D3F /* ShutterTick.caf in Resources */ = {isa = PBXBuildFile; fileRef = AC1C2D3E4F5A67890B1C2D40 /* ShutterTick.caf */; };
 		82CFFFDF435E42E192CA41F2 /* MediaPagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D253753DDA314E7DA3AE42D9 /* MediaPagerView.swift */; };
 		91F0203186EF44B99F513550 /* VideoThumbnailCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C566D818AA8C4DFFAD2CF657 /* VideoThumbnailCard.swift */; };
 		99564158C0234EF9B33247C5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1747C2BCE1D54D29A52EBF34 /* SettingsView.swift */; };
@@ -43,6 +44,7 @@
 /* Begin PBXFileReference section */
 		0609504E575B4BE39E6EACFB /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
 		0A5035B31E2C4EF39D30355E /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		AC1C2D3E4F5A67890B1C2D40 /* ShutterTick.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ShutterTick.caf; sourceTree = "<group>"; };
 		1228F6279BA140FB9EBC6850 /* ScheduledListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledListSheet.swift; sourceTree = "<group>"; };
 		15807B7856B3496BB23F2576 /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
 		1747C2BCE1D54D29A52EBF34 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 				215E96012BCA669A00634871 /* AppDelegate.swift */,
 				215E96032BCA66B100634871 /* SceneDelegate.swift */,
 				0A5035B31E2C4EF39D30355E /* Localizable.xcstrings */,
+				AC1C2D3E4F5A67890B1C2D40 /* ShutterTick.caf */,
 				218E2A462BCA1F1A00E99A2B /* Assets.xcassets */,
 				218E2A482BCA1F1A00E99A2B /* Preview Content */,
 			);
@@ -225,6 +228,7 @@
 			files = (
 				218E2A4A2BCA1F1A00E99A2B /* Preview Assets.xcassets in Resources */,
 				74A870A93E9346BEA3046FF4 /* Localizable.xcstrings in Resources */,
+				AB1C2D3E4F5A67890B1C2D3F /* ShutterTick.caf in Resources */,
 				218E2A472BCA1F1A00E99A2B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
