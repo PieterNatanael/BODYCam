@@ -52,7 +52,7 @@ struct ContentView: View {
     @State private var recordingStartedAt: Date?
     @State private var elapsed: TimeInterval = 0
     private let recordingTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.normal.rawValue
+    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.saveBattery.rawValue
     private var displayMode: CameraDisplayMode { CameraDisplayMode(rawValue: displayModeRaw) ?? .saveBattery }
     // Yapping mode: script text takes the main area, the camera preview
     // shrinks to a small draggable corner window instead. Text persists
@@ -76,7 +76,7 @@ struct ContentView: View {
     @AppStorage("YappingNarrowColumn") private var yappingNarrow: Bool = false
     @State private var yappingPipCenter: CGPoint?
     @GestureState private var yappingPipDrag: CGSize = .zero
-    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
+    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.tropical.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     // Simple and Tactical share the same flat/no-gradient/sharp-corner "bones";
     // only their accent colors (and the preview's corner-bracket treatment) differ.

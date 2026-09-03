@@ -20,7 +20,7 @@ struct VideoPlayerView: View {
     @State private var showPaywall     = false
     @State private var saveStatus: SaveStatus?
     @State private var scheduleMode: ScheduleMode?
-    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
+    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.tropical.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     private var isFlatTheme: Bool { appTheme.isFlat }
     private var accentColor: Color { appTheme.galleryAccent }

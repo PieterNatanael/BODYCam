@@ -8,7 +8,7 @@ struct VideoThumbnailCard: View {
     @State private var duration: String = ""
     @State private var date: String = ""
 
-    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
+    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.tropical.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     private var isFlatTheme: Bool { appTheme.isFlat }
     private var accentColor: Color { appTheme.galleryAccent }

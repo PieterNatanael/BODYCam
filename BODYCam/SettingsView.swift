@@ -439,8 +439,8 @@ struct RuleOfThirdsGrid: Shape {
 struct SettingsView: View {
 
     @Environment(\.presentationMode) private var presentationMode
-    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.normal.rawValue
-    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
+    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.saveBattery.rawValue
+    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.tropical.rawValue
     @AppStorage("AppLanguage") private var appLanguageRaw: String = AppLanguage.system.rawValue
     @AppStorage("SelectedVideoQuality") private var videoQuality: VideoQuality = .high
     @AppStorage("IsLowLight") private var isLowLight: Bool = false

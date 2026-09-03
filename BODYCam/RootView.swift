@@ -3,14 +3,14 @@ import AVFoundation
 
 struct RootView: View {
     @StateObject private var subscriptionManager = SubscriptionManager()
-    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
+    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.tropical.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
 
     init() {
         // Read straight from UserDefaults: @AppStorage isn't available yet
         // inside init, and the appearance proxy has to be configured before the
         // TabView is built or the first render uses stock colours.
-        let raw = UserDefaults.standard.string(forKey: "AppTheme") ?? AppTheme.simple.rawValue
+        let raw = UserDefaults.standard.string(forKey: "AppTheme") ?? AppTheme.tropical.rawValue
         Self.applyTabBarColors(for: AppTheme(rawValue: raw) ?? .normal)
     }
 

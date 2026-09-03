@@ -317,9 +317,9 @@ struct PhotoCameraView: View {
     @State private var isScreenDimmed   = false
     @State private var savedBrightness: CGFloat = UIScreen.main.brightness
     @State private var showAppSettingsSheet = false
-    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.normal.rawValue
+    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.saveBattery.rawValue
     private var displayMode: CameraDisplayMode { CameraDisplayMode(rawValue: displayModeRaw) ?? .saveBattery }
-    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
+    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.tropical.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     // Simple and Tactical share the same flat/no-gradient/sharp-corner "bones";
     // only their accent colors (and the preview's corner-bracket treatment) differ.

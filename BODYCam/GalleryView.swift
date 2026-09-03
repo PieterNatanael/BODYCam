@@ -24,7 +24,7 @@ struct GalleryView: View {
     /// stays correct if the list is reloaded or reordered underneath it —
     /// which happens whenever a recording is added or deleted.
     @State private var selectedIDs: Set<URL> = []
-    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.simple.rawValue
+    @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.tropical.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     private var isFlatTheme: Bool { appTheme.isFlat }
     private var accentColor: Color { appTheme.galleryAccent }
