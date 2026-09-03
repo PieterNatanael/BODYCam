@@ -243,7 +243,12 @@ struct VideoPlayerView: View {
                 showDeleteAlert = true
             }
         }
-        .padding(.vertical, 10)
+        // Reduced from 10 to match PhotoDetailView's identical bar — this is
+        // a solid, opaque overlay sitting ON TOP of the full-bleed media
+        // underneath, not sharing layout space with it, so every point of
+        // its own height hides a point of the frame behind it while the
+        // chrome is showing.
+        .padding(.vertical, 6)
         .background(Color(white: 0.08))
     }
 
@@ -261,21 +266,23 @@ struct VideoPlayerView: View {
                             Circle().stroke(locked ? Color(white: 0.3) : Color.white.opacity(0.18),
                                             lineWidth: 1)
                         )
-                        .frame(width: 52, height: 52)
-                        .shadow(color: locked ? .clear : color.opacity(0.35), radius: 5, x: 0, y: 2)
+                        // 44, not 52 — still Apple's own minimum comfortable
+                        // touch target, matching PhotoDetailView's bar.
+                        .frame(width: 44, height: 44)
+                        .shadow(color: locked ? .clear : color.opacity(0.35), radius: 4, x: 0, y: 2)
                     Image(systemName: icon)
-                        .font(.system(size: 20, weight: .semibold))
+                        .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(locked ? Color(white: 0.38) : color.contrastingForeground)
                 }
                 if locked {
                     Image(systemName: "lock.fill")
-                        .font(.system(size: 9))
+                        .font(.system(size: 8))
                         .foregroundColor(Color(white: 0.55))
-                        .offset(x: 2, y: -2)
+                        .offset(x: 1, y: -1)
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
+            .padding(.vertical, 6)
         }
         // The visible caption is gone, so carry it for VoiceOver instead —
         // otherwise these become three unlabelled buttons.
