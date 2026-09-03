@@ -58,10 +58,33 @@ final class VolumeButtonObserver: NSObject, ObservableObject {
             // Silently centre volume so both Up and Down are always reachable.
             self.silentReset()
 
-            // Register KVO only now — MPVolumeView is ready so setVolume works.
-            self.audioSession.addObserver(self, forKeyPath: "outputVolume",
-                                          options: [.new, .old], context: nil)
-            self.kvoRegistered = true
+            // KVO registration is delayed, not immediate, specifically
+            // because of the reset just above: it changes the real system
+            // volume, and the "outputVolume changed" notification for that
+            // isn't delivered instantly — there is a real, variable gap
+            // before iOS reports it back. suppressionCount alone races that
+            // gap against a timer, and a slow enough device can lose that
+            // race: a real iPhone 6S, under the extra CPU load of a cold
+            // launch, occasionally delivered it more than 600 ms late — past
+            // the point suppressionCount had already cleared — at which
+            // point it read as a genuine button press and silently started
+            // recording the moment the app opened. An iPhone SE never showed
+            // this because it is fast enough to always land inside that
+            // window.
+            //
+            // Not observing AT ALL until well after this specific reset has
+            // had time to fully propagate means there is no listener present
+            // to ever misinterpret it, however late it arrives — a real fix
+            // rather than a wider window that just makes the same race less
+            // likely. The only cost is volume-button-to-record being
+            // unavailable for this one second right as the tab opens, which
+            // is not something anyone presses into that fast.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                guard let self, self.isObserving, !self.kvoRegistered else { return }
+                self.audioSession.addObserver(self, forKeyPath: "outputVolume",
+                                              options: [.new, .old], context: nil)
+                self.kvoRegistered = true
+            }
         }
     }
 
