@@ -1,5 +1,6 @@
 import SwiftUI
 import AVFoundation
+import AudioToolbox
 
 // MARK: - Photo Quality
 
@@ -39,6 +40,27 @@ final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, Obser
     /// Set before each capture so the delegate knows how to process the image.
     var quality: PhotoQuality = .high
     var onFinish: ((Bool) -> Void)?
+
+    /// Called by AVFoundation immediately before the shutter fires, which is
+    /// also the moment the system plays the shutter sound. Disposing the sound
+    /// object here stops it before it is heard.
+    ///
+    /// This is needed because lowering the system volume does NOT silence the
+    /// shutter: the MPVolumeView slider VolumeButtonObserver drives controls
+    /// the MEDIA playback volume, while the shutter is played through system
+    /// sound services, the same channel as keyboard clicks. They are separate
+    /// levels, so the volume drop around each capture never touched it.
+    ///
+    /// 1108 is the shutter's system sound id. If a future iOS changes that id
+    /// or the behaviour, this quietly stops working and the sound comes back —
+    /// it cannot fail in a way that breaks capture.
+    ///
+    /// Note that iPhones sold in Japan and South Korea enforce the shutter
+    /// sound below this level, and it will still play there.
+    func photoOutput(_ output: AVCapturePhotoOutput,
+                     willCapturePhotoFor resolvedSettings: AVCaptureResolvedPhotoSettings) {
+        AudioServicesDisposeSystemSoundID(1108)
+    }
 
     func photoOutput(_ output: AVCapturePhotoOutput,
                      didFinishProcessingPhoto photo: AVCapturePhoto,
