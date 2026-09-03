@@ -345,6 +345,27 @@ struct ContentView: View {
         .onChange(of: isLowLight) { newValue in
             applyLowLight(newValue)
         }
+        // Settings is presented as a sheet over this view, not a replacement
+        // for it, so switching display modes there does NOT trigger
+        // onDisappear — the only other place Pro's settings get reset.
+        // Without this, leaving Pro mode by switching straight to another
+        // mode (never leaving the tab) left whatever exposure bias / AE-AF
+        // lock Pro set still sitting on the physical camera, silently
+        // affecting the mode switched to.
+        //
+        // Deliberately narrower than resetManualCameraAdjustments: this only
+        // clears the two things Pro mode itself exposes. Zoom is a separate,
+        // intentionally persistent control shared across every display mode
+        // (see the zoom button), and resetting it here on every mode switch
+        // would undo a zoom the user set in Normal mode the moment they so
+        // much as glanced at Pro mode.
+        .onChange(of: displayModeRaw) { _ in
+            applyExposureBias(0, session: captureSession, on: ContentView.sessionQueue) { applied in
+                exposureBias = applied
+            }
+            setAutoLock(false, session: captureSession, on: ContentView.sessionQueue)
+            isAutoLocked = false
+        }
         .alert(isPresented: $showAlert) {
             Alert(
                 title: Text(alertTitle),
