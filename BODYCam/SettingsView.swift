@@ -112,6 +112,7 @@ enum AppTheme: String, CaseIterable {
     case matcha
     case iceCream
     case spider
+    case tropical
 
     var title: LocalizedStringKey {
         switch self {
@@ -121,6 +122,7 @@ enum AppTheme: String, CaseIterable {
         case .matcha:   return "MATCHA"
         case .iceCream: return "ICE CREAM"
         case .spider:   return "SPIDER"
+        case .tropical: return "TROPICAL"
         }
     }
 
@@ -132,6 +134,7 @@ enum AppTheme: String, CaseIterable {
         case .matcha:   return "Flat and calm, soft green accents"
         case .iceCream: return "Flat and playful, pastel accents"
         case .spider:   return "Red and blue, webbed corners"
+        case .tropical: return "Wood brown and coconut white"
         }
     }
 
@@ -143,6 +146,11 @@ enum AppTheme: String, CaseIterable {
         case .matcha:   return "leaf.fill"
         case .iceCream: return "paintpalette.fill"
         case .spider:   return "network"
+        // sun.max.fill rather than a literal palm tree or coconut symbol —
+        // SF Symbols only added those in SF Symbols 4 (iOS 16), which would
+        // silently render as no icon at all back on this app's iOS 14
+        // minimum. See RootView's tab icon fix for the same pitfall.
+        case .tropical: return "sun.max.fill"
         }
     }
 }
@@ -211,6 +219,13 @@ extension AppTheme {
     private static let royalBlue     = Color(red: 0.16, green: 0.30, blue: 0.78)
     private static let webSilk       = Color(white: 0.88)
 
+    // Tropical: a rich wood brown carries most controls, with a warm,
+    // slightly off-white "coconut" tone standing in for Spider's webSilk —
+    // reserved for the dim button, the same role it plays there, since a
+    // pale accent reads better on a moon icon than the dark brown would.
+    private static let woodBrown     = Color(red: 0.45, green: 0.29, blue: 0.16)
+    private static let coconutWhite  = Color(red: 0.96, green: 0.94, blue: 0.87)
+
     private var palette: Palette {
         switch self {
         case .normal, .simple:
@@ -229,6 +244,10 @@ extension AppTheme {
             return Palette(flip: Self.royalBlue, dim: Self.webSilk,
                            settings: Self.royalBlue, record: Self.scarlet,
                            preview: Self.scarlet, gallery: Self.scarlet)
+        case .tropical:
+            return Palette(flip: Self.woodBrown, dim: Self.coconutWhite,
+                           settings: Self.woodBrown, record: Self.woodBrown,
+                           preview: Self.woodBrown, gallery: Self.woodBrown)
         }
     }
 
@@ -242,9 +261,9 @@ extension AppTheme {
 
     var previewBorderWidth: CGFloat {
         switch self {
-        case .tactical, .spider:          return 2
-        case .simple, .matcha, .iceCream: return 3
-        case .normal:                     return 1
+        case .tactical, .spider:                    return 2
+        case .simple, .matcha, .iceCream, .tropical: return 3
+        case .normal:                                return 1
         }
     }
 
@@ -256,16 +275,16 @@ extension AppTheme {
     /// theme except Matcha, which otherwise stays plain black like the rest.
     var cameraBackgroundGlow: Color? {
         switch self {
-        case .matcha, .iceCream, .spider: return galleryAccent
-        default:                          return nil
+        case .matcha, .iceCream, .spider, .tropical: return galleryAccent
+        default:                                     return nil
         }
     }
 
     var galleryBackground: Color? {
         switch self {
-        case .normal:                      return nil
-        case .matcha, .iceCream, .spider:  return galleryAccent
-        default:                           return .black
+        case .normal:                                 return nil
+        case .matcha, .iceCream, .spider, .tropical:  return galleryAccent
+        default:                                      return .black
         }
     }
 }
