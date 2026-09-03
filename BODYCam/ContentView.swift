@@ -754,7 +754,6 @@ struct ContentView: View {
 
     private var yappingTextArea: some View {
         VStack(spacing: 10) {
-            yappingToolbar
             yappingTextEditor
         }
         .padding(.top, 8)
@@ -762,71 +761,25 @@ struct ContentView: View {
         .background(Color.black.ignoresSafeArea())
     }
 
-    @ViewBuilder
     private var yappingTextEditor: some View {
-        // A TextEditor can only scroll while there is more CONTENT below to
-        // pull up — so on a short draft, or simply once someone reads down to
-        // the end of a longer one, the last line lands wherever the real text
-        // happens to stop, usually low on the screen near the record row,
-        // with no way to bring it further up. GeometryReader gives the
-        // padding below a real height to reserve: roughly the editor's own
-        // visible height, added as blank space the scroll view treats as
-        // ordinary content. That means even the very last line can still be
-        // dragged all the way up to the top of the screen, close to where
-        // the camera lens is, the same as any earlier line could.
-        GeometryReader { geo in
-            let editor = TextEditor(text: $yappingText)
-                .font(.system(size: yappingNarrow ? 26 : 22, weight: .semibold, design: .rounded))
-                .foregroundColor(.white)
-                .frame(maxWidth: yappingNarrow ? UIScreen.main.bounds.width * 0.62 : .infinity)
-                .padding(.horizontal, yappingNarrow ? 0 : 16)
-                .padding(.bottom, geo.size.height)
-
-            // .toolbar(placement: .keyboard) needs iOS 15, so Done sits in a
-            // keyboard accessory bar there — right above the keyboard,
-            // appearing only while it's up, rather than sharing the top row
-            // with the Premium badge where the two were colliding. Below iOS
-            // 15 it falls back to always being visible at the top, same as
-            // before.
-            if #available(iOS 16.0, *) {
-                editor
-                    .scrollContentBackground(.hidden)
-                    .background(Color.black)
-                    .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); doneKeyboardButton } }
-            } else if #available(iOS 15.0, *) {
-                editor
-                    .background(Color.black)
-                    .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); doneKeyboardButton } }
-            } else {
-                editor.background(Color.black)
-            }
-        }
-    }
-
-    private var doneKeyboardButton: some View {
-        Button(action: {
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
-                                            to: nil, from: nil, for: nil)
-        }) {
-            Text("Done").font(.system(size: 15, weight: .bold))
-        }
-    }
-
-    // Only reachable below iOS 15, where there's no keyboard toolbar to put
-    // Done in instead — see yappingTextEditor. Clear and Narrow moved down to
-    // sit above the flip/dim buttons instead — see body.
-    @ViewBuilder
-    private var yappingToolbar: some View {
-        if #unavailable(iOS 15.0) {
-            HStack {
-                Spacer()
-                yappingChip(title: "DONE", icon: "keyboard.chevron.compact.down") {
-                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
-                                                    to: nil, from: nil, for: nil)
-                }
-            }
-            .padding(.horizontal, 16)
-        }
+        // A UIKit UITextView wrapped directly, not SwiftUI's TextEditor.
+        // TextEditor has no way to add real scrollable space after the text
+        // without shrinking the editor's own visible frame: .padding() on a
+        // TextEditor is ordinary OUTER padding, the same as on any other
+        // view — it does not become an internal scroll inset the way it
+        // might look like it should. Setting that padding to the editor's
+        // own full height once collapsed the entire editable area down to
+        // nearly nothing, which read as the text having vanished and the
+        // editor refusing all taps, when the stored script was untouched the
+        // whole time.
+        //
+        // YappingTextView instead sets UIScrollView's own contentInset,
+        // UIKit's real mechanism for exactly this: extra blank space AFTER
+        // the content that the visible frame is completely unaffected by.
+        YappingTextView(text: $yappingText,
+                        font: .yappingScript(size: yappingNarrow ? 26 : 22))
+            .frame(maxWidth: yappingNarrow ? UIScreen.main.bounds.width * 0.62 : .infinity)
+            .padding(.horizontal, yappingNarrow ? 0 : 16)
     }
 
     private func yappingChip(title: LocalizedStringKey, icon: String, action: @escaping () -> Void) -> some View {
@@ -1455,6 +1408,117 @@ struct ContentView: View {
         guard let attrs = try? FileManager.default.attributesOfFileSystem(forPath: path),
               let freeBytes = attrs[.systemFreeSize] as? Int64 else { return 0 }
         return freeBytes / 1_000_000
+    }
+}
+
+// MARK: - Yapping text view
+
+/// UIKit's real UITextView, wrapped directly rather than using SwiftUI's
+/// TextEditor. This exists for one specific thing TextEditor cannot do: add
+/// blank space that is genuinely SCROLLABLE CONTENT after the real text,
+/// without that space eating into the editor's own visible/editable frame.
+///
+/// SwiftUI's .padding() on a TextEditor is ordinary outer padding, same as
+/// on any other view — it shrinks the view's own rendered bounds rather than
+/// becoming an internal scroll inset, which looks deceptively like it should
+/// work for "let the last line scroll up to the top" but actually collapses
+/// the editable area instead the moment that padding gets large. A plain
+/// UITextView's own contentInset is the real, correct mechanism for this —
+/// the same one Notes and Messages rely on — and does not touch the frame at
+/// all.
+extension UIFont {
+    /// The rounded system font the script used as a SwiftUI TextEditor via
+    /// .font(.system(..., design: .rounded)) — reconstructed as plain UIKit,
+    /// since UIViewRepresentable takes a UIFont, not a SwiftUI Font. Falls
+    /// back to the plain system font on the rare device where the rounded
+    /// descriptor variant isn't available, rather than force-unwrapping.
+    static func yappingScript(size: CGFloat) -> UIFont {
+        let systemFont = UIFont.systemFont(ofSize: size, weight: .semibold)
+        guard let descriptor = systemFont.fontDescriptor.withDesign(.rounded) else {
+            return systemFont
+        }
+        return UIFont(descriptor: descriptor, size: size)
+    }
+}
+
+struct YappingTextView: UIViewRepresentable {
+    @Binding var text: String
+    var font: UIFont
+
+    /// Keeps its own bottom content inset in sync with its own height via
+    /// layoutSubviews, rather than something set once from the SwiftUI side —
+    /// that height isn't known reliably at the moment updateUIView first
+    /// runs, and this also keeps it correct across rotation and the
+    /// narrow/wide column toggle without any extra plumbing.
+    final class InsetTrackingTextView: UITextView {
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            let target = bounds.height
+            if abs(contentInset.bottom - target) > 1 {
+                contentInset.bottom = target
+                verticalScrollIndicatorInsets.bottom = target
+            }
+        }
+    }
+
+    func makeUIView(context: Context) -> UITextView {
+        let textView = InsetTrackingTextView()
+        textView.delegate = context.coordinator
+        textView.text = text
+        textView.font = font
+        textView.textColor = .white
+        textView.backgroundColor = .black
+        textView.autocorrectionType = .default
+        textView.autocapitalizationType = .sentences
+
+        // A real inputAccessoryView rather than SwiftUI's
+        // .toolbar(placement: .keyboard): that modifier needs iOS 15, so the
+        // old TextEditor version had to fall back to an always visible inline
+        // chip below iOS 15 instead. inputAccessoryView is plain UIKit and
+        // has worked identically since iOS 14, so one Done button now covers
+        // every supported version.
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        toolbar.barTintColor = .black
+        toolbar.tintColor = .white
+        toolbar.isTranslucent = false
+        let done = UIBarButtonItem(
+            title: Bundle.appPreferred.localizedString(forKey: "Done", value: nil, table: nil),
+            style: .done, target: context.coordinator,
+            action: #selector(Coordinator.doneTapped))
+        toolbar.items = [UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil), done]
+        textView.inputAccessoryView = toolbar
+
+        return textView
+    }
+
+    func updateUIView(_ textView: UITextView, context: Context) {
+        // Guards against clobbering the user's cursor/selection on every
+        // SwiftUI update — updateUIView runs on more than just genuine
+        // external text changes, and resetting .text unconditionally would
+        // reset the caret to the end on every keystroke.
+        if textView.text != text {
+            textView.text = text
+        }
+        if textView.font != font {
+            textView.font = font
+        }
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    final class Coordinator: NSObject, UITextViewDelegate {
+        var parent: YappingTextView
+        init(_ parent: YappingTextView) { self.parent = parent }
+
+        func textViewDidChange(_ textView: UITextView) {
+            parent.text = textView.text
+        }
+
+        @objc func doneTapped() {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                            to: nil, from: nil, for: nil)
+        }
     }
 }
 
