@@ -764,29 +764,42 @@ struct ContentView: View {
 
     @ViewBuilder
     private var yappingTextEditor: some View {
-        let editor = TextEditor(text: $yappingText)
-            .font(.system(size: yappingNarrow ? 26 : 22, weight: .semibold, design: .rounded))
-            .foregroundColor(.white)
-            .frame(maxWidth: yappingNarrow ? UIScreen.main.bounds.width * 0.62 : .infinity)
-            .padding(.horizontal, yappingNarrow ? 0 : 16)
-            .padding(.bottom, 140) // keeps the last lines clear of the record row
+        // A TextEditor can only scroll while there is more CONTENT below to
+        // pull up — so on a short draft, or simply once someone reads down to
+        // the end of a longer one, the last line lands wherever the real text
+        // happens to stop, usually low on the screen near the record row,
+        // with no way to bring it further up. GeometryReader gives the
+        // padding below a real height to reserve: roughly the editor's own
+        // visible height, added as blank space the scroll view treats as
+        // ordinary content. That means even the very last line can still be
+        // dragged all the way up to the top of the screen, close to where
+        // the camera lens is, the same as any earlier line could.
+        GeometryReader { geo in
+            let editor = TextEditor(text: $yappingText)
+                .font(.system(size: yappingNarrow ? 26 : 22, weight: .semibold, design: .rounded))
+                .foregroundColor(.white)
+                .frame(maxWidth: yappingNarrow ? UIScreen.main.bounds.width * 0.62 : .infinity)
+                .padding(.horizontal, yappingNarrow ? 0 : 16)
+                .padding(.bottom, geo.size.height)
 
-        // .toolbar(placement: .keyboard) needs iOS 15, so Done sits in a
-        // keyboard accessory bar there — right above the keyboard, appearing
-        // only while it's up, rather than sharing the top row with the
-        // Premium badge where the two were colliding. Below iOS 15 it falls
-        // back to always being visible at the top, same as before.
-        if #available(iOS 16.0, *) {
-            editor
-                .scrollContentBackground(.hidden)
-                .background(Color.black)
-                .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); doneKeyboardButton } }
-        } else if #available(iOS 15.0, *) {
-            editor
-                .background(Color.black)
-                .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); doneKeyboardButton } }
-        } else {
-            editor.background(Color.black)
+            // .toolbar(placement: .keyboard) needs iOS 15, so Done sits in a
+            // keyboard accessory bar there — right above the keyboard,
+            // appearing only while it's up, rather than sharing the top row
+            // with the Premium badge where the two were colliding. Below iOS
+            // 15 it falls back to always being visible at the top, same as
+            // before.
+            if #available(iOS 16.0, *) {
+                editor
+                    .scrollContentBackground(.hidden)
+                    .background(Color.black)
+                    .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); doneKeyboardButton } }
+            } else if #available(iOS 15.0, *) {
+                editor
+                    .background(Color.black)
+                    .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); doneKeyboardButton } }
+            } else {
+                editor.background(Color.black)
+            }
         }
     }
 
