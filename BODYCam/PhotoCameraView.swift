@@ -72,9 +72,40 @@ enum ShutterTick {
 // MARK: - Photo Capture Delegate
 
 final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, ObservableObject {
-    /// Set before each capture so the delegate knows how to process the image.
-    var quality: PhotoQuality = .high
-    var onFinish: ((Bool) -> Void)?
+    /// One in-flight request's own quality and callbacks. Tracked per request,
+    /// rather than as shared mutable properties on the delegate, because the
+    /// shutter button no longer stays disabled for the whole save pipeline —
+    /// a second tap can now fire while the first photo is still being scaled,
+    /// stamped, and written, and each has to be finished with the settings it
+    /// was actually taken with, not whatever the delegate's properties were
+    /// last overwritten to.
+    private struct PendingCapture {
+        let quality: PhotoQuality
+        let onShutterFired: () -> Void
+        let onFinish: (Bool) -> Void
+    }
+
+    /// Keyed by AVCapturePhotoSettings.uniqueID, which AVFoundation carries
+    /// through to both delegate callbacks below for the same request, so a
+    /// result can always be matched back to the request that produced it —
+    /// even when several are in flight at once. Access goes through
+    /// stateQueue because these delegate methods are called on an arbitrary
+    /// AVFoundation-owned queue, not necessarily the same one twice in a row,
+    /// so a plain dictionary would race under overlapping captures.
+    private var pending: [Int64: PendingCapture] = [:]
+    private let stateQueue = DispatchQueue(label: "PhotoCaptureDelegate.pending")
+
+    /// Called right before output.capturePhoto(with:delegate:), so this
+    /// request's identity is registered before AVFoundation can possibly call
+    /// back about it.
+    func beginCapture(settings: AVCapturePhotoSettings, quality: PhotoQuality,
+                      onShutterFired: @escaping () -> Void,
+                      onFinish: @escaping (Bool) -> Void) {
+        stateQueue.sync {
+            pending[settings.uniqueID] = PendingCapture(
+                quality: quality, onShutterFired: onShutterFired, onFinish: onFinish)
+        }
+    }
 
     /// Called by AVFoundation immediately before the shutter fires, which is
     /// also the moment the system plays the shutter sound. Disposing the sound
@@ -92,18 +123,37 @@ final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, Obser
     ///
     /// Note that iPhones sold in Japan and South Korea enforce the shutter
     /// sound below this level, and it will still play there.
+    ///
+    /// This is also the earliest reliable signal that THIS capture's shutter
+    /// has actually fired, which is what tells the button it can pop back up
+    /// — well before the photo has finished saving.
     func photoOutput(_ output: AVCapturePhotoOutput,
                      willCapturePhotoFor resolvedSettings: AVCaptureResolvedPhotoSettings) {
         AudioServicesDisposeSystemSoundID(1108)
+        let entry = stateQueue.sync { pending[resolvedSettings.uniqueID] }
+        DispatchQueue.main.async { entry?.onShutterFired() }
     }
 
     func photoOutput(_ output: AVCapturePhotoOutput,
                      didFinishProcessingPhoto photo: AVCapturePhoto,
                      error: Error?) {
+        guard let entry = stateQueue.sync(execute: {
+            pending.removeValue(forKey: photo.resolvedSettings.uniqueID)
+        }) else {
+            // Should never happen — every capture is registered in
+            // beginCapture before AVFoundation can call back about it, and
+            // AVFoundation guarantees the same uniqueID on both callbacks for
+            // one request. If it somehow does, there is no request left to
+            // report a result to.
+            return
+        }
+        let quality = entry.quality
+        let onFinish = entry.onFinish
+
         guard error == nil,
               let rawData = photo.fileDataRepresentation(),
               let rawImage = UIImage(data: rawData) else {
-            DispatchQueue.main.async { self.onFinish?(false) }
+            DispatchQueue.main.async { onFinish(false) }
             return
         }
 
@@ -140,7 +190,7 @@ final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, Obser
 
         // 2. Re-encode as JPEG with the tier's compression factor
         guard let jpeg = processed.jpegData(compressionQuality: quality.jpegCompression) else {
-            DispatchQueue.main.async { self.onFinish?(false) }
+            DispatchQueue.main.async { onFinish(false) }
             return
         }
 
@@ -152,9 +202,9 @@ final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, Obser
             .appendingPathComponent("photo_\(timestamp).jpg")
         do {
             try jpeg.write(to: url)
-            DispatchQueue.main.async { self.onFinish?(true) }
+            DispatchQueue.main.async { onFinish(true) }
         } catch {
-            DispatchQueue.main.async { self.onFinish?(false) }
+            DispatchQueue.main.async { onFinish(false) }
         }
     }
 
@@ -1147,6 +1197,13 @@ struct PhotoCameraView: View {
     }
 
     private func capturePhoto() {
+        // Still guards against a genuine double-fire of ONE tap — the volume
+        // button calls capturePhoto() directly, bypassing the shutter
+        // button's own .disabled(isCapturing), so this is the only thing
+        // stopping that path from double-triggering. Its window is now just
+        // "until this specific shot's shutter fires" (well under a second),
+        // not the whole save pipeline, so a second, genuinely separate tap
+        // shortly after is no longer blocked by it — see onShutterFired below.
         guard !isCapturing, let output = photoOutput else { return }
         isCapturing = true
         saveStatus  = .saving
@@ -1167,16 +1224,12 @@ struct PhotoCameraView: View {
         // Re-arm for the next shot; a generator goes back to idle after firing.
         hapticGenerator.prepare()
 
-        captureDelegate.quality = quality
-        captureDelegate.onFinish = { success in
-            // Restore volume now that the shutter has fired
-            self.volumeObserver.restoreAfterCapture()
-            self.saveStatus  = success ? .success : .failure
-            self.isCapturing = false
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self.saveStatus = nil
-            }
-        }
+        // Snapshotted now rather than read again once the shutter actually
+        // fires: quality is a shared @AppStorage value, and with more than
+        // one capture able to be in flight at once, a setting change made
+        // between this tap and its shutter firing must not retroactively
+        // change what THIS shot was taken with.
+        let capturedQuality = quality
 
         // Read on the main thread (UIKit call); AVFoundation defaults new
         // connections to portrait, so without this landscape photos come out
@@ -1226,6 +1279,32 @@ struct PhotoCameraView: View {
                 if let connection = output.connection(with: .video) {
                     connection.videoOrientation = captureOrientation
                 }
+
+                self.captureDelegate.beginCapture(
+                    settings: settings,
+                    quality: capturedQuality,
+                    onShutterFired: {
+                        // The shutter for THIS shot has fired — the button can
+                        // pop back up now rather than waiting for the save
+                        // pipeline below to finish, which is the whole point.
+                        self.isCapturing = false
+                    },
+                    onFinish: { success in
+                        // Restores whatever this shot's own silenceForCapture
+                        // call dropped. VolumeButtonObserver's suppression is
+                        // reference counted specifically so overlapping
+                        // silence/restore pairs from concurrent captures don't
+                        // clear each other's window early.
+                        self.volumeObserver.restoreAfterCapture()
+                        // Last writer wins if more than one capture is
+                        // in flight — acceptable here since only .failure
+                        // renders anything to begin with.
+                        self.saveStatus = success ? .success : .failure
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            self.saveStatus = nil
+                        }
+                    }
+                )
                 output.capturePhoto(with: settings, delegate: self.captureDelegate)
             }
         }
