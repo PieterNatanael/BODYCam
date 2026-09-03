@@ -200,6 +200,13 @@ struct PhotoCameraView: View {
     @State private var exposureBiasRange: ClosedRange<Float> = -2...2
     @State private var isCapturing      = false
     @State private var saveStatus: SaveStatus?
+    /// Drives the shutter blink over the preview. Black rather than white,
+    /// matching the built in Camera app: it reads as a shutter closing, and
+    /// white would blow out the viewfinder's own dark UI.
+    @State private var shutterFlash     = false
+    /// Held rather than created per capture so it can be kept prepared, and so
+    /// repeated shots reuse one warmed generator.
+    @State private var hapticGenerator  = UIImpactFeedbackGenerator(style: .light)
     @State private var isScreenDimmed   = false
     @State private var savedBrightness: CGFloat = UIScreen.main.brightness
     @State private var showAppSettingsSheet = false
@@ -361,6 +368,10 @@ struct PhotoCameraView: View {
                 setupCaptureSession()
             }
             volumeObserver.start { self.capturePhoto() }
+            // Warms the Taptic Engine so the first shutter of the session taps
+            // as promptly as the rest. Without this the hardware idles down and
+            // the very first impact can land noticeably late.
+            hapticGenerator.prepare()
         }
         .onDisappear {
             restoreBrightness()
@@ -579,6 +590,16 @@ struct PhotoCameraView: View {
                                               width: borderWidth, decoration: decoration)
                     )
                     .overlay(gridLinesOverlay)
+                    // Applied here rather than over the whole screen so the
+                    // blink lands exactly on the viewfinder in every display
+                    // mode, picking up the same corner radius and full bleed
+                    // geometry as the preview itself.
+                    .overlay(
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(Color.black)
+                            .opacity(shutterFlash ? 1 : 0)
+                            .allowsHitTesting(false)
+                    )
                     .offset(y: verticalOffset)
                     .ignoresSafeArea(.all, edges: isNormal ? .all : [])
                 }
@@ -649,24 +670,6 @@ struct PhotoCameraView: View {
     @ViewBuilder
     private var statusLabel: some View {
         switch saveStatus {
-        case .saving:
-            HStack(spacing: 6) {
-                ProgressView().scaleEffect(0.75)
-                Text("SAVING…")
-                    .font(.system(size: 11, weight: .bold, design: .monospaced))
-                    .foregroundColor(Color(white: 0.5))
-                    .tracking(2)
-            }
-        case .success:
-            HStack(spacing: 6) {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 13))
-                    .foregroundColor(.green)
-                Text("SAVED TO GALLERY")
-                    .font(.system(size: 11, weight: .bold, design: .monospaced))
-                    .foregroundColor(.green)
-                    .tracking(2)
-            }
         case .failure:
             HStack(spacing: 6) {
                 Image(systemName: "xmark.circle.fill")
@@ -677,8 +680,15 @@ struct PhotoCameraView: View {
                     .foregroundColor(.red)
                     .tracking(2)
             }
-        case nil:
-            // Reserve height so layout doesn't jump
+        case .saving, .success, nil:
+            // Deliberately wordless. A successful capture is signalled by the
+            // shutter blink and the haptic tap instead, the way the built in
+            // Camera app does it. Failure keeps its label above: silence there
+            // would be indistinguishable from success, and someone would walk
+            // away believing they had captured something they hadn't.
+            //
+            // Still rendered as a blank line so the shutter row below never
+            // shifts as the status changes.
             Text(" ")
                 .font(.system(size: 11, design: .monospaced))
         }
@@ -1044,10 +1054,38 @@ struct PhotoCameraView: View {
 
     // MARK: - Capture
 
+    /// Blinks the viewfinder to black and fades it back, the built in Camera
+    /// app's acknowledgement of a shutter.
+    ///
+    /// The blink is set without animation and cleared with one, so it snaps to
+    /// black instantly and eases back out. Wrapping both halves in a single
+    /// animation would cross fade INTO black too, which reads as a slow dip
+    /// rather than a shutter.
+    private func flashShutter() {
+        shutterFlash = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            withAnimation(.easeOut(duration: 0.2)) { shutterFlash = false }
+        }
+    }
+
     private func capturePhoto() {
         guard !isCapturing, let output = photoOutput else { return }
         isCapturing = true
         saveStatus  = .saving
+
+        // Fired on press rather than when the file finishes writing: this is
+        // acknowledgement that the shutter was taken, and it has to feel
+        // immediate. The save result is reported separately, and only when it
+        // fails.
+        flashShutter()
+        // Silent by design, which is the point — this app deliberately drops
+        // system volume around every capture (see below) so nothing is audible
+        // to bystanders. A haptic gives the user their confirmation without
+        // giving that away. Does nothing on hardware without a Taptic Engine,
+        // which is a no-op rather than an error.
+        hapticGenerator.impactOccurred()
+        // Re-arm for the next shot; a generator goes back to idle after firing.
+        hapticGenerator.prepare()
 
         captureDelegate.quality = quality
         captureDelegate.onFinish = { success in
