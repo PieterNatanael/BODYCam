@@ -451,7 +451,12 @@ struct SettingsView: View {
     // directly from UserDefaults (not through this @AppStorage) by
     // PhotoCaptureDelegate and VideoCaptureDelegate, neither of which is a
     // View and so can't hold an @AppStorage of its own.
-    @AppStorage("ShowDateStamp") private var showDateStamp: Bool = false
+    // Default true for new installs — actually enforced by
+    // UserDefaults.register(defaults:) in AppDelegate, not this literal
+    // alone; see the comment there for why. Kept in sync here so this
+    // property wrapper's own initial value agrees with what a fresh install
+    // will actually read.
+    @AppStorage("ShowDateStamp") private var showDateStamp: Bool = true
     @ObservedObject private var scheduleStore = ScheduleStore.shared
     @State private var showScheduledList = false
 

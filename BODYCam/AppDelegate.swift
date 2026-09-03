@@ -18,6 +18,21 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         // the app, iOS delivers the response immediately afterwards and drops
         // it when no delegate is set yet.
         UNUserNotificationCenter.current().delegate = self
+
+        // register(defaults:) rather than changing the @AppStorage literal in
+        // SettingsView alone: PhotoCameraView and VideoCaptureDelegate read
+        // this setting via a plain UserDefaults.standard.bool(forKey:) call,
+        // not through SettingsView's @AppStorage property — and a raw
+        // bool(forKey:) on a key that has never been set returns false no
+        // matter what default @AppStorage declares elsewhere, until Settings
+        // has actually been opened at least once. A brand new install can
+        // easily take its first photo before ever visiting Settings, so that
+        // default needs to be in place before ANY view exists, not just
+        // SettingsView's own. register(defaults:) does exactly that — and,
+        // same as @AppStorage's own default, never overrides a value that has
+        // actually been set, so anyone who already chose OFF keeps OFF.
+        UserDefaults.standard.register(defaults: ["ShowDateStamp": true])
+
         return true
     }
 
