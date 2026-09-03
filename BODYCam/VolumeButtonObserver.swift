@@ -11,8 +11,15 @@ import UIKit
 ///   • After each detected press the volume is silently reset to 0.5 so the
 ///     user can press again from any starting level.
 ///   • A `suppressionCount` counter (not a bool) prevents double-firing:
-///     every `setVolume` call increments before and decrements 200 ms after,
+///     every `setVolume` call increments before and decrements 600 ms after,
 ///     so overlapping resets / silence / restore windows never race each other.
+///   • A second, timing-independent guard backs that counter up: every
+///     self-inflicted change lands on exactly 0 or 0.5, values a genuine press
+///     essentially never reports back (see observeValue). suppressionCount's
+///     window is a race against how long iOS takes to deliver the
+///     notification for our own change, and that delivery time isn't
+///     bounded — a slow enough device taking longer than the window can
+///     still lose that race. Checking the reported value itself cannot.
 ///   • All state is accessed on the main thread only (KVO handler dispatches
 ///     to main before touching any state), eliminating data races.
 ///
@@ -58,33 +65,10 @@ final class VolumeButtonObserver: NSObject, ObservableObject {
             // Silently centre volume so both Up and Down are always reachable.
             self.silentReset()
 
-            // KVO registration is delayed, not immediate, specifically
-            // because of the reset just above: it changes the real system
-            // volume, and the "outputVolume changed" notification for that
-            // isn't delivered instantly — there is a real, variable gap
-            // before iOS reports it back. suppressionCount alone races that
-            // gap against a timer, and a slow enough device can lose that
-            // race: a real iPhone 6S, under the extra CPU load of a cold
-            // launch, occasionally delivered it more than 600 ms late — past
-            // the point suppressionCount had already cleared — at which
-            // point it read as a genuine button press and silently started
-            // recording the moment the app opened. An iPhone SE never showed
-            // this because it is fast enough to always land inside that
-            // window.
-            //
-            // Not observing AT ALL until well after this specific reset has
-            // had time to fully propagate means there is no listener present
-            // to ever misinterpret it, however late it arrives — a real fix
-            // rather than a wider window that just makes the same race less
-            // likely. The only cost is volume-button-to-record being
-            // unavailable for this one second right as the tab opens, which
-            // is not something anyone presses into that fast.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                guard let self, self.isObserving, !self.kvoRegistered else { return }
-                self.audioSession.addObserver(self, forKeyPath: "outputVolume",
-                                              options: [.new, .old], context: nil)
-                self.kvoRegistered = true
-            }
+            // Register KVO only now — MPVolumeView is ready so setVolume works.
+            self.audioSession.addObserver(self, forKeyPath: "outputVolume",
+                                          options: [.new, .old], context: nil)
+            self.kvoRegistered = true
         }
     }
 
@@ -124,6 +108,36 @@ final class VolumeButtonObserver: NSObject, ObservableObject {
 
             // Suppress events we generated ourselves (resets, silence, restore).
             guard self.suppressionCount == 0 else { return }
+
+            // A second guard, independent of timing entirely: every change
+            // THIS class ever makes lands on exactly 0 (silenceForCapture) or
+            // 0.5 (every reset, including the very first one in start()). A
+            // genuine physical press instead steps the volume by a hardware
+            // notch from wherever it already sits, which — since this class
+            // always recentres to 0.5 after handling any event — means a real
+            // press essentially never reports back exactly one of these two
+            // values.
+            //
+            // This exists because suppressionCount's fixed timer is a race,
+            // not a guarantee: it assumes the "outputVolume changed"
+            // notification for our OWN change always arrives within its
+            // window, but that delivery isn't instant, and a slow enough
+            // device can lose that race. Concretely: a real iPhone 6S,
+            // activating its audio session for the very first time on a true
+            // cold launch (a genuinely more expensive one-time cost that a
+            // background/foreground resume never repeats, which is why this
+            // only ever showed up on a full relaunch), sometimes delivered
+            // its own start()-time reset late enough to read as a genuine
+            // press and silently start recording. A fixed delay before
+            // registering KVO was tried first and was not a large enough
+            // margin for that specific case — there is no delay that is
+            // guaranteed long enough, since the real bound on iOS's own
+            // delivery time isn't known. Checking WHAT changed rather than
+            // WHEN removes the guesswork entirely.
+            if let newVolume = (change?[.newKey] as? NSNumber)?.floatValue,
+               newVolume == 0 || abs(newVolume - 0.5) < 0.001 {
+                return
+            }
 
             // 300 ms debounce — prevents rapid double-fire from a single press.
             let now = Date()
