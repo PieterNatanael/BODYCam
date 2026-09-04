@@ -1065,6 +1065,52 @@
         }
       }
     },
+    "CIRCLE MODE": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KREISMODUS"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODE CERCLE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODE LINGKARAN"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "サークルモード"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서클 모드"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "圆形模式"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "圓形模式"
+          }
+        }
+      }
+    },
     "CLEAR": {
       "localizations": {
         "de": {
@@ -4752,6 +4798,52 @@
           "stringUnit": {
             "state": "translated",
             "value": "使用 iOS 鬧鐘鈴聲響鈴，可穿透靜音模式和專注模式。"
+          }
+        }
+      }
+    },
+    "Round preview only — photos and videos save normally": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur die Vorschau ist rund — Fotos und Videos werden normal gespeichert"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seul l’aperçu est rond — les photos et vidéos s’enregistrent normalement"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hanya pratinjau yang bulat — foto dan video tersimpan seperti biasa"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プレビューのみ円形です。写真と動画は通常どおり保存されます"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "미리보기만 원형입니다 — 사진과 동영상은 평소처럼 저장됩니다"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅取景框为圆形 — 照片和视频仍按正常方式保存"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "僅取景框為圓形 — 照片和影片仍按正常方式儲存"
           }
         }
       }

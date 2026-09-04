@@ -70,6 +70,7 @@ enum CameraDisplayMode: String, CaseIterable {
     case normal
     case yapping
     case pro
+    case circle
 
     // LocalizedStringKey rather than String: these flow straight into Text(),
     // and only the LocalizedStringKey overload of Text's initializer actually
@@ -81,6 +82,7 @@ enum CameraDisplayMode: String, CaseIterable {
         case .normal:       return "NORMAL MODE"
         case .yapping:      return "YAPPING MODE"
         case .pro:          return "PRO MODE"
+        case .circle:       return "CIRCLE MODE"
         }
     }
 
@@ -90,6 +92,7 @@ enum CameraDisplayMode: String, CaseIterable {
         case .normal:       return "Full screen preview, uses more battery"
         case .yapping:      return "Script on screen, preview shrinks to a movable corner"
         case .pro:          return "Compact preview, with manual exposure and focus lock"
+        case .circle:       return "Round preview only — photos and videos save normally"
         }
     }
 
@@ -99,6 +102,7 @@ enum CameraDisplayMode: String, CaseIterable {
         case .normal:       return "rectangle.fill"
         case .yapping:      return "text.alignleft"
         case .pro:          return "slider.horizontal.3"
+        case .circle:       return "circle"
         }
     }
 }

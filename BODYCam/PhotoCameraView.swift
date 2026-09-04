@@ -401,6 +401,21 @@ struct PhotoCameraView: View {
         return min(natural, effectiveScreenSize.height - reserved)
     }
 
+    /// Circle mode's preview diameter — the largest circle that fits the same
+    /// reserved chrome space as the Save Battery card, in EITHER orientation.
+    /// Unlike previewCardWidth/Height, which derive one dimension from the
+    /// other via a fixed 4:3 ratio, a circle needs an equal width and height,
+    /// so this takes whichever of the two available constraints (horizontal
+    /// room, vertical room) is actually tighter right now.
+    private var previewCircleDiameter: CGFloat {
+        let maxWidth = effectiveScreenSize.width - 48
+        let reserved: CGFloat = isLandscapeInterface
+            ? (isCompact ? 90 : 110)
+            : (isCompact ? 260 : 300)
+        let maxHeight = effectiveScreenSize.height - reserved
+        return min(maxWidth, maxHeight)
+    }
+
     /// Reaches the screen's corners, the farthest a centered gradient ever has
     /// to travel, so it reads as fully faded to black there rather than
     /// stopping short on larger devices.
@@ -433,7 +448,12 @@ struct PhotoCameraView: View {
 
     @ViewBuilder
     private var gridLinesOverlay: some View {
-        if showGridLines {
+        // Excluded in Circle mode: the grid is a plain rectangular shape
+        // drawn edge to edge, and the preview it sits over is clipped to a
+        // circle — the lines would visibly run past the circle's edge into
+        // the corners the circle cuts away, rather than being clipped along
+        // with it.
+        if showGridLines, displayMode != .circle {
             RuleOfThirdsGrid()
                 .stroke(Color.white.opacity(0.6), lineWidth: 1)
                 .allowsHitTesting(false)
@@ -563,7 +583,9 @@ struct PhotoCameraView: View {
                 // gradient had already faded well past full strength by the
                 // time it emerged from behind the card, reading as weak.
                 RadialGradient(colors: [glow, .black],
-                               center: .center, startRadius: previewCardWidth / 2, endRadius: screenGlowRadius)
+                               center: .center,
+                               startRadius: (displayMode == .circle ? previewCircleDiameter : previewCardWidth) / 2,
+                               endRadius: screenGlowRadius)
                     .ignoresSafeArea()
             } else {
                 Color.black.ignoresSafeArea()
@@ -684,19 +706,33 @@ struct PhotoCameraView: View {
         // so the bleed lands exactly at the top and exactly at the tab bar.
         GeometryReader { geo in
             let isNormal = displayMode == .normal
+            let isCircle = displayMode == .circle
             let topInset = geo.safeAreaInsets.top
             let bottomInset = geo.safeAreaInsets.bottom
             let w: CGFloat = isNormal
                 ? geo.size.width + geo.safeAreaInsets.leading + geo.safeAreaInsets.trailing
-                : previewCardWidth
-            let h: CGFloat = isNormal ? geo.size.height + topInset + bottomInset : previewCardHeight
+                : isCircle ? previewCircleDiameter : previewCardWidth
+            let h: CGFloat = isNormal
+                ? geo.size.height + topInset + bottomInset
+                : isCircle ? previewCircleDiameter : previewCardHeight
             let verticalOffset: CGFloat = isNormal ? (bottomInset - topInset) / 2 : 0
-            let radius: CGFloat = isNormal ? 0 : previewCornerRadius
+            // Half the diameter, not previewCornerRadius's small rounded-rect
+            // value — SwiftUI's cornerRadius (and RoundedRectangle's own
+            // cornerRadius in previewBorderOverlay's .border case) both clamp
+            // to half the shorter side, so on a perfectly square frame this
+            // is exactly what turns the existing rounded-rect machinery into
+            // a true circle, with no new shape code needed anywhere.
+            let radius: CGFloat = isNormal ? 0 : isCircle ? previewCircleDiameter / 2 : previewCornerRadius
             let borderColor: Color = isNormal ? Color.clear : previewBorderColor
             let borderWidth: CGFloat = isNormal ? 0 : previewBorderWidth
             let placeholderFill: Color = (isFlatTheme || isNormal) ? Color.black : Color(white: 0.05)
             let accentColor: Color = isFlatTheme ? previewAccent : Color(white: 0.2)
-            let decoration: PreviewFrameDecoration = isNormal ? .border : previewDecoration
+            // Forced to .border regardless of theme: Tactical's brackets and
+            // Spider's corner webs both assume a rectangular frame with real
+            // corners to sit in, which a circle doesn't have — a plain
+            // circular stroke is the only frame treatment that makes sense
+            // here, the same reasoning Normal already gets its own override.
+            let decoration: PreviewFrameDecoration = (isNormal || isCircle) ? .border : previewDecoration
 
             ZStack {
                 if let session = captureSession {
