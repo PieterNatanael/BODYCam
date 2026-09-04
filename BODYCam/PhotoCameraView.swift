@@ -290,10 +290,15 @@ struct PhotoCameraView: View {
     // MARK: - UI State
 
     @AppStorage("SelectedPhotoQuality") private var quality: PhotoQuality = .high
-    /// Pro mode's rule-of-thirds composition grid. Shared across tabs via
-    /// AppStorage — a preference about how you like to frame shots, not
-    /// something tied to one tab's own state the way zoom/exposure are.
-    @AppStorage("ShowGridLines") private var showGridLines: Bool = false
+    /// The rule-of-thirds composition grid, shown over the preview in every
+    /// display mode, not just Pro — Pro just happens to be where the one
+    /// on-screen toggle button lives. Shared across tabs via AppStorage — a
+    /// preference about how you like to frame shots, not something tied to
+    /// one tab's own state the way zoom/exposure are. Defaults on: it is a
+    /// framing aid, not a destructive or surprising change to what gets
+    /// captured, so there is no real downside to a new user having it from
+    /// the start.
+    @AppStorage("ShowGridLines") private var showGridLines: Bool = true
     @State private var isUsingFront     = false
     /// Mirrors the video device's own videoZoomFactor for the on screen
     /// readout. Reset to 1 on flip, since a freshly attached device always

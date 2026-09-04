@@ -457,6 +457,12 @@ struct SettingsView: View {
     // property wrapper's own initial value agrees with what a fresh install
     // will actually read.
     @AppStorage("ShowDateStamp") private var showDateStamp: Bool = true
+    // The same key ContentView/PhotoCameraView's own on-screen toggle button
+    // reads and writes — this is another way to reach the identical
+    // preference, not a separate one, so the two always agree. Default true:
+    // a framing aid rather than a permanent or destructive change to what
+    // gets captured, unlike the date stamp above.
+    @AppStorage("ShowGridLines") private var showGridLines: Bool = true
     @ObservedObject private var scheduleStore = ScheduleStore.shared
     @State private var showScheduledList = false
 
@@ -508,6 +514,8 @@ struct SettingsView: View {
                     }
 
                     previewTipCard
+
+                    gridSection
 
                     videoRecordSection
 
@@ -898,6 +906,41 @@ struct SettingsView: View {
                 }
             )
         }
+    }
+
+    /// The same preference the on-screen grid button (Pro mode's toolbar)
+    /// toggles — this just gives it a second, more discoverable home, since
+    /// framing help is useful in every display mode, not only Pro.
+    private var gridSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            sectionLabel("COMPOSITION GRID")
+            Button(action: { showGridLines.toggle() }) {
+                HStack(spacing: 8) {
+                    Image(systemName: showGridLines ? "square.grid.3x3.fill" : "square.grid.3x3")
+                        .font(.system(size: 14))
+                    Text(showGridLines ? "ON" : "OFF")
+                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                        .tracking(1)
+                }
+                .foregroundColor(showGridLines ? Color(white: 0.85) : Color(white: 0.4))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .background(
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(showGridLines ? Color(white: 0.25) : Color(white: 0.1))
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(showGridLines ? Color(white: 0.45) : Color(white: 0.2), lineWidth: 1)
+                    }
+                )
+            }
+            Text("Overlays rule-of-thirds lines on the camera preview, in every display mode. A framing aid only — never appears in a saved photo or video.")
+                .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                .foregroundColor(Color(white: 0.5))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(16)
+        .background(cardBackground)
     }
 
     private func modeRow(_ mode: CameraDisplayMode) -> some View {

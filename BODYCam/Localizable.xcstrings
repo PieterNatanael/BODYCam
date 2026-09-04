@@ -1111,6 +1111,52 @@
         }
       }
     },
+    "COMPOSITION GRID": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KOMPOSITIONSRASTER"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GRILLE DE COMPOSITION"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GARIS BANTU KOMPOSISI"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "構図グリッド"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "구도 그리드"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "构图网格"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "構圖網格"
+          }
+        }
+      }
+    },
     "Cancel": {
       "localizations": {
         "de": {
@@ -3506,6 +3552,52 @@
           "stringUnit": {
             "state": "translated",
             "value": "僅在你選擇將照片或影片儲存到圖庫時使用。"
+          }
+        }
+      }
+    },
+    "Overlays rule-of-thirds lines on the camera preview, in every display mode. A framing aid only — never appears in a saved photo or video.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Legt Drittel-Regel-Linien über die Kamera-Vorschau, in jedem Anzeigemodus. Nur eine Hilfe beim Bildaufbau — erscheint nie in einem gespeicherten Foto oder Video."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Superpose des lignes de règle des tiers sur l’aperçu de l’appareil photo, dans tous les modes d’affichage. Une simple aide au cadrage — n’apparaît jamais sur une photo ou vidéo enregistrée."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menampilkan garis bantu rule-of-thirds pada pratinjau kamera, di setiap mode tampilan. Hanya alat bantu framing — tidak pernah muncul pada foto atau video yang tersimpan."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すべての表示モードで、カメラのプレビューに三分割構図の線を重ねて表示します。あくまで構図の目安であり、保存された写真や動画に写り込むことはありません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모든 디스플레이 모드에서 카메라 미리보기에 삼분할 구도선을 표시합니다. 구도를 잡기 위한 보조 기능일 뿐이며, 저장된 사진이나 동영상에는 나타나지 않습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在所有显示模式下，在取景预览上叠加三分构图线。仅作取景辅助之用，绝不会出现在已保存的照片或视频中。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在所有顯示模式下，在取景預覽上疊加三分構圖線。僅作取景輔助之用，絕不會出現在已儲存的照片或影片中。"
           }
         }
       }
