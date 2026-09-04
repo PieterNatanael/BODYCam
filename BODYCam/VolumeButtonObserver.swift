@@ -20,6 +20,10 @@ import UIKit
 ///     notification for our own change, and that delivery time isn't
 ///     bounded — a slow enough device taking longer than the window can
 ///     still lose that race. Checking the reported value itself cannot.
+///   • A third guard blocks the action outright for the first couple of
+///     seconds after start(), regardless of what any event looks like — see
+///     observeValue for why even the value check above isn't the full
+///     picture on old hardware.
 ///   • All state is accessed on the main thread only (KVO handler dispatches
 ///     to main before touching any state), eliminating data races.
 ///
@@ -36,6 +40,11 @@ final class VolumeButtonObserver: NSObject, ObservableObject {
     private var suppressionCount = 0        // >0 → ignore KVO events we generated
     private var lastFiredAt: Date = .distantPast
     private var action: (() -> Void)?
+    /// When this instance started observing. Backs the grace-period guard in
+    /// observeValue that blocks the action outright for the first couple of
+    /// seconds — see there for why this exists on top of suppressionCount
+    /// and the value check.
+    private var observingStartedAt: Date = .distantPast
 
     // MARK: - Public interface
 
@@ -45,6 +54,7 @@ final class VolumeButtonObserver: NSObject, ObservableObject {
         guard !isObserving else { return }
         isObserving  = true
         self.action  = action
+        observingStartedAt = Date()
 
         // Ensure the audio session is active so KVO delivers events.
         try? audioSession.setActive(true)
@@ -138,6 +148,29 @@ final class VolumeButtonObserver: NSObject, ObservableObject {
                newVolume == 0 || abs(newVolume - 0.5) < 0.001 {
                 return
             }
+
+            // A third, final guard: a flat couple of seconds after start()
+            // during which the action can never fire, no matter what the
+            // event looks like. This exists for something neither guard
+            // above can fully rule out — confirmed on a real iPhone 6S,
+            // where a full device reboot left the very first one or two app
+            // launches afterward still auto starting a recording, but never
+            // a third launch, and never on an iPhone SE at all. That pattern
+            // points to iOS's own audio daemon still settling in after a
+            // cold boot on old, slow hardware, not to anything this app
+            // itself does — it can apparently report a volume change that
+            // matches neither "our own reset" nor "a real press" cleanly
+            // enough for the checks above to classify it, before it finishes
+            // stabilizing. There's no reported value or timing signature to
+            // catch reliably here, because the cause isn't this code.
+            //
+            // A real person cannot see the camera, decide to record, and
+            // physically press a hardware button within the first couple of
+            // seconds of the screen even appearing, so unconditionally
+            // refusing to act in that window costs nothing in real use while
+            // absorbing whatever this settling behaviour does, regardless of
+            // what it reports.
+            guard Date().timeIntervalSince(self.observingStartedAt) > 2.0 else { return }
 
             // 300 ms debounce — prevents rapid double-fire from a single press.
             let now = Date()
