@@ -278,8 +278,14 @@ struct PhotoCameraView: View {
     @StateObject private var volumeObserver   = VolumeButtonObserver()
 
     /// ALL AVCaptureSession operations must run on a dedicated serial queue.
-    private static let sessionQueue = DispatchQueue(
-        label: "com.bodycam.photo.session", qos: .userInitiated)
+    ///
+    /// This USED to be its own separate queue from ContentView's. Now points
+    /// at the queue shared with it instead — see sharedCameraSessionQueue's
+    /// own comment in CameraPreviewView.swift for why two independent queues
+    /// here was a real, confirmed bug (a frozen camera after a fast
+    /// Video → Photo → Video switch right after stopping a recording), not
+    /// just a theoretical one.
+    private static let sessionQueue = sharedCameraSessionQueue
 
     // MARK: - UI State
 

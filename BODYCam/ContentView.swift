@@ -103,7 +103,13 @@ struct ContentView: View {
     // Apple requirement: ALL AVCaptureSession operations MUST run on a dedicated
     // serial queue — NOT main, NOT DispatchQueue.global() (which is concurrent).
     // Using concurrent threads causes silent audio drops and race conditions.
-    private static let sessionQueue = DispatchQueue(label: "com.bodycam.session", qos: .userInitiated)
+    //
+    // This USED to be its own separate queue from PhotoCameraView's. Now
+    // points at the queue shared with it instead — see
+    // sharedCameraSessionQueue's own comment in CameraPreviewView.swift for
+    // why two independent queues here was a real, confirmed bug, not just a
+    // theoretical one.
+    private static let sessionQueue = sharedCameraSessionQueue
 
     // MARK: - Adaptive layout
     // iPhone SE / small screens: height < 700pt

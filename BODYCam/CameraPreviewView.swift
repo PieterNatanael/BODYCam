@@ -1,6 +1,34 @@
 import SwiftUI
 import AVFoundation
 
+/// One serial queue for ALL AVCaptureSession work across BOTH the Video and
+/// Photo tabs — they used to each have their own. That looked correct in
+/// isolation (Apple does require session work to run on a dedicated serial
+/// queue, and each tab had one), but a tab switch fires the outgoing tab's
+/// onDisappear and the incoming tab's onAppear back to back on the main
+/// thread, and each side only ENQUEUED its own release/claim of the shared
+/// physical AVCaptureDevice onto its own queue — nothing tied those two
+/// queues' orderings together. Two independently-correct serial queues give
+/// you no guarantee about their order relative to EACH OTHER, only within
+/// themselves.
+///
+/// Confirmed as a real bug, not just a theoretical one: recording, stopping,
+/// and switching Video → Photo → Video in quick succession froze the camera
+/// on a real iPhone SE, recovering only once backgrounding the app forced
+/// iOS to reclaim the hardware from outside either queue's bookkeeping —
+/// the signature of two things having briefly disagreed about who owned it,
+/// not a crash.
+///
+/// The fix relies on one more fact: AVCaptureSession.startRunning() and
+/// stopRunning() are both documented as BLOCKING calls — they don't return
+/// until the session has actually started or stopped. So once both tabs'
+/// work is funneled through this single serial queue, plain FIFO ordering is
+/// enough: whichever tab's release job was enqueued first is GUARANTEED to
+/// have fully released the camera — not merely begun to — before the other
+/// tab's claim job, right behind it in the same queue, can even start. No
+/// completion handlers or explicit handoff signalling needed.
+let sharedCameraSessionQueue = DispatchQueue(label: "com.bodycam.camera.session", qos: .userInitiated)
+
 // Maps UIInterfaceOrientation to the AVCaptureVideoOrientation needed so
 // photos/video come out right-side-up instead of sideways when captured in
 // landscape. Deliberately NOT based on UIDevice.current.orientation — that's
