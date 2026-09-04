@@ -396,30 +396,6 @@ struct ContentView: View {
             }
             setAutoLock(false, session: captureSession, on: ContentView.sessionQueue)
             isAutoLocked = false
-            // A real pinch always produces a genuinely different zoom value
-            // moment to moment. Reapplying the CURRENT value, tried first,
-            // had zero effect on a real iPhone 6S — very likely because
-            // AVCaptureDevice's own setter probably no-ops when assigned the
-            // value it already holds, the same way many Apple framework
-            // setters skip real hardware reconfiguration when nothing is
-            // actually changing. That would explain a clean zero effect far
-            // better than "the theory was wrong": the fix never actually
-            // touched the hardware at all.
-            //
-            // This nudges zoom up by an amount too small to see, then
-            // immediately back to the original value — two genuinely
-            // different writes, guaranteed not to no-op, bracketing the
-            // original value so the net visible effect is nothing. If
-            // AVCaptureVideoPreviewLayer's content-fit reconsideration really
-            // is gated on an actual zoom pipeline event (not merely "zoom was
-            // touched"), this should trigger it where a same-value reapply
-            // could not.
-            let currentZoom = zoomFactor
-            applyZoom(currentZoom + 0.01, session: captureSession, on: ContentView.sessionQueue) { _ in
-                applyZoom(currentZoom, session: captureSession, on: ContentView.sessionQueue) { applied in
-                    zoomFactor = applied
-                }
-            }
         }
         .alert(isPresented: $showAlert) {
             Alert(
