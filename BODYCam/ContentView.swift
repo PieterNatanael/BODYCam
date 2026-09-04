@@ -1,6 +1,5 @@
 import SwiftUI
 import AVFoundation
-import QuartzCore
 
 struct ContentView: View {
 
@@ -397,28 +396,7 @@ struct ContentView: View {
             }
             setAutoLock(false, session: captureSession, on: ContentView.sessionQueue)
             isAutoLocked = false
-            // Confirmed on a real iPhone 6S: switching modes from the
-            // Settings sheet (in place, no tab switch, no camera session
-            // work at all) could leave the preview showing the PREVIOUS
-            // mode's size/shape until the next touch, indefinitely — the new
-            // frame/cornerRadius SwiftUI computes is correct immediately,
-            // but flushing that geometry change to the actual screen goes
-            // through a UIKit transaction that isn't guaranteed to commit
-            // right away on slow hardware under load, and nothing here
-            // normally forces one. This tab happens to self-heal within
-            // under a second regardless, purely as a side effect of
-            // recordingTimer firing every second for the recording clock —
-            // PhotoCameraView has no equivalent timer and could stay stuck
-            // indefinitely, which is where this was first noticed. Forcing
-            // the flush explicitly here, right when the mode actually
-            // changes, removes the reliance on that coincidence in both
-            // places. Dispatched to the next run loop turn rather than
-            // called inline, so SwiftUI's own re-render (scheduled by the
-            // state changes above) has already applied the new geometry by
-            // the time this actually flushes it.
-            DispatchQueue.main.async {
-                CATransaction.flush()
-            }
+            forceImmediateRelayout()
         }
         .alert(isPresented: $showAlert) {
             Alert(
