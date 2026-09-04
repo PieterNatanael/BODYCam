@@ -299,6 +299,11 @@ struct PhotoCameraView: View {
     /// captured, so there is no real downside to a new user having it from
     /// the start.
     @AppStorage("ShowGridLines") private var showGridLines: Bool = true
+    /// Circle mode's interface is locked to portrait (see AppDelegate), so
+    /// this tracks the phone's raw physical rotation separately, purely to
+    /// decide which way its control icons should turn to stay upright —
+    /// never used for layout, which is what stays still.
+    @State private var deviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
     @State private var isUsingFront     = false
     /// Mirrors the video device's own videoZoomFactor for the on screen
     /// readout. Reset to 1 on flip, since a freshly attached device always
@@ -330,6 +335,11 @@ struct PhotoCameraView: View {
     @State private var showAppSettingsSheet = false
     @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.saveBattery.rawValue
     private var displayMode: CameraDisplayMode { CameraDisplayMode(rawValue: displayModeRaw) ?? .saveBattery }
+    /// .zero outside Circle mode — every other mode lets the interface
+    /// itself rotate, so its icons never need to turn independently.
+    private var circleIconRotation: Angle {
+        displayMode == .circle ? iconRotationAngle(for: deviceOrientation) : .zero
+    }
     @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.tropical.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     // Simple and Tactical share the same flat/no-gradient/sharp-corner "bones";
@@ -556,10 +566,27 @@ struct PhotoCameraView: View {
             }
             setAutoLock(false, session: captureSession, on: PhotoCameraView.sessionQueue)
             isAutoLocked = false
+            // AppDelegate.supportedInterfaceOrientationsFor only gets
+            // consulted again when something asks iOS to re-check — this is
+            // that ask, needed both entering Circle mode (snaps a currently
+            // landscape interface back to portrait immediately) and leaving
+            // it (frees the interface to rotate again without waiting for
+            // the next physical rotation to prompt a check on its own).
+            UIViewController.attemptRotationToDeviceOrientation()
         }
         // RootView → PhotoCameraView: restore brightness when user taps overlay
         .onReceive(NotificationCenter.default.publisher(for: .userRequestedWake)) { _ in
             wakeScreen()
+        }
+        // Backs circleIconRotation. isValidInterfaceOrientation filters out
+        // .faceUp/.faceDown/.unknown — frequent, completely normal readings
+        // while actually holding and using the phone, which would otherwise
+        // snap every icon back to .zero any time it's set down or tilted
+        // flat, only to snap again the moment a real orientation is read.
+        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+            let new = UIDevice.current.orientation
+            guard new.isValidInterfaceOrientation else { return }
+            deviceOrientation = new
         }
         // Screen brightness is a system-wide setting that survives the app, so
         // backgrounding while dimmed would otherwise leave the user's phone at
@@ -951,17 +978,23 @@ struct PhotoCameraView: View {
     private var shutterRow: some View {
         ZStack {
             shutterButton
+                .reorientIcon(circleIconRotation)
 
             HStack {
                 HStack(spacing: 10) {
                     flipButton
+                        .reorientIcon(circleIconRotation)
                     dimButton
+                        .reorientIcon(circleIconRotation)
                 }
                 .padding(.leading, 20)
                 Spacer()
                 HStack(spacing: 10) {
+                    // Not rotated: its content is wording (a zoom readout
+                    // like "1.5×"), not an icon — see reorientIcon.
                     zoomButton
                     settingsButton
+                        .reorientIcon(circleIconRotation)
                 }
                 .padding(.trailing, 20)
             }

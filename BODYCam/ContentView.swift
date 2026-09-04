@@ -20,6 +20,11 @@ struct ContentView: View {
     /// captured, so there is no real downside to a new user having it from
     /// the start.
     @AppStorage("ShowGridLines") private var showGridLines: Bool = true
+    /// Circle mode's interface is locked to portrait (see AppDelegate), so
+    /// this tracks the phone's raw physical rotation separately, purely to
+    /// decide which way its control icons should turn to stay upright —
+    /// never used for layout, which is what stays still.
+    @State private var deviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
     @State private var isUsingFront  = false
     /// Mirrors the video device's own videoZoomFactor for the on screen
     /// readout. Reset to 1 on flip, since a freshly attached device always
@@ -59,6 +64,11 @@ struct ContentView: View {
     private let recordingTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.saveBattery.rawValue
     private var displayMode: CameraDisplayMode { CameraDisplayMode(rawValue: displayModeRaw) ?? .saveBattery }
+    /// .zero outside Circle mode — every other mode lets the interface
+    /// itself rotate, so its icons never need to turn independently.
+    private var circleIconRotation: Angle {
+        displayMode == .circle ? iconRotationAngle(for: deviceOrientation) : .zero
+    }
     // Yapping mode: script text takes the main area, the camera preview
     // shrinks to a small draggable corner window instead. Text persists
     // across launches like everything else here; the PiP's position is
@@ -364,6 +374,16 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: .userRequestedWake)) { _ in
             wakeScreen()
         }
+        // Backs circleIconRotation. isValidInterfaceOrientation filters out
+        // .faceUp/.faceDown/.unknown — frequent, completely normal readings
+        // while actually holding and using the phone, which would otherwise
+        // snap every icon back to .zero any time it's set down or tilted
+        // flat, only to snap again the moment a real orientation is read.
+        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+            let new = UIDevice.current.orientation
+            guard new.isValidInterfaceOrientation else { return }
+            deviceOrientation = new
+        }
         // Quality / low-light now live in the shared Settings screen — apply
         // hardware changes here whenever either @AppStorage value changes,
         // regardless of which tab's Settings sheet made the change.
@@ -396,6 +416,13 @@ struct ContentView: View {
             }
             setAutoLock(false, session: captureSession, on: ContentView.sessionQueue)
             isAutoLocked = false
+            // AppDelegate.supportedInterfaceOrientationsFor only gets
+            // consulted again when something asks iOS to re-check — this is
+            // that ask, needed both entering Circle mode (snaps a currently
+            // landscape interface back to portrait immediately) and leaving
+            // it (frees the interface to rotate again without waiting for
+            // the next physical rotation to prompt a check on its own).
+            UIViewController.attemptRotationToDeviceOrientation()
         }
         .alert(isPresented: $showAlert) {
             Alert(
@@ -900,18 +927,24 @@ struct ContentView: View {
         ZStack {
             Button(action: { isRecording ? stopRecording() : startRecording() }) {
                 recordButtonView
+                    .reorientIcon(circleIconRotation)
             }
 
             HStack {
                 HStack(spacing: 10) {
                     flipButton
+                        .reorientIcon(circleIconRotation)
                     dimButton
+                        .reorientIcon(circleIconRotation)
                 }
                 .padding(.leading, 20)
                 Spacer()
                 HStack(spacing: 10) {
+                    // Not rotated: its content is wording (a zoom readout
+                    // like "1.5×"), not an icon — see reorientIcon.
                     zoomButton
                     settingsButton
+                        .reorientIcon(circleIconRotation)
                 }
                 .padding(.trailing, 20)
             }

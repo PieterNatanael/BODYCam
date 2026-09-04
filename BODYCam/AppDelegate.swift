@@ -36,6 +36,28 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         return true
     }
 
+    /// Locks the whole interface to portrait while Circle mode is active, so
+    /// the tab bar, every button, and all their positions stay completely
+    /// still when the phone is physically rotated — Circle mode's control
+    /// icons reorient in place instead (see reorientIcon in
+    /// CameraPreviewView.swift), the same convention the built in Camera app
+    /// uses. Every other mode keeps the normal behaviour declared in the
+    /// project's own orientation settings (portrait plus both landscapes,
+    /// no upside down on iPhone).
+    ///
+    /// Read directly from UserDefaults rather than through an @AppStorage:
+    /// this delegate method isn't a View and can't hold one, the same
+    /// reason PhotoCaptureDelegate and VideoCaptureDelegate read
+    /// ShowDateStamp this way instead.
+    func application(_ application: UIApplication,
+                     supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        let raw = UserDefaults.standard.string(forKey: "CameraDisplayMode")
+        if raw == CameraDisplayMode.circle.rawValue {
+            return .portrait
+        }
+        return .allButUpsideDown
+    }
+
     /// Tapping a reminder opens the app on that photo or video.
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,

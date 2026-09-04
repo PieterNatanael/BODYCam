@@ -52,14 +52,87 @@ extension AVCaptureVideoOrientation {
         default:                  return nil
         }
     }
+
+    /// For Circle mode specifically, whose interface is locked to portrait —
+    /// see AppDelegate.supportedInterfaceOrientationsFor — so
+    /// interfaceOrientation would always read .portrait regardless of how the
+    /// phone is actually held. Raw device rotation is the only signal left.
+    ///
+    /// Deliberately swaps landscapeLeft and landscapeRight relative to the
+    /// interfaceOrientation initializer above, rather than mirroring it:
+    /// UIDeviceOrientation and UIInterfaceOrientation use OPPOSITE
+    /// conventions for which physical rotation each name refers to — a
+    /// device physically rotated so its top points left needs interface (and
+    /// therefore capture) orientation .landscapeRight to appear upright, not
+    /// .landscapeLeft. Getting this backwards would save landscape photos
+    /// and videos rotated 180 degrees from correct.
+    ///
+    /// Returns nil for .faceUp/.faceDown/.unknown — frequent, completely
+    /// normal readings while actually holding and using the phone, not
+    /// meaningful capture orientations — so callers can fall back to
+    /// portrait rather than trust a meaningless reading.
+    init?(deviceOrientation: UIDeviceOrientation) {
+        switch deviceOrientation {
+        case .portrait:           self = .portrait
+        case .portraitUpsideDown: self = .portraitUpsideDown
+        case .landscapeLeft:      self = .landscapeRight
+        case .landscapeRight:     self = .landscapeLeft
+        default:                  return nil
+        }
+    }
 }
 
 /// Current capture orientation, read from the window's actual interface
 /// orientation rather than the accelerometer. Falls back to portrait if no
 /// window scene is available yet (e.g. very early during launch).
+///
+/// Circle mode is the one exception: its interface never actually rotates
+/// (see AppDelegate.supportedInterfaceOrientationsFor), so interfaceOrientation
+/// would report .portrait even while genuinely holding the phone sideways to
+/// frame a landscape shot. Raw device orientation is less reliable in
+/// general — routinely .faceUp/.faceDown/.unknown while filming — but it is
+/// the only signal available once the interface itself is locked, and
+/// AVCaptureVideoOrientation(deviceOrientation:) already falls back to
+/// portrait on exactly those unreliable readings.
 func currentCaptureOrientation() -> AVCaptureVideoOrientation {
+    if UserDefaults.standard.string(forKey: "CameraDisplayMode") == CameraDisplayMode.circle.rawValue,
+       let fromDevice = AVCaptureVideoOrientation(deviceOrientation: UIDevice.current.orientation) {
+        return fromDevice
+    }
     let interfaceOrientation = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.interfaceOrientation
     return AVCaptureVideoOrientation(interfaceOrientation: interfaceOrientation ?? .portrait) ?? .portrait
+}
+
+/// Maps the device's raw physical orientation to the angle a fixed on screen
+/// icon needs to turn by to stay upright to the viewer — Circle mode's
+/// control icons only, since every other mode lets the whole interface
+/// rotate instead of holding still. .faceUp/.faceDown/.unknown are handled
+/// by each view's own deviceOrientation state filtering them out before ever
+/// assigning a new value, not here — this always has a genuine
+/// portrait/landscape/upside-down reading to work with.
+func iconRotationAngle(for orientation: UIDeviceOrientation) -> Angle {
+    switch orientation {
+    case .landscapeLeft:      return .degrees(90)
+    case .landscapeRight:     return .degrees(-90)
+    case .portraitUpsideDown: return .degrees(180)
+    default:                  return .zero
+    }
+}
+
+extension View {
+    /// Rotates this view IN PLACE, exactly the Camera app's own convention:
+    /// the button's position and everything around it never move, only the
+    /// glyph itself turns to stay upright as the phone physically rotates.
+    ///
+    /// Applied to whole buttons rather than just the icon inside them —
+    /// every control this is used on has a circular or square background,
+    /// both visually unchanged by a 90/180/270 degree turn, so rotating the
+    /// button as a whole reads identically to rotating just the glyph, for
+    /// a fraction of the code at each call site.
+    func reorientIcon(_ angle: Angle) -> some View {
+        rotationEffect(angle)
+            .animation(.easeInOut(duration: 0.25), value: angle)
+    }
 }
 
 /// Applies tap-to-focus at a normalized device point (0...1, from
