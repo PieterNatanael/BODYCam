@@ -448,12 +448,12 @@ struct PhotoCameraView: View {
 
     @ViewBuilder
     private var gridLinesOverlay: some View {
-        // Excluded in Circle mode: the grid is a plain rectangular shape
-        // drawn edge to edge, and the preview it sits over is clipped to a
-        // circle — the lines would visibly run past the circle's edge into
-        // the corners the circle cuts away, rather than being clipped along
-        // with it.
-        if showGridLines, displayMode != .circle {
+        // Available in every mode, Circle included — the call site clips
+        // this to the same shape as the preview itself (see sharedPreviewLayer),
+        // so in Circle mode the lines are cut off cleanly at the circle's
+        // edge instead of running past it into the corners the circle cuts
+        // away.
+        if showGridLines {
             RuleOfThirdsGrid()
                 .stroke(Color.white.opacity(0.6), lineWidth: 1)
                 .allowsHitTesting(false)
@@ -764,7 +764,16 @@ struct PhotoCameraView: View {
                         previewBorderOverlay(radius: radius, color: borderColor,
                                               width: borderWidth, decoration: decoration)
                     )
-                    .overlay(gridLinesOverlay)
+                    // clipShape here, matching the same radius the preview
+                    // itself is cut to, is what makes the grid safe to show
+                    // in every mode including Circle: in the rectangular
+                    // modes this radius is small and the grid's own lines
+                    // already terminate at the frame's edge, so it clips
+                    // nothing new — but in Circle mode it cuts the grid's
+                    // straight edge-to-edge lines off cleanly at the circle's
+                    // boundary, instead of letting them run into the corners
+                    // the circle itself cuts away.
+                    .overlay(gridLinesOverlay.clipShape(RoundedRectangle(cornerRadius: radius)))
                     // Applied here rather than over the whole screen so the
                     // blink lands exactly on the viewfinder in every display
                     // mode, picking up the same corner radius and full bleed
