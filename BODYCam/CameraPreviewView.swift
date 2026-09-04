@@ -413,6 +413,20 @@ struct CameraPreviewView: UIViewRepresentable {
         uiView.onFocusTap = onFocusTap
         uiView.onPinchZoom = onPinchZoom
         uiView.setPreviewActive(isPreviewActive)
+        // Piggybacks the preview's own orientation refresh onto SwiftUI's
+        // re-render cycle, rather than relying solely on PreviewUIView's own
+        // independent UIDevice.orientationDidChangeNotification observer.
+        // That observer is a genuinely separate mechanism from the
+        // deviceOrientation @State the containing view (ContentView /
+        // PhotoCameraView) already tracks for icon rotation — proven
+        // reliable, since the icons themselves do turn correctly — so this
+        // reapplies orientation every time THAT state changes and SwiftUI
+        // re-renders as a result, giving Circle mode's live preview content
+        // a second, independent path to actually catch up, on top of (not
+        // instead of) the notification observer. Cheap and safe to call on
+        // every re-render regardless: assigning the same orientation the
+        // connection already holds is a harmless no-op.
+        uiView.applyCurrentOrientation()
     }
 
     class PreviewUIView: UIView {
