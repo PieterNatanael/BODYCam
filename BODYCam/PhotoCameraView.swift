@@ -1,6 +1,7 @@
 import SwiftUI
 import AVFoundation
 import AudioToolbox
+import QuartzCore
 
 // MARK: - Photo Quality
 
@@ -556,6 +557,26 @@ struct PhotoCameraView: View {
             }
             setAutoLock(false, session: captureSession, on: PhotoCameraView.sessionQueue)
             isAutoLocked = false
+            // Confirmed on a real iPhone 6S: switching modes from the
+            // Settings sheet (in place, no tab switch, no camera session
+            // work at all) could leave the preview showing the PREVIOUS
+            // mode's size/shape until the next touch, indefinitely — the new
+            // frame/cornerRadius SwiftUI computes is correct immediately,
+            // but flushing that geometry change to the actual screen goes
+            // through a UIKit transaction that isn't guaranteed to commit
+            // right away on slow hardware under load, and nothing here
+            // normally forces one. ContentView's equivalent bug self-heals
+            // within under a second purely as a side effect of its
+            // recordingTimer firing every second for the recording clock —
+            // this tab has no equivalent timer, so a stalled update here
+            // could stay stuck indefinitely, which is where this was first
+            // noticed. Dispatched to the next run loop turn rather than
+            // called inline, so SwiftUI's own re-render (scheduled by the
+            // state changes above) has already applied the new geometry by
+            // the time this actually flushes it.
+            DispatchQueue.main.async {
+                CATransaction.flush()
+            }
         }
         // RootView → PhotoCameraView: restore brightness when user taps overlay
         .onReceive(NotificationCenter.default.publisher(for: .userRequestedWake)) { _ in
