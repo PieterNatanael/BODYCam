@@ -1,6 +1,5 @@
 import SwiftUI
 import AVFoundation
-import QuartzCore
 
 /// One serial queue for ALL AVCaptureSession work across BOTH the Video and
 /// Photo tabs — they used to each have their own. That looked correct in
@@ -29,45 +28,6 @@ import QuartzCore
 /// tab's claim job, right behind it in the same queue, can even start. No
 /// completion handlers or explicit handoff signalling needed.
 let sharedCameraSessionQueue = DispatchQueue(label: "com.bodycam.camera.session", qos: .userInitiated)
-
-/// Forces a real, synchronous UIKit layout pass on the whole key window,
-/// right now, rather than leaving a pending visual update to whenever the
-/// system next gets around to it.
-///
-/// Needed for a display-mode switch made from the Settings sheet: no camera
-/// session work happens at all in that path (that's only tied to tab
-/// appear/disappear), so this is purely about SwiftUI's newly computed
-/// preview frame/cornerRadius actually reaching the screen. Confirmed on a
-/// real iPhone 6S that it otherwise doesn't, reliably: the preview could
-/// keep showing the PREVIOUS mode's size and shape indefinitely, until the
-/// next real touch — a pinch, a tap, anything — forced a genuine layout
-/// pass and it snapped to the correct one immediately. SwiftUI computes the
-/// new geometry correctly right away; committing it to the actual screen
-/// goes through a UIKit render pass that isn't guaranteed to run promptly on
-/// slow hardware under load, and normally nothing here forces one.
-///
-/// A first attempt used only CATransaction.flush(), dispatched to the next
-/// run loop turn. That fixed it on the Video tab but NOT on Photo, and the
-/// difference is informative: flush() only commits whatever transaction is
-/// ALREADY open at the moment it runs — it doesn't itself trigger a new
-/// layout pass. A real touch works because UIKit's own event handling
-/// forces one as a side effect; Video tab's fix appeared to work because its
-/// recording-clock timer, firing every second regardless of whether a
-/// recording is active, incidentally provides the same kind of nudge often
-/// enough to mask the problem — not because the flush was actually reaching
-/// the right transaction. Photo has no such timer, so the same weak fix
-/// there did nothing. layoutIfNeeded() on the window is the stronger,
-/// correct tool: it actively performs a layout pass synchronously, rather
-/// than passively hoping one is already pending to flush.
-func forceImmediateRelayout() {
-    DispatchQueue.main.async {
-        let window = UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .first?.windows.first(where: { $0.isKeyWindow })
-        window?.layoutIfNeeded()
-        CATransaction.flush()
-    }
-}
 
 // Maps UIInterfaceOrientation to the AVCaptureVideoOrientation needed so
 // photos/video come out right-side-up instead of sideways when captured in

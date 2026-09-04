@@ -556,7 +556,23 @@ struct PhotoCameraView: View {
             }
             setAutoLock(false, session: captureSession, on: PhotoCameraView.sessionQueue)
             isAutoLocked = false
-            forceImmediateRelayout()
+            // Reapplies the CURRENT zoom factor, unchanged in value — this is
+            // what actually fixes the stuck preview on a real iPhone 6S,
+            // confirmed after two other approaches (forcing a UIKit layout
+            // pass, then a full window layoutIfNeeded + flush) both did
+            // nothing at all. AVCaptureVideoPreviewLayer displays whatever
+            // frame the camera pipeline last handed it, and appears to only
+            // reconsider how to fit that image into a NEW layer bounds when a
+            // fresh frame arrives tied to a zoom-relevant pipeline event —
+            // not merely because SwiftUI told the layer its frame changed. A
+            // real pinch fixes it for exactly this reason; tap to focus does
+            // not, because focusing never touches zoom. Reassigning
+            // videoZoomFactor to the value it already holds still runs the
+            // same AVFoundation pipeline event a real pinch does, without
+            // requiring an actual touch.
+            applyZoom(zoomFactor, session: captureSession, on: PhotoCameraView.sessionQueue) { applied in
+                zoomFactor = applied
+            }
         }
         // RootView → PhotoCameraView: restore brightness when user taps overlay
         .onReceive(NotificationCenter.default.publisher(for: .userRequestedWake)) { _ in
