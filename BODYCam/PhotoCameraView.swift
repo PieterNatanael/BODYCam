@@ -556,22 +556,29 @@ struct PhotoCameraView: View {
             }
             setAutoLock(false, session: captureSession, on: PhotoCameraView.sessionQueue)
             isAutoLocked = false
-            // Reapplies the CURRENT zoom factor, unchanged in value — this is
-            // what actually fixes the stuck preview on a real iPhone 6S,
-            // confirmed after two other approaches (forcing a UIKit layout
-            // pass, then a full window layoutIfNeeded + flush) both did
-            // nothing at all. AVCaptureVideoPreviewLayer displays whatever
-            // frame the camera pipeline last handed it, and appears to only
-            // reconsider how to fit that image into a NEW layer bounds when a
-            // fresh frame arrives tied to a zoom-relevant pipeline event —
-            // not merely because SwiftUI told the layer its frame changed. A
-            // real pinch fixes it for exactly this reason; tap to focus does
-            // not, because focusing never touches zoom. Reassigning
-            // videoZoomFactor to the value it already holds still runs the
-            // same AVFoundation pipeline event a real pinch does, without
-            // requiring an actual touch.
-            applyZoom(zoomFactor, session: captureSession, on: PhotoCameraView.sessionQueue) { applied in
-                zoomFactor = applied
+            // A real pinch always produces a genuinely different zoom value
+            // moment to moment. Reapplying the CURRENT value, tried first,
+            // had zero effect on a real iPhone 6S — very likely because
+            // AVCaptureDevice's own setter probably no-ops when assigned the
+            // value it already holds, the same way many Apple framework
+            // setters skip real hardware reconfiguration when nothing is
+            // actually changing. That would explain a clean zero effect far
+            // better than "the theory was wrong": the fix never actually
+            // touched the hardware at all.
+            //
+            // This nudges zoom up by an amount too small to see, then
+            // immediately back to the original value — two genuinely
+            // different writes, guaranteed not to no-op, bracketing the
+            // original value so the net visible effect is nothing. If
+            // AVCaptureVideoPreviewLayer's content-fit reconsideration really
+            // is gated on an actual zoom pipeline event (not merely "zoom was
+            // touched"), this should trigger it where a same-value reapply
+            // could not.
+            let currentZoom = zoomFactor
+            applyZoom(currentZoom + 0.01, session: captureSession, on: PhotoCameraView.sessionQueue) { _ in
+                applyZoom(currentZoom, session: captureSession, on: PhotoCameraView.sessionQueue) { applied in
+                    zoomFactor = applied
+                }
             }
         }
         // RootView → PhotoCameraView: restore brightness when user taps overlay
