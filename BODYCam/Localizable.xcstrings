@@ -3510,6 +3510,52 @@
         }
       }
     },
+    "Only the preview is round. Photos and videos save normally.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur die Vorschau ist rund. Fotos und Videos werden normal gespeichert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seul l’aperçu est rond. Les photos et vidéos s’enregistrent normalement."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hanya pratinjau yang bulat. Foto dan video tetap tersimpan seperti biasa."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プレビューのみ円形です。写真と動画は通常どおり保存されます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "미리보기만 원형입니다. 사진과 동영상은 평소처럼 저장됩니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅取景框为圆形。照片和视频仍按正常方式保存。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "僅取景框為圓形。照片和影片仍按正常方式儲存。"
+          }
+        }
+      }
+    },
     "Only used if you set an alarm or reminder for something you saved.": {
       "localizations": {
         "de": {
@@ -3602,24 +3648,24 @@
         }
       }
     },
-    "Overlays rule-of-thirds lines on the camera preview, in every display mode. A framing aid only — never appears in a saved photo or video.": {
+    "Overlays rule-of-thirds lines on the camera preview, in every display mode. A framing aid only, it never appears in a saved photo or video.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Legt Drittel-Regel-Linien über die Kamera-Vorschau, in jedem Anzeigemodus. Nur eine Hilfe beim Bildaufbau — erscheint nie in einem gespeicherten Foto oder Video."
+            "value": "Legt Drittel-Regel-Linien über die Kamera-Vorschau, in jedem Anzeigemodus. Nur eine Hilfe beim Bildaufbau, die nie in einem gespeicherten Foto oder Video erscheint."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Superpose des lignes de règle des tiers sur l’aperçu de l’appareil photo, dans tous les modes d’affichage. Une simple aide au cadrage — n’apparaît jamais sur une photo ou vidéo enregistrée."
+            "value": "Superpose des lignes de règle des tiers sur l’aperçu de l’appareil photo, dans tous les modes d’affichage. Une simple aide au cadrage qui n’apparaît jamais sur une photo ou vidéo enregistrée."
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Menampilkan garis bantu rule-of-thirds pada pratinjau kamera, di setiap mode tampilan. Hanya alat bantu framing — tidak pernah muncul pada foto atau video yang tersimpan."
+            "value": "Menampilkan garis bantu rule-of-thirds pada pratinjau kamera, di setiap mode tampilan. Hanya alat bantu framing yang tidak pernah muncul pada foto atau video yang tersimpan."
           }
         },
         "ja": {
@@ -4798,52 +4844,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "使用 iOS 鬧鐘鈴聲響鈴，可穿透靜音模式和專注模式。"
-          }
-        }
-      }
-    },
-    "Round preview only — photos and videos save normally": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur die Vorschau ist rund — Fotos und Videos werden normal gespeichert"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seul l’aperçu est rond — les photos et vidéos s’enregistrent normalement"
-          }
-        },
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hanya pratinjau yang bulat — foto dan video tersimpan seperti biasa"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "プレビューのみ円形です。写真と動画は通常どおり保存されます"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "미리보기만 원형입니다 — 사진과 동영상은 평소처럼 저장됩니다"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "仅取景框为圆形 — 照片和视频仍按正常方式保存"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "僅取景框為圓形 — 照片和影片仍按正常方式儲存"
           }
         }
       }

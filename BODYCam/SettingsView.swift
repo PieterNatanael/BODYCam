@@ -92,7 +92,7 @@ enum CameraDisplayMode: String, CaseIterable {
         case .normal:       return "Full screen preview, uses more battery"
         case .yapping:      return "Script on screen, preview shrinks to a movable corner"
         case .pro:          return "Compact preview, with manual exposure and focus lock"
-        case .circle:       return "Round preview only — photos and videos save normally"
+        case .circle:       return "Only the preview is round. Photos and videos save normally."
         }
     }
 
@@ -938,7 +938,7 @@ struct SettingsView: View {
                     }
                 )
             }
-            Text("Overlays rule-of-thirds lines on the camera preview, in every display mode. A framing aid only — never appears in a saved photo or video.")
+            Text("Overlays rule-of-thirds lines on the camera preview, in every display mode. A framing aid only, it never appears in a saved photo or video.")
                 .font(.system(size: 9, weight: .semibold, design: .monospaced))
                 .foregroundColor(Color(white: 0.5))
                 .fixedSize(horizontal: false, vertical: true)
