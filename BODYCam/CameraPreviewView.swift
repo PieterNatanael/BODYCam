@@ -1,5 +1,6 @@
 import SwiftUI
 import AVFoundation
+import QuartzCore
 
 /// One serial queue for ALL AVCaptureSession work across BOTH the Video and
 /// Photo tabs — they used to each have their own. That looked correct in
@@ -397,6 +398,10 @@ struct CameraPreviewView: UIViewRepresentable {
     /// safely read that from. The caller clamps and applies via applyZoom(),
     /// same division of responsibility as onFocusTap.
     var onPinchZoom: ((CGFloat) -> Void)? = nil
+    /// Circle mode only — see PreviewUIView.applyContentRotation for why this
+    /// exists at all. .zero everywhere else, where the interface itself
+    /// rotates instead of the content needing to compensate on its own.
+    var contentRotationAngle: Angle = .zero
 
     func makeUIView(context: Context) -> PreviewUIView {
         let view = PreviewUIView()
@@ -413,20 +418,8 @@ struct CameraPreviewView: UIViewRepresentable {
         uiView.onFocusTap = onFocusTap
         uiView.onPinchZoom = onPinchZoom
         uiView.setPreviewActive(isPreviewActive)
-        // Piggybacks the preview's own orientation refresh onto SwiftUI's
-        // re-render cycle, rather than relying solely on PreviewUIView's own
-        // independent UIDevice.orientationDidChangeNotification observer.
-        // That observer is a genuinely separate mechanism from the
-        // deviceOrientation @State the containing view (ContentView /
-        // PhotoCameraView) already tracks for icon rotation — proven
-        // reliable, since the icons themselves do turn correctly — so this
-        // reapplies orientation every time THAT state changes and SwiftUI
-        // re-renders as a result, giving Circle mode's live preview content
-        // a second, independent path to actually catch up, on top of (not
-        // instead of) the notification observer. Cheap and safe to call on
-        // every re-render regardless: assigning the same orientation the
-        // connection already holds is a harmless no-op.
         uiView.applyCurrentOrientation()
+        uiView.applyContentRotation(CGFloat(contentRotationAngle.radians))
     }
 
     class PreviewUIView: UIView {
@@ -479,6 +472,37 @@ struct CameraPreviewView: UIViewRepresentable {
             // The orientation is applied to the connection, so re-assert it on
             // the way back rather than trusting whatever it held while off.
             if active { applyCurrentOrientation() }
+        }
+
+        /// Circle mode only. Confirmed on a real device that
+        /// connection.videoOrientation — applyCurrentOrientation's whole
+        /// job — does NOT visibly rotate this layer's live rendered content
+        /// while the app's own interface orientation is locked to portrait:
+        /// a photo taken while physically holding the phone sideways saved
+        /// correctly oriented (that's the photo output's own, separate
+        /// connection, unaffected by any of this), but the live image
+        /// itself stayed frozen looking upright-portrait regardless of how
+        /// the phone was actually held. connection.videoOrientation appears
+        /// to only ever affect how a CAPTURE's pixel buffer is tagged, not
+        /// how an already-locked AVCaptureVideoPreviewLayer visually renders
+        /// moment to moment.
+        ///
+        /// A genuine CGAffineTransform rotation on the layer itself is the
+        /// actual fix — the same technique used whenever an app wants live
+        /// preview content to visually reorient independent of the
+        /// interface. This is specifically safe for Circle mode and would
+        /// NOT be for an ordinary rectangular preview: the frame this layer
+        /// fills is a SQUARE (clipped to a circle afterwards), and a square
+        /// rotated by any multiple of 90 degrees still exactly fills that
+        /// same square bounds — no gap, no overflow to letterbox or crop,
+        /// which a rotated rectangle would have.
+        func applyContentRotation(_ angle: CGFloat) {
+            let target = CGAffineTransform(rotationAngle: angle)
+            guard previewLayer.affineTransform() != target else { return }
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(0.25)
+            previewLayer.setAffineTransform(target)
+            CATransaction.commit()
         }
 
         @objc private func handleFocusTap(_ recognizer: UITapGestureRecognizer) {

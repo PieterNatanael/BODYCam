@@ -783,7 +783,8 @@ struct PhotoCameraView: View {
                             applyZoom(requested, session: captureSession, on: PhotoCameraView.sessionQueue) { applied in
                                 zoomFactor = applied
                             }
-                        }
+                        },
+                        contentRotationAngle: circleIconRotation
                     )
                     .frame(width: w, height: h)
                     .cornerRadius(radius)
