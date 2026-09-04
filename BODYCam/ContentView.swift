@@ -940,9 +940,8 @@ struct ContentView: View {
                 .padding(.leading, 20)
                 Spacer()
                 HStack(spacing: 10) {
-                    // Not rotated: its content is wording (a zoom readout
-                    // like "1.5×"), not an icon — see reorientIcon.
                     zoomButton
+                        .reorientIcon(circleIconRotation)
                     settingsButton
                         .reorientIcon(circleIconRotation)
                 }

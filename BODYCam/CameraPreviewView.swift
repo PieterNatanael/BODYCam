@@ -530,6 +530,25 @@ struct CameraPreviewView: UIViewRepresentable {
         // value always comes from currentCaptureOrientation().
         @objc func applyCurrentOrientation() {
             guard let connection = previewLayer.connection else { return }
+            // Circle mode's interface is locked to portrait, so
+            // currentCaptureOrientation() falls back to the raw
+            // accelerometer for it — and that reading is routinely
+            // .faceUp/.faceDown/.unknown for a moment even while genuinely
+            // holding the phone rock steady in landscape, which
+            // currentCaptureOrientation() resolves by falling back to
+            // portrait. This method fires on every single orientation
+            // notification, so trusting that fallback here would flicker
+            // the live preview back to portrait on every one of those
+            // routine, momentary blips rather than holding the last
+            // confidently known orientation — in practice reading as
+            // permanently "stuck" on portrait, since ambiguous blips are
+            // frequent enough to win most of the time. An ambiguous
+            // reading is skipped entirely instead, leaving the connection
+            // exactly as it already was.
+            if UserDefaults.standard.string(forKey: "CameraDisplayMode") == CameraDisplayMode.circle.rawValue,
+               !UIDevice.current.orientation.isValidInterfaceOrientation {
+                return
+            }
             connection.videoOrientation = currentCaptureOrientation()
         }
     }
