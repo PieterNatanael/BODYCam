@@ -333,7 +333,7 @@ struct PhotoCameraView: View {
     @State private var isScreenDimmed   = false
     @State private var savedBrightness: CGFloat = UIScreen.main.brightness
     @State private var showAppSettingsSheet = false
-    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.saveBattery.rawValue
+    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.circle.rawValue
     private var displayMode: CameraDisplayMode { CameraDisplayMode(rawValue: displayModeRaw) ?? .saveBattery }
     /// .zero outside Circle mode — every other mode lets the interface
     /// itself rotate, so its icons never need to turn independently.

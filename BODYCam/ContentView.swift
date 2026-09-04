@@ -62,7 +62,7 @@ struct ContentView: View {
     @State private var recordingStartedAt: Date?
     @State private var elapsed: TimeInterval = 0
     private let recordingTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.saveBattery.rawValue
+    @AppStorage("CameraDisplayMode") private var displayModeRaw: String = CameraDisplayMode.circle.rawValue
     private var displayMode: CameraDisplayMode { CameraDisplayMode(rawValue: displayModeRaw) ?? .saveBattery }
     /// .zero outside Circle mode — every other mode lets the interface
     /// itself rotate, so its icons never need to turn independently.
