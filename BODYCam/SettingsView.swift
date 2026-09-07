@@ -92,7 +92,7 @@ enum CameraDisplayMode: String, CaseIterable {
         case .normal:       return "Full screen preview, uses more battery"
         case .yapping:      return "Script on screen, preview shrinks to a movable corner"
         case .pro:          return "Compact preview, with manual exposure and focus lock"
-        case .circle:       return "Only the preview is round. Photos and videos save normally."
+        case .circle:       return "Compact round preview, lower power use. Photos and videos still save normally."
         }
     }
 

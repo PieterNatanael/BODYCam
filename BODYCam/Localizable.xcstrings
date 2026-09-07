@@ -1342,6 +1342,52 @@
         }
       }
     },
+    "Compact round preview, lower power use. Photos and videos still save normally.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompakte runde Vorschau, geringerer Stromverbrauch. Fotos und Videos werden weiterhin normal gespeichert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aperçu compact et rond, consommation réduite. Les photos et vidéos s’enregistrent toujours normalement."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pratinjau bulat yang ringkas, hemat daya. Foto dan video tetap tersimpan seperti biasa."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コンパクトな円形プレビュー、消費電力を抑制。写真と動画は通常どおり保存されます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "작고 둥근 미리보기, 전력 소모 감소. 사진과 동영상은 그대로 정상 저장됩니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "圆形预览窗口，更省电。照片和视频仍按正常方式保存。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "圓形預覽視窗，更省電。照片和影片仍按正常方式儲存。"
+          }
+        }
+      }
+    },
     "DATE STAMP ON PHOTOS AND VIDEOS": {
       "localizations": {
         "de": {
@@ -3506,52 +3552,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "僅剩 %lld MB。%@ 畫質至少需要 %lld MB 可用空間。請在錄製前清理儲存空間或降低畫質。"
-          }
-        }
-      }
-    },
-    "Only the preview is round. Photos and videos save normally.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur die Vorschau ist rund. Fotos und Videos werden normal gespeichert."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seul l’aperçu est rond. Les photos et vidéos s’enregistrent normalement."
-          }
-        },
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hanya pratinjau yang bulat. Foto dan video tetap tersimpan seperti biasa."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "プレビューのみ円形です。写真と動画は通常どおり保存されます。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "미리보기만 원형입니다. 사진과 동영상은 평소처럼 저장됩니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "仅取景框为圆形。照片和视频仍按正常方式保存。"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "僅取景框為圓形。照片和影片仍按正常方式儲存。"
           }
         }
       }
