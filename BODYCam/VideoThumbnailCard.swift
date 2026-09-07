@@ -1,5 +1,6 @@
 import SwiftUI
 import AVFoundation
+import ImageIO
 
 struct VideoThumbnailCard: View {
     let item: VideoItem
@@ -17,6 +18,20 @@ struct VideoThumbnailCard: View {
     /// Fixed cell height. Declared once and used for the frame so the drawn
     /// content and the layout box can never disagree.
     private static let cellHeight: CGFloat = 160
+
+    /// Shared across every card, keyed by file URL. Scrolling far down a
+    /// long gallery and back up can recreate cells that had already
+    /// appeared once — LazyVGrid doesn't keep unlimited off screen views
+    /// alive forever — and without this, that redid the full decode/
+    /// generate work from scratch every time, which is exactly the kind of
+    /// repeated, avoidable cost that reads as scroll jank. NSCache evicts
+    /// on its own under memory pressure, so this never needs manual
+    /// clearing; countLimit is just a sane ceiling, not a tuned budget.
+    private static let thumbnailCache: NSCache<NSURL, UIImage> = {
+        let cache = NSCache<NSURL, UIImage>()
+        cache.countLimit = 500
+        return cache
+    }()
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
@@ -150,9 +165,16 @@ struct VideoThumbnailCard: View {
 
     private func loadThumbnail() {
         let url = item.url
+
+        if let cached = Self.thumbnailCache.object(forKey: url as NSURL) {
+            thumbnail = cached
+            return
+        }
+
         if item.isPhoto {
             DispatchQueue.global(qos: .userInitiated).async {
-                guard let data = try? Data(contentsOf: url), let image = UIImage(data: data) else { return }
+                guard let image = Self.downsampledImage(at: url, maxPixelSize: Self.cellHeight * 3) else { return }
+                Self.thumbnailCache.setObject(image, forKey: url as NSURL)
                 DispatchQueue.main.async { thumbnail = image }
             }
             return
@@ -166,9 +188,37 @@ struct VideoThumbnailCard: View {
             generator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { _, cgImage, _, _, _ in
                 guard let cgImage else { return }
                 let image = UIImage(cgImage: cgImage)
+                Self.thumbnailCache.setObject(image, forKey: url as NSURL)
                 DispatchQueue.main.async { thumbnail = image }
             }
         }
+    }
+
+    /// Decodes directly at thumbnail size via ImageIO rather than loading the
+    /// full image and letting SwiftUI's .resizable()/.scaledToFill() shrink
+    /// it visually afterward — that still means fully decoding the source
+    /// pixel data first. For a Max quality photo (up to the device's true
+    /// sensor resolution), that is tens of megabytes of decoded bitmap for
+    /// something displayed at under 200 points tall; multiplied across a
+    /// scrolling grid, that repeated decode cost is exactly the kind of
+    /// thing that reads as jank. CGImageSourceCreateThumbnailAtIndex decodes
+    /// straight to the requested pixel size instead of decoding-then-scaling.
+    private static func downsampledImage(at url: URL, maxPixelSize: CGFloat) -> UIImage? {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil) else { return nil }
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
+            // Bakes in any EXIF rotation so the thumbnail's pixels are
+            // already upright, matching what displaying the full image would
+            // show — a no-op for this app's own captures, whose orientation
+            // is already baked into the pixels rather than tagged, but
+            // correct regardless of how a file ended up on disk.
+            kCGImageSourceCreateThumbnailWithTransform: true
+        ]
+        guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
+            return nil
+        }
+        return UIImage(cgImage: cgImage)
     }
 
     private func loadMetadata() {
