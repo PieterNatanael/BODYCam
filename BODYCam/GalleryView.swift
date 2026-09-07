@@ -236,38 +236,30 @@ struct GalleryView: View {
                     scheduledBadge
                 }
             }
-            if !isSelecting {
-                if !subscriptionManager.isUnlocked {
-                    Button(action: { showPaywall = true }) {
-                        HStack(spacing: 5) {
-                            Image(systemName: "lock.fill")
-                                .font(.system(size: 11))
-                            Text("PREMIUM")
-                                .font(.system(size: 10, weight: .bold, design: .monospaced))
-                                .tracking(1)
-                        }
-                        .foregroundColor(isFlatTheme ? accentColor : Color(white: 0.85))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(
-                            ZStack {
-                                RoundedRectangle(cornerRadius: isFlatTheme ? 4 : 6)
-                                    .fill(isFlatTheme ? Color.black : Color(white: 0.2))
-                                RoundedRectangle(cornerRadius: isFlatTheme ? 4 : 6)
-                                    .stroke(isFlatTheme ? accentColor : Color(white: 0.45),
-                                            lineWidth: isFlatTheme ? 2 : 1)
-                            }
-                        )
+            // The item count that used to sit here for unlocked users now
+            // lives in infoPanel instead, one tap away behind the title —
+            // showing it twice on screen at once was redundant.
+            if !isSelecting && !subscriptionManager.isUnlocked {
+                Button(action: { showPaywall = true }) {
+                    HStack(spacing: 5) {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 11))
+                        Text("PREMIUM")
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .tracking(1)
                     }
-                } else {
-                    // Two full literal keys ("%lld item" / "%lld items") rather
-                    // than a nested interpolation building the "s" suffix in
-                    // code — the catalog can then hold a properly pluralized
-                    // translation per language instead of an English-only rule
-                    // baked into the source.
-                    Text(videos.count == 1 ? "\(videos.count) item" : "\(videos.count) items")
-                        .font(isFlatTheme ? .system(size: 12, weight: .bold, design: .monospaced) : .subheadline)
-                        .foregroundColor(.white)
+                    .foregroundColor(isFlatTheme ? accentColor : Color(white: 0.85))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(
+                        ZStack {
+                            RoundedRectangle(cornerRadius: isFlatTheme ? 4 : 6)
+                                .fill(isFlatTheme ? Color.black : Color(white: 0.2))
+                            RoundedRectangle(cornerRadius: isFlatTheme ? 4 : 6)
+                                .stroke(isFlatTheme ? accentColor : Color(white: 0.45),
+                                        lineWidth: isFlatTheme ? 2 : 1)
+                        }
+                    )
                 }
             }
         }
