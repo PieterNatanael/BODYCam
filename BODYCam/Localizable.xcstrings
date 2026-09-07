@@ -2585,6 +2585,52 @@
         }
       }
     },
+    "ITEMS": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ELEMENTE"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ÉLÉMENTS"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ITEM"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アイテム"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "항목"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "项目"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目"
+          }
+        }
+      }
+    },
     "Interrupted recordings (low battery, force-quit, calls) may result in corrupted or missing files.": {
       "localizations": {
         "de": {
@@ -5357,6 +5403,7 @@
       }
     },
     "STARTING CAMERA": {
+      "extractionState": "stale",
       "localizations": {
         "de": {
           "stringUnit": {
@@ -6227,6 +6274,52 @@
           "stringUnit": {
             "state": "translated",
             "value": "縮圖日期和時間"
+          }
+        }
+      }
+    },
+    "TOTAL SIZE": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GESAMTGRÖSSE"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TAILLE TOTALE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UKURAN TOTAL"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合計サイズ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "전체 용량"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "总大小"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "總大小"
           }
         }
       }

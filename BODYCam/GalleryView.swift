@@ -24,6 +24,10 @@ struct GalleryView: View {
     /// stays correct if the list is reloaded or reordered underneath it —
     /// which happens whenever a recording is added or deleted.
     @State private var selectedIDs: Set<URL> = []
+    /// Tapping the "Gallery" title reveals a small panel with the item count
+    /// and total storage used — info that isn't worth permanent screen space
+    /// but is easy to want a glance at.
+    @State private var showInfoPanel = false
     @AppStorage("AppTheme") private var appThemeRaw: String = AppTheme.tropical.rawValue
     private var appTheme: AppTheme { AppTheme(rawValue: appThemeRaw) ?? .normal }
     private var isFlatTheme: Bool { appTheme.isFlat }
@@ -32,6 +36,17 @@ struct GalleryView: View {
     // Simple/Tactical widens the grid gutter so the grid structure itself
     // reads as a design element, Bauhaus-style, rather than an afterthought.
     private var gridSpacing: CGFloat { isFlatTheme ? 8 : 3 }
+
+    /// ByteCountFormatter rather than a hand rolled MB/GB conversion — it
+    /// already picks the right unit and decimal precision on its own, and
+    /// its output is already localized by iOS itself, unlike a label built
+    /// from scratch in source.
+    private var totalSizeFormatted: String {
+        let totalBytes = videos.reduce(Int64(0)) { $0 + $1.fileSizeBytes }
+        let formatter = ByteCountFormatter()
+        formatter.countStyle = .file
+        return formatter.string(fromByteCount: totalBytes)
+    }
     private var columns: [GridItem] {
         [GridItem(.flexible(), spacing: gridSpacing),
          GridItem(.flexible(), spacing: gridSpacing)]
@@ -43,6 +58,7 @@ struct GalleryView: View {
 
             VStack(spacing: 0) {
                 header
+                infoPanel
 
                 if videos.isEmpty {
                     emptyState
@@ -176,14 +192,30 @@ struct GalleryView: View {
                                       : .title2.bold())
                     .foregroundColor(.white)
             } else if isFlatTheme {
-                Text("GALLERY")
-                    .font(.system(size: 22, weight: .heavy, design: .monospaced))
-                    .tracking(3)
-                    .foregroundColor(.white)
+                Button(action: { withAnimation(.easeInOut(duration: 0.25)) { showInfoPanel.toggle() } }) {
+                    HStack(spacing: 6) {
+                        Text("GALLERY")
+                            .font(.system(size: 22, weight: .heavy, design: .monospaced))
+                            .tracking(3)
+                            .foregroundColor(.white)
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 13, weight: .heavy))
+                            .foregroundColor(.white)
+                            .rotationEffect(.degrees(showInfoPanel ? 180 : 0))
+                    }
+                }
             } else {
-                Text("Gallery")
-                    .font(.largeTitle.bold())
-                    .foregroundColor(.lightGray)
+                Button(action: { withAnimation(.easeInOut(duration: 0.25)) { showInfoPanel.toggle() } }) {
+                    HStack(spacing: 6) {
+                        Text("Gallery")
+                            .font(.largeTitle.bold())
+                            .foregroundColor(.lightGray)
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 17, weight: .bold))
+                            .foregroundColor(.lightGray)
+                            .rotationEffect(.degrees(showInfoPanel ? 180 : 0))
+                    }
+                }
             }
             Spacer()
 
@@ -247,6 +279,52 @@ struct GalleryView: View {
         // where SwiftUI starts dropping presentations.
         .sheet(isPresented: $showScheduledList) {
             ScheduledListSheet(store: scheduleStore)
+        }
+    }
+
+    /// Drops down from the title when tapped — see showInfoPanel. Hidden
+    /// entirely while selecting, the same as the title button that reveals
+    /// it, rather than showing stale info behind the selection count.
+    @ViewBuilder
+    private var infoPanel: some View {
+        if showInfoPanel && !isSelecting {
+            HStack {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        Text("ITEMS")
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .tracking(1.5)
+                            .foregroundColor(Color(white: 0.5))
+                        Spacer()
+                        Text(videos.count == 1 ? "\(videos.count) item" : "\(videos.count) items")
+                            .font(.system(size: 13, weight: .bold, design: .monospaced))
+                            .foregroundColor(.white)
+                    }
+                    HStack {
+                        Text("TOTAL SIZE")
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .tracking(1.5)
+                            .foregroundColor(Color(white: 0.5))
+                        Spacer()
+                        Text(totalSizeFormatted)
+                            .font(.system(size: 13, weight: .bold, design: .monospaced))
+                            .foregroundColor(isFlatTheme ? accentColor : .lightGray)
+                    }
+                }
+            }
+            .padding(14)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: isFlatTheme ? 6 : 10)
+                        .fill(Color(white: 0.1))
+                    RoundedRectangle(cornerRadius: isFlatTheme ? 6 : 10)
+                        .stroke(isFlatTheme ? accentColor : Color(white: 0.3),
+                                lineWidth: isFlatTheme ? 1.5 : 1)
+                }
+            )
+            .padding(.horizontal)
+            .padding(.bottom, 10)
+            .transition(.opacity.combined(with: .move(edge: .top)))
         }
     }
 
