@@ -112,6 +112,13 @@ struct GalleryView: View {
             // the list reflect what's genuinely still pending.
             scheduleStore.refresh()
         }
+        // Switching to another tab and back should find the info panel
+        // closed again, not remembering it was left open — SwiftUI keeps
+        // this tab's whole view (and its @State) alive underneath, so
+        // without this it would otherwise still be showing on return.
+        .onDisappear {
+            showInfoPanel = false
+        }
         // Hop off the current update: @Published replays its value the moment
         // this view subscribes, which on a cold launch lands mid body evaluation.
         .onReceive(notificationRouter.$mediaToOpen.compactMap { $0 }) { fileName in
