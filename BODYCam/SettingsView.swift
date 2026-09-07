@@ -450,6 +450,10 @@ struct SettingsView: View {
     @AppStorage("IsLowLight") private var isLowLight: Bool = false
     @AppStorage("SelectedPhotoQuality") private var photoQuality: PhotoQuality = .high
     @AppStorage("ShowThumbnailMetadata") private var showThumbnailMetadata: Bool = false
+    /// 2 or 3 thumbnails per row. Read directly by GalleryView's own
+    /// @AppStorage of the same name, not through this one — this is just
+    /// where the picker that writes it lives.
+    @AppStorage("GalleryColumns") private var galleryColumns: Int = 2
     // Off by default: unlike the thumbnail toggle above, this one is
     // permanent per file the moment something is captured with it on — read
     // directly from UserDefaults (not through this @AppStorage) by
@@ -786,6 +790,32 @@ struct SettingsView: View {
     private var gallerySection: some View {
         VStack(alignment: .leading, spacing: 14) {
             sectionLabel("GALLERY")
+
+            VStack(alignment: .leading, spacing: 6) {
+                sectionLabel("GRID COLUMNS")
+                HStack(spacing: 8) {
+                    ForEach([2, 3], id: \.self) { count in
+                        Button(action: { galleryColumns = count }) {
+                            Text("\(count)")
+                                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                                .tracking(1)
+                                .foregroundColor(galleryColumns == count ? .white : Color(white: 0.4))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                                .background(qualityBackground(active: galleryColumns == count))
+                        }
+                    }
+                }
+                // 3 columns only, where the point is fitting more in — the
+                // same wider gutter as 2 columns would fight that instead of
+                // serving it.
+                if galleryColumns == 3 {
+                    Text("Thumbnails sit close together with a thin line between them")
+                        .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                        .foregroundColor(Color(white: 0.5))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
 
             VStack(alignment: .leading, spacing: 6) {
                 sectionLabel("THUMBNAIL DATE AND TIME")

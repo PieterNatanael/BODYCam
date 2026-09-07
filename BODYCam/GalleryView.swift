@@ -33,9 +33,20 @@ struct GalleryView: View {
     private var isFlatTheme: Bool { appTheme.isFlat }
     private var accentColor: Color { appTheme.galleryAccent }
 
+    /// 2 or 3 thumbnails per row — set from Settings. Written there via its
+    /// own @AppStorage of the same name; read here directly rather than
+    /// passed in, the same relationship AppTheme/CameraDisplayMode already
+    /// have between the two files.
+    @AppStorage("GalleryColumns") private var galleryColumns: Int = 2
+
     // Simple/Tactical widens the grid gutter so the grid structure itself
     // reads as a design element, Bauhaus-style, rather than an afterthought.
-    private var gridSpacing: CGFloat { isFlatTheme ? 8 : 3 }
+    // 3 columns overrides both: the point of asking for more thumbnails per
+    // row is fitting more in, which a wide gutter would fight rather than
+    // serve, so it gets a thin, deliberately theme independent line instead.
+    private var gridSpacing: CGFloat {
+        galleryColumns == 3 ? 2 : (isFlatTheme ? 8 : 3)
+    }
 
     /// ByteCountFormatter rather than a hand rolled MB/GB conversion — it
     /// already picks the right unit and decimal precision on its own, and
@@ -48,8 +59,7 @@ struct GalleryView: View {
         return formatter.string(fromByteCount: totalBytes)
     }
     private var columns: [GridItem] {
-        [GridItem(.flexible(), spacing: gridSpacing),
-         GridItem(.flexible(), spacing: gridSpacing)]
+        Array(repeating: GridItem(.flexible(), spacing: gridSpacing), count: galleryColumns)
     }
 
     var body: some View {

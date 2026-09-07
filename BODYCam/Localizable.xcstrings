@@ -2354,6 +2354,52 @@
         }
       }
     },
+    "GRID COLUMNS": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RASTERSPALTEN"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "COLONNES DE LA GRILLE"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KOLOM GRID"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "グリッド列数"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그리드 열 수"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "网格列数"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "網格欄數"
+          }
+        }
+      }
+    },
     "Gallery": {
       "localizations": {
         "de": {
@@ -6642,6 +6688,52 @@
           "stringUnit": {
             "state": "translated",
             "value": "此操作無法復原。"
+          }
+        }
+      }
+    },
+    "Thumbnails sit close together with a thin line between them": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Miniaturansichten liegen eng beieinander, nur durch eine dünne Linie getrennt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les vignettes sont rapprochées, séparées seulement par une fine ligne"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thumbnail berdekatan, hanya dipisahkan garis tipis"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "サムネイルは細い線だけで区切られ、隙間なく並びます"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "썸네일이 가는 선 하나만 사이에 두고 가깝게 배치됩니다"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "缩略图紧密排列，仅以细线分隔"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "縮圖緊密排列，僅以細線分隔"
           }
         }
       }
