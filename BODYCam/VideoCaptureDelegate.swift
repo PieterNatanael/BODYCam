@@ -188,15 +188,38 @@ class VideoCaptureDelegate: NSObject, AVCaptureFileOutputRecordingDelegate, Obse
             completion(false)
             return
         }
-        export.outputURL = destinationURL
+        // Exports to a TEMP file alongside the real destination, then moves it
+        // into place atomically only once fully finished — AVAssetExportSession
+        // writes its output progressively as the export runs, so pointing
+        // outputURL directly at the real Documents filename would let
+        // GalleryView's loadVideos(), which runs synchronously on the main
+        // thread the instant its tab appears, enumerate this exact file mid
+        // export and hand an unfinished video to the thumbnail generator. The
+        // plain (non-stamped) recording path already avoids this exact race
+        // by recording to a temp file first (see the comment at the top of
+        // this file); this mirrors that for the stamped path, which bypassed
+        // it entirely by exporting straight to the final name.
+        let tempExportURL = destinationURL.deletingLastPathComponent()
+            .appendingPathComponent("bodycam_tmp_stamped_\(UUID().uuidString).mov")
+        export.outputURL = tempExportURL
         export.outputFileType = .mov
         export.videoComposition = videoComposition
 
         export.exportAsynchronously {
-            if export.status != .completed {
+            guard export.status == .completed else {
                 print("Date stamp export failed: \(export.error?.localizedDescription ?? "unknown")")
+                try? FileManager.default.removeItem(at: tempExportURL)
+                completion(false)
+                return
             }
-            completion(export.status == .completed)
+            do {
+                try FileManager.default.moveItem(at: tempExportURL, to: destinationURL)
+                completion(true)
+            } catch {
+                print("Date stamp: failed to move the exported file into place — \(error)")
+                try? FileManager.default.removeItem(at: tempExportURL)
+                completion(false)
+            }
         }
     }
 

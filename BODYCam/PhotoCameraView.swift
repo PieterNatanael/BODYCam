@@ -201,7 +201,23 @@ final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate, Obser
         let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("photo_\(timestamp).jpg")
         do {
-            try jpeg.write(to: url)
+            // .atomic, not a plain write: without it, this writes directly
+            // into the final filename while the bytes are still arriving,
+            // and GalleryView's loadVideos() runs synchronously on the main
+            // thread the instant its tab appears — swiping there fast enough
+            // after capturing could enumerate this exact file mid write and
+            // hand a still-incomplete JPEG to the thumbnail decoder. Video
+            // already guards against the equivalent race by recording to a
+            // temp file and moving it into place only once finished (see
+            // VideoCaptureDelegate); .atomic gets the same guarantee here
+            // with much less code, since Data itself already writes to an
+            // auxiliary file and renames it into place under the hood. Worth
+            // it precisely because it wasn't always this reachable: the
+            // shutter button now pops back up almost immediately after a
+            // tap, decoupled from save completion, so there is no longer
+            // anything visually holding the user back from swiping away
+            // before this finishes.
+            try jpeg.write(to: url, options: .atomic)
             DispatchQueue.main.async { onFinish(true) }
         } catch {
             DispatchQueue.main.async { onFinish(false) }
