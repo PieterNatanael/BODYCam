@@ -753,7 +753,6 @@ struct PhotoCameraView: View {
             let borderColor: Color = isNormal ? Color.clear : previewBorderColor
             let borderWidth: CGFloat = isNormal ? 0 : previewBorderWidth
             let placeholderFill: Color = (isFlatTheme || isNormal) ? Color.black : Color(white: 0.05)
-            let accentColor: Color = isFlatTheme ? previewAccent : Color(white: 0.2)
             // Forced to .border regardless of theme: Tactical's brackets and
             // Spider's corner webs both assume a rectangular frame with real
             // corners to sit in, which a circle doesn't have — a plain
@@ -819,26 +818,18 @@ struct PhotoCameraView: View {
                 // Shown only until the capture session is ready. The preview is
                 // never user-hidden any more, so this is purely a loading state.
                 if captureSession == nil {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: radius)
-                            .fill(placeholderFill)
-                            .overlay(
-                                previewBorderOverlay(radius: radius, color: borderColor,
-                                                      width: borderWidth, decoration: decoration)
-                            )
-                        VStack(spacing: 10) {
-                            Image(systemName: "camera.fill")
-                                .font(.system(size: isNormal ? 46 : 38))
-                                .foregroundColor(accentColor)
-                            Text("STARTING CAMERA")
-                                .font(.system(size: isNormal ? 12 : 10, weight: .bold, design: .monospaced))
-                                .foregroundColor(accentColor)
-                                .tracking(isNormal ? 3 : 2)
-                        }
-                    }
-                    .frame(width: w, height: h)
-                    .offset(y: verticalOffset)
-                    .ignoresSafeArea(.all, edges: isNormal ? .all : [])
+                    // Deliberately blank, matching the built in Camera app —
+                    // no icon, no wording, just the plain card, gone the
+                    // instant the real preview is ready underneath it.
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(placeholderFill)
+                        .overlay(
+                            previewBorderOverlay(radius: radius, color: borderColor,
+                                                  width: borderWidth, decoration: decoration)
+                        )
+                        .frame(width: w, height: h)
+                        .offset(y: verticalOffset)
+                        .ignoresSafeArea(.all, edges: isNormal ? .all : [])
                 }
             }
             .frame(width: geo.size.width, height: geo.size.height)
