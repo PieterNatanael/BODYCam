@@ -35,23 +35,14 @@ struct VideoThumbnailCard: View {
                 .overlay(thumbnailContent)
                 .clipped()
                 .cornerRadius(isFlatTheme ? 0 : 8)
-                // Media type badge, top trailing, so photos and videos are
-                // distinguishable at a glance in the mixed grid.
-                .overlay(
-                    VStack {
-                        HStack {
-                            Spacer()
-                            Image(systemName: item.isPhoto ? "photo.fill" : "video.fill")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundColor(.white)
-                                .padding(5)
-                                .background(Color.black.opacity(0.55))
-                                .clipShape(Circle())
-                                .padding(6)
-                        }
-                        Spacer()
-                    }
-                )
+                // Duration badge, bottom trailing, videos only — matches the
+                // native Photos app: no separate photo/video type icon is
+                // needed once only videos carry a duration at all, so the
+                // badge itself already tells them apart. Always visible,
+                // independent of showThumbnailMetadata, which is a
+                // separate, richer info bar rather than a replacement for
+                // this at-a-glance one.
+                .overlay(durationBadge, alignment: .bottomTrailing)
 
             if showThumbnailMetadata {
                 metadataPlate
@@ -77,6 +68,23 @@ struct VideoThumbnailCard: View {
             date = ""
             loadThumbnail()
             loadMetadata()
+        }
+    }
+
+    /// Empty for photos, and for a video whose duration hasn't loaded yet —
+    /// @ViewBuilder's if with no else renders nothing in either case, rather
+    /// than an empty badge box briefly flashing before the real value lands.
+    @ViewBuilder
+    private var durationBadge: some View {
+        if !item.isPhoto, !duration.isEmpty {
+            Text(duration)
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .foregroundColor(.white)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 3)
+                .background(Color.black.opacity(0.6))
+                .cornerRadius(4)
+                .padding(6)
         }
     }
 
