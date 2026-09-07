@@ -37,7 +37,7 @@ struct GalleryView: View {
     /// own @AppStorage of the same name; read here directly rather than
     /// passed in, the same relationship AppTheme/CameraDisplayMode already
     /// have between the two files.
-    @AppStorage("GalleryColumns") private var galleryColumns: Int = 2
+    @AppStorage("GalleryColumns") private var galleryColumns: Int = 3
 
     // Simple/Tactical widens the grid gutter so the grid structure itself
     // reads as a design element, Bauhaus-style, rather than an afterthought.

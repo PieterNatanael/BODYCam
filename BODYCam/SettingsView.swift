@@ -453,7 +453,7 @@ struct SettingsView: View {
     /// 2 or 3 thumbnails per row. Read directly by GalleryView's own
     /// @AppStorage of the same name, not through this one — this is just
     /// where the picker that writes it lives.
-    @AppStorage("GalleryColumns") private var galleryColumns: Int = 2
+    @AppStorage("GalleryColumns") private var galleryColumns: Int = 3
     // Off by default: unlike the thumbnail toggle above, this one is
     // permanent per file the moment something is captured with it on — read
     // directly from UserDefaults (not through this @AppStorage) by
