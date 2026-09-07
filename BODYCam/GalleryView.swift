@@ -385,17 +385,17 @@ struct GalleryView: View {
         }
     }
 
-    @ViewBuilder
-    private var footerBackground: some View {
-        if isFlatTheme {
-            // No fill: the disclaimer just sits directly on the gallery's own
-            // background across every theme, rather than on a distinct bar.
-            // The thin accent line on top is a divider, not a background.
-            Rectangle().fill(accentColor).frame(height: 1).frame(maxHeight: .infinity, alignment: .top)
-        } else {
-            Color.clear
-        }
-    }
+    // No fill: the disclaimer just sits directly on the gallery's own
+    // background across every theme, rather than on a distinct bar.
+    //
+    // Used to draw a thin accent-colored divider on top for flat themes.
+    // That line was only ever invisible by accident for Matcha/Ice
+    // Cream/Spider/Tropical, whose gallery background happens to be the
+    // exact same color as the accent it was drawn in — for Simple/Tactical,
+    // whose gallery background is plain black, the identical line stood out
+    // sharply instead. Removed rather than fixed to match the others, since
+    // no theme actually needs a divider here.
+    private var footerBackground: some View { Color.clear }
 
     // MARK: - Data
 
